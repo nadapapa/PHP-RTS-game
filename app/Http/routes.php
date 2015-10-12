@@ -14,9 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/home', function () {
+
+Route::get('home', ['as' => 'home', 'uses' => function() {
     return view('home');
-});
+}]);
 
 // Authentication routes...
 Route::get('auth/login', 'Auth\AuthController@getLogin');
@@ -27,5 +28,9 @@ Route::get('auth/logout', 'Auth\AuthController@getLogout');
 Route::get('auth/register', 'Auth\AuthController@getRegister');
 Route::post('auth/register', 'Auth\AuthController@postRegister');
 
-
+// email activation route
 Route::get('auth/verify/{id}', 'Auth\AuthController@getValidate');
+
+// social registration
+Route::get('auth/{provider}', ['uses' => 'Auth\AuthController@redirectToProvider', 'as' => 'social.login']);
+Route::get('auth/login/{provider}', 'Auth\AuthController@handleProviderCallback');

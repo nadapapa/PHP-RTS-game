@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+
 use App\User;
+use Laravel\Socialite\Facades\Socialite;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -47,7 +49,6 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
     /**
      * Create a new authentication controller instance.
      *
-     * @return void
      */
     public function __construct() {
         $this->middleware('guest', ['except' => 'getLogout']);
@@ -87,8 +88,6 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
         $user = User::verify($code);
 
         if ($user) {
-            // $user = User model
-
             return view('user.validated');
         } else {
             // $user = null;
@@ -119,29 +118,9 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
             return $this->sendLockoutResponse($request);
         }
 
-
         $credentials = $this->getCredentials($request);
         $credentials['verified'] = 1;
-//        return $credentials;
- 
-//        if (Auth::validate($credentials)) {
-//            $user = Auth::getLastAttempted();
-//            print_r($user);
-//            if ($user->verified) {
-//                Auth::login($user, $request->has('remember'));
-//                return redirect()->intended($this->redirectPath());
-//            } else {
-//                return redirect($this->loginPath()) // Change this to redirect elsewhere
-//                    ->withInput($request->only($this->loginUsername(), 'remember'))
-//                    ->withErrors([
-//                        'active' => 'You must be active to login.'
-////                        $this->loginUsername() => $this->getFailedLoginMessage(),
-//                    ]);
-//            }
-//        }
-        
-        
-        
+
         if (Auth::attempt($credentials, $request->has('remember'))) {
             return $this->handleUserWasAuthenticated($request, $throttles);
         }
@@ -158,5 +137,53 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
             ->withErrors([
                 $this->loginUsername() => $this->getFailedLoginMessage(),
             ]);
-   }
+    }
+
+
+
+
+    /**
+     * Redirect the user to the social authentication page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function redirectToProvider($provider)
+    {
+        return Socialite::driver($provider)->redirect();
+    }
+
+
+    /**
+     * Obtain the user information from social media.
+     *
+     * @param Request $request
+     * @param $provider
+     * @return \Illuminate\Http\Response
+     */
+    public function handleProviderCallback(Request $request, $provider)
+    {
+    //notice we are not doing any validation, you should do it
+
+    $user = Socialite::driver($provider)->user();
+
+    /*    if ($request->has('error'))){
+        return 'HIBA';
+    }*/
+    // storing data to our users table
+    $data = [
+        'name'      => $user->getName(),
+        'email'     => $user->getEmail(),
+//        'avatar'    => $user->getAvatar(),
+        'verified' => 1
+    ];
+
+    // login the user
+     /*   if (Auth::attempt(User::firstOrCreate($data))) {
+            return $this->handleUserWasAuthenticated($request, $throttles);
+        }*/
+    Auth::login(User::firstOrCreate($data));
+
+    //after login redirecting to home page
+    return redirect('/');
+    }
 }
