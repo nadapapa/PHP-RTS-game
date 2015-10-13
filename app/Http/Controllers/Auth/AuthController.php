@@ -163,12 +163,13 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
     public function handleProviderCallback(Request $request, $provider)
     {
     //notice we are not doing any validation, you should do it
+   if ($request->has('error')){
+       return redirect('/');
+   }
 
     $user = Socialite::driver($provider)->user();
 
-    /*    if ($request->has('error'))){
-        return 'HIBA';
-    }*/
+
     // storing data to our users table
     $data = [
         'name'      => $user->getName(),
@@ -184,6 +185,7 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
     Auth::login(User::firstOrCreate($data));
 
     //after login redirecting to home page
-    return redirect('/');
+    return redirect('/home');
     }
+
 }

@@ -15,9 +15,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('home', ['as' => 'home', 'uses' => function() {
-    return view('home');
-}]);
+
+Route::get('home', [
+            'middleware' => 'auth',
+            'as' => 'home',
+            'uses' => function() {
+                return view('home');
+            }]);
+
+
+//Route::get('home', ['as' => 'home', 'uses' => function() {
+//    return view('home');
+//}]);
 
 // Authentication routes...
 Route::get('auth/login', 'Auth\AuthController@getLogin');
