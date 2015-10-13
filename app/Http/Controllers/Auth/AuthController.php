@@ -43,7 +43,7 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
         $user = $this->create($request->all());
         $user->sendVerification();
-        return view('welcome');
+        return view('auth.see_email');
     }
 
     /**
@@ -84,6 +84,12 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
         return $user;
     }
 
+    /**
+     * Validates the registration when the user clicks on the code sent to him/her.
+     *
+     * @param $code
+     * @return \Illuminate\View\View
+     */
     public function getValidate($code) {
         $user = User::verify($code);
 
@@ -95,8 +101,7 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
         }
     }
 
-    
-    
+
     /**
      * Handle a login request to the application.
      *
@@ -138,8 +143,6 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
                 $this->loginUsername() => $this->getFailedLoginMessage(),
             ]);
     }
-
-
 
 
     /**
