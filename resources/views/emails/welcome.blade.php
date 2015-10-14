@@ -1,7 +1,7 @@
 
 Hali {{ $user['name'] }},
 
-<a href="{{ url('auth/verify', $user['verification_code']) }}">Kattints ide a regisztráció megerõsítéséhez!</a>
+<a href="{{ url('auth/verify', $user['verification_code']) }}">Kattints ide a regisztrÃ¡ciÃ³ megerÅ‘sÃ­tÃ©sÃ©hez!</a>
 
-vagy másold be a böngészõd címsorába a linket és nyomj entert:
+vagy mÃ¡sold be a bÃ¶ngÃ©szÅ‘d cÃ­msorÃ¡ba a linket Ã©s nyomj entert:
 {{ url('auth/verify', $user['verification_code']) }}

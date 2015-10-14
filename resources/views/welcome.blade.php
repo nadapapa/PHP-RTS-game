@@ -27,7 +27,6 @@
 
                         <a href="/auth/login">bejelentkezés</a><br>
                         <a href="/auth/register">regisztráció</a><br>
-                        <a href="/auth/logout">kijelentkezés</a><br>
                         <a href="/password/email">elfelejtett jelszó</a><br>
                     <br>
                         Bejelentkezés közösségi szolgáltatással<br>

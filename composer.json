@@ -8,7 +8,8 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.1.*",
         "coderjp/verifier": "^0.1.2",
-        "laravel/socialite": "^2.0"
+        "laravel/socialite": "^2.0",
+        "barryvdh/laravel-ide-helper": "^2.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

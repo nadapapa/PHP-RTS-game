@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 
 use App\User;
+use App\Exceptions;
+use Illuminate\Database\QueryException;
 use Laravel\Socialite\Facades\Socialite;
+use App\Exceptions\UserCreateException;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -94,7 +97,8 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
         $user = User::verify($code);
 
         if ($user) {
-            return view('user.validated');
+            Auth::login($user);
+            return redirect('/home');
         } else {
             // $user = null;
             return view('user.invalid');
@@ -182,10 +186,13 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
     ];
 
     // login the user
-     /*   if (Auth::attempt(User::firstOrCreate($data))) {
-            return $this->handleUserWasAuthenticated($request, $throttles);
-        }*/
-    Auth::login(User::firstOrCreate($data));
+    try{
+        Auth::login(User::firstOrCreate($data));
+    } catch(QueryException $e) {
+//        throw new UserCreateException();
+        return "a felhasználó már létezik";
+    }
+
 
     //after login redirecting to home page
     return redirect('/home');

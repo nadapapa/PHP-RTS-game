@@ -1,8 +1,6 @@
+<a href="/">főoldal</a><br>
 
-    <h1>Hello
-        @if (Auth::check())
-            {{Auth::user()->name}}
-        @else
-            guest
-        @endif
-    </h1>
+    <h1>Hello {{Auth::user()->name}}</h1>
+
+
+    <a href="/auth/logout">kijelentkezés</a><br>

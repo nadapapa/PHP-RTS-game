@@ -1,3 +1,4 @@
+_ide_helper.php
 /nbproject
 /.idea
 /vendor
@@ -5,4 +6,3 @@
 Homestead.yaml
 Homestead.json
 .env
-/nbproject/private/
