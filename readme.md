@@ -1,7 +1,5 @@
 ## böngészõben játszható RTS
 
-Laravel 5.1
+travian, ogame, tribalwars, stb-szerû stratégiai játék
 
-travian-szerû stratégiai játék
-
-részletek majd jönnek
+[wiki](https://github.com/nadapapa/PHP-RTS-game/wiki)
