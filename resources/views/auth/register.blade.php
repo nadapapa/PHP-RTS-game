@@ -1,4 +1,6 @@
-<!-- resources/views/auth/register.blade.php -->
+{{--resources/views/auth/register.blade.php--}}
+<!DOCTYPE html>
+<html>
 
 <form method="POST" action="/auth/register">
     {!! csrf_field() !!}
@@ -27,3 +29,7 @@
         <button type="submit">Register</button>
     </div>
 </form>
+
+
+
+</html>

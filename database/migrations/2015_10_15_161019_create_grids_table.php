@@ -27,6 +27,6 @@ class CreateGridsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('grids');
+        Schema::drop('grid');
     }
 }

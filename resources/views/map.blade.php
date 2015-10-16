@@ -1,10 +1,12 @@
+<!-- resources/views/map.blade.php -->
+
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="_token" content="{{ csrf_token() }}"/>
-    <title>php rts j√°t√©k</title>
+    <title>php rts j·tÈk</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -18,28 +20,28 @@
         <div class="col-md-6 col-md-offset-3">
 
 
-            <a href="/">f≈ëoldal</a><br>
+            <a href="/">fıoldal</a><br>
 
             <h1>Hello {{Auth::user()->name}}</h1>
 
             @if(Auth::user()->nation != 0)
-                a n√©ped: {{Auth::user()->nation}}
+                a nÈped: {{Auth::user()->nation}}
 
             @else
-                v√°laszd ki melyik n√©p vez√©re akarsz lenni! <br>
+                v·laszd ki melyik nÈp vezÈre akarsz lenni! <br>
 
                 <form method="POST" action="/home">
                     {!! csrf_field() !!}
-                    <input type="radio" name="nation" value="1"> R√≥mai <br>
-                    <input type="radio" name="nation" value="2"> G√∂r√∂g <br>
-                    <input type="radio" name="nation" value="3"> Germ√°n <br>
+                    <input type="radio" name="nation" value="1"> RÛmai <br>
+                    <input type="radio" name="nation" value="2"> Gˆrˆg <br>
+                    <input type="radio" name="nation" value="3"> Germ·n <br>
                     <input type="radio" name="nation" value="4"> Kelta <br>
-                    <button type="submit">j√°t√©k</button>
+                    <button type="submit">j·tÈk</button>
                 </form>
             @endif
 
 
-            <a href="/auth/logout">kijelentkez√©s</a><br>
+            <a href="/auth/logout">kijelentkezÈs</a><br>
 
 
         </div>
