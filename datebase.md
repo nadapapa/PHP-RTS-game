@@ -29,8 +29,8 @@ MySQL
 
 - id
 - name
-- x - *x koordináta*
-- y - *y koordináta*
+- grid_id *annak a hexnek az id-je, amin a város van*
+- level
 - population
 - owner - *a tulajdonos felhasználó id-je*
 
