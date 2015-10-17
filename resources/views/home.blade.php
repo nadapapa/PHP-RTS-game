@@ -21,23 +21,13 @@
             <a href="/">főoldal</a><br>
 
             <h1>Hello {{Auth::user()->name}}</h1>
+<?php
 
-            @if(Auth::user()->nation != 0)
-                a néped: {{Auth::user()->nation}}
+            use App\City;
+                $id = Auth::user()->id;
+            print_r(City::where('owner', $id)->name);
 
-            @else
-                válaszd ki melyik nép vezére akarsz lenni! <br>
-
-                <form method="POST" action="/home">
-                    {!! csrf_field() !!}
-                    <input type="radio" name="nation" value="1"> Római <br>
-                    <input type="radio" name="nation" value="2"> Görög <br>
-                    <input type="radio" name="nation" value="3"> Germán <br>
-                    <input type="radio" name="nation" value="4"> Kelta <br>
-                    <button type="submit">játék</button>
-                </form>
-            @endif
-
+?>
 
             <a href="/auth/logout">kijelentkezés</a><br>
 

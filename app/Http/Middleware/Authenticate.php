@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\User;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Auth;
 
 class Authenticate
 {

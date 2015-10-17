@@ -40,10 +40,21 @@ Route::get('auth/{provider}', ['uses' => 'Auth\AuthController@redirectToProvider
 Route::get('auth/login/{provider}', 'Auth\AuthController@handleProviderCallback');
 
 
-// routes defended by auth middleware
+
+
 Route::group(['middleware' => 'auth'], function () {
-    Route::post('home', 'HomeController@postNation');
-    Route::get('home', 'HomeController@getHome');
+
+Route::post('setup', 'SetupController@postSetup');
+    Route::get('setup', 'SetupController@getSetup');
+});
+
+// routes defended by auth middleware
+
+Route::group(['middleware' => ['auth', 'setup']], function () {
+//    Route::post('home', 'StartController@postNation');
+    Route::get('home', function () {
+        return view('home');
+    });
 
 
     Route::get('map', 'MapController@showMap');

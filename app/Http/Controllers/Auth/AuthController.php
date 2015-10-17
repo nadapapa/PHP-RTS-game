@@ -98,7 +98,7 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
         if ($user) {
             Auth::login($user);
-            return redirect('/home');
+            return view('user.validated');
         } else {
             // $user = null;
             return view('user.invalid');
@@ -195,7 +195,7 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
 
     //after login redirecting to home page
-    return redirect('/home');
+    return view('user.validated');
     }
 
 }
