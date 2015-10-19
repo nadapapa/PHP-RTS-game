@@ -20,14 +20,14 @@
 
             <a href="/">főoldal</a><br>
 
-            <h1>Hello {{Auth::user()->name}}</h1>
-<?php
+            <h1>Hello {{$name}}</h1>
 
-            use App\City;
-                $id = Auth::user()->id;
-            print_r(City::where('owner', $id)->name);
+{{$city}}
 
-?>
+
+
+
+<br>
 
             <a href="/auth/logout">kijelentkezés</a><br>
 

@@ -18,8 +18,8 @@ class MapController extends Controller
      */
     public function showMap()
     {
-        $grid = Grid::all();
-
+        $grid = Grid::all()->toArray();
+//
         return view('map', ['grid' => $grid]);
     }
 }

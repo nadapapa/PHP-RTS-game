@@ -4,8 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use App\User;
 
-class SetupNotCompleted
+class SetupCompleted
 {
     /**
      * Handle an incoming request.
@@ -16,10 +17,9 @@ class SetupNotCompleted
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->nation == 0){
+        if ($request->user()->nation == 0){
             return redirect('setup');
         }
-
         return $next($request);
     }
 }

@@ -44,7 +44,7 @@ Route::get('auth/login/{provider}', 'Auth\AuthController@handleProviderCallback'
 
 Route::group(['middleware' => 'auth'], function () {
 
-Route::post('setup', 'SetupController@postSetup');
+    Route::post('setup', 'SetupController@postSetup');
     Route::get('setup', 'SetupController@getSetup');
 });
 
@@ -52,10 +52,6 @@ Route::post('setup', 'SetupController@postSetup');
 
 Route::group(['middleware' => ['auth', 'setup']], function () {
 //    Route::post('home', 'StartController@postNation');
-    Route::get('home', function () {
-        return view('home');
-    });
-
-
+    Route::get('home', 'HomeController@getHome');
     Route::get('map', 'MapController@showMap');
 });
