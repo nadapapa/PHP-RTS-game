@@ -1,35 +1,29 @@
 {{--resources/views/auth/register.blade.php--}}
-<!DOCTYPE html>
-<html>
 
 <form method="POST" action="/auth/register">
     {!! csrf_field() !!}
 
-    <div>
-        Name
-        <input type="text" name="name" value="{{ old('name') }}">
+    <div class="form-group">
+        <label for="name">Név</label>
+        <input class="form-control" id="name" type="text" name="name" value="{{ old('name') }}" placeholder="Név">
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input class="form-control" id="email" type="email" name="email" value="{{ old('email') }}" placeholder="Email">
+    </div>
+
+    <div class="form-group">
+        <label for="password">Jelszó</label>
+        <input class="form-control" id="password" type="password" name="password" placeholder="Jelszó">
+    </div>
+
+    <div class="form-group">
+        <label for="password">Jelszó újra</label>
+        <input class="form-control" id="password" type="password" name="password_confirmation" placeholder="Jelszó">
     </div>
 
     <div>
-        Email
-        <input type="email" name="email" value="{{ old('email') }}">
-    </div>
-
-    <div>
-        Password
-        <input type="password" name="password">
-    </div>
-
-    <div>
-        Confirm Password
-        <input type="password" name="password_confirmation">
-    </div>
-
-    <div>
-        <button type="submit">Register</button>
+        <button class="btn btn-info" type="submit">Regisztráció</button>
     </div>
 </form>
-
-
-
-</html>

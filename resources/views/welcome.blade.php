@@ -1,42 +1,49 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="_token" content="{{ csrf_token() }}"/>
-        <title>php rts játék</title>
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            body {
-                padding-top : 70px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 col-md-offset-3">
-                    <div class="title">Laravel 5</div>
-                        hello
-                        @if (Auth::check())
-                            {{Auth::user()->name}}
-                        @else
-                            vendég!
-                        @endif
+@extends('layouts.master')
 
-                        <br><br>
+@section('header')
+    <div class="jumbotron text-center">
+        <h1>RTS játék</h1>
 
-                        <a href="/auth/login">bejelentkezés</a><br>
-                        <a href="/auth/register">regisztráció</a><br>
-                        <a href="/password/email">elfelejtett jelszó</a><br>
-                    <br>
-                        Bejelentkezés közösségi szolgáltatással<br>
+        <p>Ide jön vmi szöveg. Jelenleg csak annyi, hogy a játék még nagyon kezdeti stádiumban van.</p>
+    </div>
+@stop
 
-                        <a class="btn btn-primary" href="{{ route('social.login', ['facebook']) }}">Facebook</a>
-                        <a class="btn btn-primary" href="{{ route('social.login', ['google']) }}">Google</a>
-                    </div>
-                </div>
+
+@section('content')
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <b>Bejelentkezés email címmel</b>
             </div>
+            <div class="panel-body text-center">
+                @include('auth.login')
+                <br>
+                <a class="btn btn-info" href="/password/email">Elfelejtett jelszó</a>
+            </div>
+        </div>
+    </div>
 
-        <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-    </body>
-</html>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <b>Regisztráció</b>
+            </div>
+            <div class="panel-body text-center">
+                @include('auth.register')
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <b>Bejelentkezés közösségi szolgáltatással</b>
+            </div>
+            <div class="panel-body text-center">
+                <a class="btn btn-primary" href="{{ route('social.login', ['facebook']) }}">Facebook</a>
+                <a class="btn btn-primary" href="{{ route('social.login', ['google']) }}">Google</a>
+            </div>
+        </div>
+    </div>
+@stop
