@@ -10,15 +10,25 @@
 
 
 @section('content')
-    <div class="col-md-4">
+    <div class="col-md-4 col-md-offset-2">
         <div class="panel panel-default">
             <div class="panel-heading text-center">
-                <b>Bejelentkezés email címmel</b>
+                <b>Bejelentkezés</b>
             </div>
             <div class="panel-body text-center">
+
                 @include('auth.login')
                 <br>
-                <a class="btn btn-info" href="/password/email">Elfelejtett jelszó</a>
+
+                <div class="collapse" id="collapseExample">
+                    @include('auth.password')
+                </div>
+                <hr>
+                <h4>Közösségi</h4>
+                <div>
+                    <a class="btn btn-primary" href="{{ route('social.login', ['facebook']) }}">Facebook</a>
+                    <a class="btn btn-primary" href="{{ route('social.login', ['google']) }}">Google</a>
+                </div>
             </div>
         </div>
     </div>
@@ -30,19 +40,6 @@
             </div>
             <div class="panel-body text-center">
                 @include('auth.register')
-            </div>
-        </div>
-    </div>
-
-
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading text-center">
-                <b>Bejelentkezés közösségi szolgáltatással</b>
-            </div>
-            <div class="panel-body text-center">
-                <a class="btn btn-primary" href="{{ route('social.login', ['facebook']) }}">Facebook</a>
-                <a class="btn btn-primary" href="{{ route('social.login', ['google']) }}">Google</a>
             </div>
         </div>
     </div>

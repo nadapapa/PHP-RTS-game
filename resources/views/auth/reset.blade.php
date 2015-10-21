@@ -1,35 +1,39 @@
 <!-- resources/views/auth/reset.blade.php -->
+@extends('layouts.master')
 
-<form method="POST" action="/password/reset">
-    {!! csrf_field() !!}
-    <input type="hidden" name="token" value="{{ $token }}">
+@section('content')
+    <div class="col-md-6 col-md-offset-3">
+        <form method="POST" action="/password/reset">
+            {!! csrf_field() !!}
+            <input type="hidden" name="token" value="{{ $token }}">
 
-    @if (count($errors) > 0)
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    @endif
+            @if (count($errors) > 0)
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            @endif
 
-    <div>
-        Email
-        <input type="email" name="email" value="{{ old('email') }}">
-    </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input class="form-control" id="email" type="email" name="email" value="{{ old('email') }}"
+                       placeholder="Email">
+            </div>
 
-    <div>
-        Password
-        <input type="password" name="password">
-    </div>
+            <div class="form-group">
+                <label for="password">Új jelszó</label>
+                <input class="form-control" id="password" type="password" name="password" placeholder="Jelszó">
+            </div>
 
-    <div>
-        Confirm Password
-        <input type="password" name="password_confirmation">
-    </div>
+            <div class="form-group">
+                <label for="password">Jelszó újra</label>
+                <input class="form-control" id="password" type="password" name="password_confirmation"
+                       placeholder="Jelszó">
+            </div>
+            <div>
+                <button class="btn btn-info" type="submit">Jelszó beállítása</button>
+            </div>
+        </form>
 
-    <div>
-        <button type="submit">
-            Reset Password
-        </button>
-    </div>
-</form>
+@endsection

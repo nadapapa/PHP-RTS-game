@@ -16,8 +16,13 @@ class CreateGridsTable extends Migration
             $table->increments('id');
             $table->integer('x');
             $table->integer('y');
-            $table->integer('type');
+            $table->integer('layer1');
+            $table->integer('layer2');
+            $table->integer('layer3');
+            $table->integer('layer4');
+            $table->integer('layer5');
             $table->integer('owner');
+            $table->integer('city');
         });
     }
     /**

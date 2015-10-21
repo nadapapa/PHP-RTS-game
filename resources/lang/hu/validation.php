@@ -28,7 +28,7 @@ return [
         'array'   => ':attribute :min és :max elem között kell legyen.',
     ],
     'boolean'              => ':attribute mező csak igaz vagy hamis lehet.',
-    'confirmed'            => ':attribute megerősítés nem egyezik.',
+    'confirmed'            => ':attribute és megerősítése nem egyezik.',
     'date'                 => ':attribute nem érvényes dátum.',
     'date_format'          => ':attribute nem egyezik a formátummal: :format.',
     'different'            => ':attribute és :other különböző kell legyen.',
@@ -88,9 +88,15 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
+//        'password' => [
+//            'required' => 'A jelszó mező kitöltése szükséges',
+//        ],
+//        'email' => [
+//            'required' => 'Az email mező kitöltése szükséges',
+//        ],
+//        'name' => [
+//            'required' => 'A név mező kitöltése szükséges',
+//        ],
     ],
 
     /*
@@ -104,6 +110,11 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'password' => 'A jelszó',
+        'email' => 'Az e-mail',
+        'name' => 'A név',
+        'nation' => 'A nép',
+    ],
 
 ];

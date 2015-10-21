@@ -23,7 +23,7 @@ return array(
     | This is the subject of the email.
     |
     */
-    'subject' => 'Welcome to our site!',
+    'subject' => 'Üdvözlet az oldalon!',
     /*
     |--------------------------------------------------------------------------
     | Authorisation Code Length

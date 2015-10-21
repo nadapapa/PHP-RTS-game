@@ -1,1 +1,0 @@
-kaptál egy emailt. kattints a benne található linkre a regisztrációd megerősítéséhez

@@ -21,5 +21,6 @@
 
     <div>
         <button class="btn btn-info" type="submit">Bejelentkezés</button>
+        <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Elfelejtett jelszó</a>
     </div>
 </form>

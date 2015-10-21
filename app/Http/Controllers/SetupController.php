@@ -11,13 +11,15 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Support\Facades\Auth;
+use Validator;
 
 class SetupController extends Controller
 {
 
+
+
     public function getSetup()
     {
-
         return view('user.validated');
     }
 
@@ -30,6 +32,14 @@ class SetupController extends Controller
      */
     public function postSetup(Request $request)
     {
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            $this->throwValidationException(
+                $request, $validator
+            );
+        }
+
         $user = Auth::user();
 
 
@@ -39,7 +49,7 @@ class SetupController extends Controller
 
         $hex_id = $this->randomHex();
 
-        $name = $user->name." városa";
+        $name = $request->input('name');
         $this->createCity($user, 1, $hex_id, $name);
 
         return redirect('home');
@@ -57,8 +67,20 @@ class SetupController extends Controller
         $user->save();
     }
 
+    protected function validator(array $data) {
+        return Validator::make($data, [
+            'nation' => 'required|max:1',
+            'name' => 'required|max:255|unique:cities',
+        ]);
+    }
+
     /**
-     * @param $user
+     * creates a new city
+     *
+     * @param User $user
+     * @param int $capital
+     * @param int $hex_id
+     * @param string $name
      */
     public function createCity(User $user, $capital, $hex_id, $name)
     {
@@ -70,16 +92,24 @@ class SetupController extends Controller
             'owner' => $user->id,
             'hex_id' => $hex_id,
         ]);
+
+        $hex = Grid::where('id', $hex_id);
+        $hex->update(['owner' => $user->id]);
+
     }
 
     /**
+     * Returns a random hex id. Only habitable hexes can be chosen.
      *
+     * @param array $habitable
+     * @return
      */
     public function randomHex()
     {
-        $grid = Grid::where('type', 0)->orWhere('type', 4)->get();
+        $inhabitable = Grid::$inhabitable;
+        $grid = Grid::whereNotIn('type', $inhabitable)->get();
         $hex = $grid->random();
+        $hex->update(['type' => 100]);
         return $hex->id;
-
     }
 }

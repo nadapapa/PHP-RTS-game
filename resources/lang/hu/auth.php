@@ -15,5 +15,5 @@ return [
 
     'failed' => 'Ezek az adatok nem egyeznek az adatbázisban lévőkkel.',
     'throttle' => 'Túl sok bejelentkezési kísérlet. Próbáld újra :seconds másodperc múlva.',
-
+    'email_sent' => 'Elküldtük az aktivációs emailt a címedre.'
 ];

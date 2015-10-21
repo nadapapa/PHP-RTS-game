@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Auth;
 use App\User;
 use App\Exceptions;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use App\Exceptions\UserCreateException;
 use Validator;
@@ -46,7 +47,8 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
         $user = $this->create($request->all());
         $user->sendVerification();
-        return view('auth.see_email');
+
+        return redirect('/')->with('status', trans('auth.email_sent'));
     }
 
     /**
@@ -103,6 +105,17 @@ use AuthenticatesAndRegistersUsers, ThrottlesLogins;
             // $user = null;
             return view('user.invalid');
         }
+    }
+
+
+    /**
+     * Get the path to the login route.
+     *
+     * @return string
+     */
+    public function loginPath()
+    {
+        return property_exists($this, 'loginPath') ? $this->loginPath : '/';
     }
 
 

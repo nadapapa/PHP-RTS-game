@@ -20,6 +20,7 @@ class PasswordController extends Controller
 
     use ResetsPasswords;
 
+    public $subject = 'Jelszó-helyreállító email';
     /**
      * Create a new password controller instance.
      *

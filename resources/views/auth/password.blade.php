@@ -3,22 +3,14 @@
 <form method="POST" action="/password/email">
     {!! csrf_field() !!}
 
-    @if (count($errors) > 0)
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    @endif
-
-    <div>
-        Email
-        <input type="email" name="email" value="{{ old('email') }}">
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input class="form-control" id="email" type="email" name="email" value="{{ old('email') }}" placeholder="Email">
     </div>
 
     <div>
-        <button type="submit">
-            Send Password Reset Link
+        <button class="btn btn-info" type="submit">
+            Jelszó-helyreállító link küldése
         </button>
     </div>
 </form>
