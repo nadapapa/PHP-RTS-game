@@ -19,6 +19,7 @@ class HomeController extends Controller
         $id = Auth::user()->id;
         $city = City::where('owner', $id)->first();
 
-        return view('home', ['name' => $name, 'city' => $city->name]);
+
+        return view('home', ['name' => $name, 'city' => $city]);
     }
 }

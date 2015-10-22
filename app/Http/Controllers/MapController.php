@@ -33,8 +33,11 @@ class MapController extends Controller
                 $city = $cities->where('hex_id', $row['id'])->first();
                 $cityname = $city->name;
 
+                $nation = $city->nation;
+
                 $row['owner_name'] = $username;
                 $row['city'] = $cityname;
+                $row['nation'] = $nation;
             }
         };
 
