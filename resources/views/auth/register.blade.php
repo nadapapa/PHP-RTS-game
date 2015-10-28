@@ -1,8 +1,7 @@
 {{--resources/views/auth/register.blade.php--}}
 
 <form method="POST" action="/auth/register">
-    {!! csrf_field() !!}
-
+    <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div class="form-group">
         <label for="name">Név</label>
         <input class="form-control" id="name" type="text" name="name" value="{{ old('name') }}" placeholder="Név">

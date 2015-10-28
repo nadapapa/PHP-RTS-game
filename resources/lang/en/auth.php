@@ -13,7 +13,8 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-    'email_sent' => 'An activation email has been sent to your email address'
+    'failed' => 'These credentials do not match with the database.',
+    'throttle' => 'Túl sok bejelentkezési kísérlet. Próbáld újra :seconds másodperc múlva.',
+    'email_sent' => 'Activation email sent.',
+    'user' => 'The user already registered.'
 ];

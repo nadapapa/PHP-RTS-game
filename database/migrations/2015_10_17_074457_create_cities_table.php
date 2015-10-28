@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class CreateCitiesTable extends Migration
 {
@@ -13,20 +14,19 @@ class CreateCitiesTable extends Migration
     public function up()
     {
         Schema::create('cities', function (Blueprint $table) {
-            $table->increments('id');
+            $table->increments('id')->unsigned();
             $table->boolean('capital');
             $table->string('name')->unique();
-            $table->integer('owner');
-            $table->integer('population')->default(100);
-            $table->integer('workers');
-            $table->integer('iron')->default(100);
-            $table->integer('stone')->default(100);
-            $table->integer('lumber')->default(100);
-            $table->integer('food')->default(100);
+
+            $table->integer('owner')->unsigned();
+
             $table->integer('level')->default(1);
             $table->integer('nation');
-            $table->integer('slots')->default(10);
-            $table->integer('hex_id');
+
+            $table->integer('building_slots')->unsigned();
+
+            $table->integer('hex_id')->unsigned();
+
             $table->timestamps();
         });
     }

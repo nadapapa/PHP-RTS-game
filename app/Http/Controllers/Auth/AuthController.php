@@ -1,23 +1,24 @@
-<?php
-
-namespace App\Http\Controllers\Auth;
+<?php namespace App\Http\Controllers\Auth;
 
 
 use App\User;
 use App\Exceptions;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use App\Exceptions\UserCreateException;
 use Validator;
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
-use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\Registrar;
+use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+
 class AuthController extends Controller {
-    /*
+	/*
       |--------------------------------------------------------------------------
       | Registration & Login Controller
       |--------------------------------------------------------------------------
@@ -28,187 +29,198 @@ class AuthController extends Controller {
       |
      */
 
-use AuthenticatesAndRegistersUsers, ThrottlesLogins;
+	use AuthenticatesAndRegistersUsers;
 
-    /**
-     * Handle a registration request for the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function postRegister(Request $request) {
-        $validator = $this->validator($request->all());
+	/**
+	 * Create a new authentication controller instance.
+	 *
+	 * @param  \Illuminate\Contracts\Auth\Guard $auth
+	 * @param  \Illuminate\Contracts\Auth\Registrar $registrar
+	 * @return void
+	 */
+	public function __construct(Guard $auth, Registrar $registrar)
+	{
+		$this->auth = $auth;
+		$this->registrar = $registrar;
 
-        if ($validator->fails()) {
-            $this->throwValidationException(
-                    $request, $validator
-            );
-        }
-
-        $user = $this->create($request->all());
-        $user->sendVerification();
-
-        return redirect('/')->with('status', trans('auth.email_sent'));
-    }
-
-    /**
-     * Create a new authentication controller instance.
-     *
-     */
-    public function __construct() {
-        $this->middleware('guest', ['except' => 'getLogout']);
-    }
-
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data) {
-        return Validator::make($data, [
-                    'name' => 'required|max:255',
-                    'email' => 'required|email|max:255|unique:users',
-                    'password' => 'required|confirmed|min:6',
-        ]);
-    }
-
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return User
-     */
-    protected function create(array $data) {
-        $user = User::create([
-                    'name' => $data['name'],
-                    'email' => $data['email'],
-                    'password' => bcrypt($data['password']),
-        ]);
-
-        return $user;
-    }
-
-    /**
-     * Validates the registration when the user clicks on the code sent to him/her.
-     *
-     * @param $code
-     * @return \Illuminate\View\View
-     */
-    public function getValidate($code) {
-        $user = User::verify($code);
-
-        if ($user) {
-            Auth::login($user);
-            return redirect('setup');
-        } else {
-            // $user = null;
-            return view('user.invalid');
-        }
-    }
+		$this->middleware('guest', ['except' => 'getLogout']);
+	}
 
 
-    /**
-     * Get the path to the login route.
-     *
-     * @return string
-     */
-    public function loginPath()
-    {
-        return property_exists($this, 'loginPath') ? $this->loginPath : '/';
-    }
+	/**
+	 * Handle a registration request for the application.
+	 *
+	 * @param  \Illuminate\Http\Request $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function postRegister(Request $request)
+	{
+		$validator = $this->validator($request->all());
+
+		if ($validator->fails()) {
+			$this->throwValidationException(
+				$request, $validator
+			);
+		}
+
+		$user = $this->create($request->all());
+		$user->sendVerification();
+
+		return redirect('/')->with('status', trans('auth.email_sent'));
+	}
 
 
-    /**
-     * Handle a login request to the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function postLogin(Request $request)
-    {
-        $this->validate($request, [
-            $this->loginUsername() => 'required', 'password' => 'required',
-        ]);
+	/**
+	 * Get a validator for an incoming registration request.
+	 *
+	 * @param  array $data
+	 * @return \Illuminate\Contracts\Validation\Validator
+	 */
+	protected function validator(array $data)
+	{
+		return Validator::make($data, [
+			'name' => 'required|max:255',
+			'email' => 'required|email|max:255|unique:users',
+			'password' => 'required|confirmed|min:6',
+		]);
+	}
 
-        // If the class is using the ThrottlesLogins trait, we can automatically throttle
-        // the login attempts for this application. We'll key this by the username and
-        // the IP address of the client making these requests into this application.
-        $throttles = $this->isUsingThrottlesLoginsTrait();
+	/**
+	 * Create a new user instance after a valid registration.
+	 *
+	 * @param  array $data
+	 * @return User
+	 */
+	protected function create(array $data)
+	{
+		$user = User::create([
+			'name' => $data['name'],
+			'email' => $data['email'],
+			'password' => bcrypt($data['password']),
+		]);
 
-        if ($throttles && $this->hasTooManyLoginAttempts($request)) {
-            return $this->sendLockoutResponse($request);
-        }
+		return $user;
+	}
 
-        $credentials = $this->getCredentials($request);
-        $credentials['verified'] = 1;
+	/**
+	 * Validates the registration when the user clicks on the code sent to him/her.
+	 *
+	 * @param $code
+	 * @return \Illuminate\View\View
+	 */
+	public function getValidate($code)
+	{
+		$user = User::verify($code);
 
-        if (Auth::attempt($credentials, $request->has('remember'))) {
-            return $this->handleUserWasAuthenticated($request, $throttles);
-        }
-
-        // If the login attempt was unsuccessful we will increment the number of attempts
-        // to login and redirect the user back to the login form. Of course, when this
-        // user surpasses their maximum number of attempts they will get locked out.
-        if ($throttles) {
-            $this->incrementLoginAttempts($request);
-        }
-//
-        return redirect($this->loginPath())
-            ->withInput($request->only($this->loginUsername(), 'remember'))
-            ->withErrors([
-                $this->loginUsername() => $this->getFailedLoginMessage(),
-            ]);
-    }
-
-
-    /**
-     * Redirect the user to the social authentication page.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function redirectToProvider($provider)
-    {
-        return Socialite::driver($provider)->redirect();
-    }
+		if ($user) {
+			Auth::login($user);
+			return redirect('setup');
+		} else {
+			// $user = null;
+			return view('user.invalid');
+		}
+	}
 
 
-    /**
-     * Obtain the user information from social media.
-     *
-     * @param Request $request
-     * @param $provider
-     * @return \Illuminate\Http\Response
-     */
-    public function handleProviderCallback(Request $request, $provider)
-    {
-    //notice we are not doing any validation, you should do it
-   if ($request->has('error')){
-       return redirect('/');
-   }
-
-    $user = Socialite::driver($provider)->user();
+	/**
+	 * Get the path to the login route.
+	 *
+	 * @return string
+	 */
+	public function loginPath()
+	{
+		return property_exists($this, 'loginPath') ? $this->loginPath : '/';
+	}
 
 
-    // storing data to our users table
-    $data = [
-        'name'      => $user->getName(),
-        'email'     => $user->getEmail(),
+	/**
+	 * Handle a login request to the application.
+	 *
+	 * @param  \Illuminate\Http\Request $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function postLogin(Request $request)
+	{
+		$this->validate($request, [
+			'email' => 'required', 'password' => 'required',
+		]);
+
+
+		$credentials = $request->only('email', 'password');
+//		$credentials['verified'] = 1;
+
+		if (Auth::attempt([
+			'email' => $credentials['email'],
+			'password' => $credentials['password'],
+			'verified' => 1],
+			$request->has('remember'))
+		) {
+
+			return redirect('home');
+		}
+
+		return redirect('/')
+			->withInput($request->only('email', 'remember'))
+			->withErrors(['email' => $this->getFailedLoginMessage(),]);
+	}
+
+
+	/**
+	 * Redirect the user to the social authentication page.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function redirectToProvider($provider)
+	{
+		return Socialite::driver($provider)->redirect();
+	}
+
+
+	/**
+	 * Obtain the user information from social media.
+	 *
+	 * @param Request $request
+	 * @param $provider
+	 * @return \Illuminate\Http\Response
+	 */
+	public function handleProviderCallback(Request $request, $provider)
+	{
+		//notice we are not doing any validation, you should do it
+		if ($request->has('error')) {
+			return redirect('/');
+		}
+
+		$user = Socialite::driver($provider)->user();
+
+
+		// storing data to our users table
+		$data = [
+			'name' => $user->getName(),
+			'email' => $user->getEmail(),
 //        'avatar'    => $user->getAvatar(),
-        'verified' => 1
-    ];
+			'verified' => 1
+		];
 
-    // login the user
-    try{
-        Auth::login(User::firstOrCreate($data));
-    } catch(QueryException $e) {
+		// login the user
+		try {
+			Auth::login(User::firstOrCreate($data));
+		} catch (QueryException $e) {
 //        throw new UserCreateException();
-        return "a felhasználó már létezik";
-    }
+			return redirect('/')->withErrors([Lang::get('auth.user')]);
+		}
 
 
-    //after login redirecting to home page
-    return redirect('home');
-    }
+		//after login redirecting to home page
+		return redirect('home');
+	}
 
+	/**
+	 * Get the failed login message.
+	 *
+	 * @return string
+	 */
+	protected function getFailedLoginMessage()
+	{
+		return Lang::get('auth.failed');
+	}
 }

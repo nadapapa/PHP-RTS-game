@@ -1,8 +1,7 @@
 <!-- resources/views/auth/login.blade.php -->
 
 <form method="POST" action="/auth/login">
-    {!! csrf_field() !!}
-
+    <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div class="form-group">
         <label for="email">Email</label>
         <input class="form-control" id="email" type="email" name="email" value="{{ old('email') }}" placeholder="Email">

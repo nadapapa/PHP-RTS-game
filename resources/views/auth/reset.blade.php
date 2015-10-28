@@ -4,7 +4,7 @@
 @section('content')
     <div class="col-md-6 col-md-offset-3">
         <form method="POST" action="/password/reset">
-            {!! csrf_field() !!}
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <input type="hidden" name="token" value="{{ $token }}">
 
             @if (count($errors) > 0)

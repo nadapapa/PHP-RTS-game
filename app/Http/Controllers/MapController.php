@@ -22,15 +22,13 @@ class MapController extends Controller
     public function showMap()
     {
          $grid = Grid::all()->toArray();
-         $users = User::all();
-         $cities = City::all();
 
         foreach ($grid as &$row) {
             if ($row['owner'] > 0) {
-                $user = $users->where('id', $row['owner'])->first();
+                $user = User::find($row['owner']);
                 $username = $user->name;
 
-                $city = $cities->where('hex_id', $row['id'])->first();
+                $city = City::find($row['city']);
                 $cityname = $city->name;
 
                 $nation = $city->nation;
@@ -41,8 +39,6 @@ class MapController extends Controller
             }
         };
 
-//        $grid->toArray();
-//
         return view('map', ['grid' => $grid]);
     }
 }

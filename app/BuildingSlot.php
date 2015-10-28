@@ -13,4 +13,23 @@ class BuildingSlot extends Model
      */
     protected $table = 'building_slots';
 
+    protected $fillable = ['city', 'slot1', 'slot2', 'slot3', 'slot4', 'slot5', 'slot6', 'slot7', 'slot8', 'slot9', 'slot10', 'slot11', 'slot12', 'slot13', 'slot14', 'slot15', 'slot16', 'slot17', 'slot18', 'slot19', 'slot20', 'slot21', 'slot22', 'slot23', 'slot24', 'slot25'];
+
+    public function city()
+    {
+        return $this->belongsTo('App\City', 'building_slots');
+    }
+
+    public function building()
+    {
+        return $this->hasMany('App\Building', 'slot');
+    }
+
+    public $building_names = [
+        '1' => 'Farm',
+        '2' => 'Kőfejtő',
+        '3' => 'Barakk',
+        '4' => 'Favágó',
+        '5' => 'Bánya'
+    ];
 }

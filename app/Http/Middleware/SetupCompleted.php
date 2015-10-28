@@ -17,7 +17,7 @@ class SetupCompleted
      */
     public function handle($request, Closure $next)
     {
-        if ($request->user()->nation == 0){
+        if (Auth::user()->nation == 0) {
             return redirect('setup');
         }
         return $next($request);

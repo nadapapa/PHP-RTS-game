@@ -10,13 +10,12 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
 Route::get('/', function () {
-    return view('welcome');
+	return view('welcome');
 });
 
 // Authentication routes...
-Route::get('auth/login', 'Auth\AuthController@getLogin');
+//Route::get('auth/login', 'Auth\AuthController@getLogin');
 Route::post('auth/login', 'Auth\AuthController@postLogin');
 Route::get('auth/logout', 'Auth\AuthController@getLogout');
 
@@ -44,14 +43,22 @@ Route::get('auth/login/{provider}', 'Auth\AuthController@handleProviderCallback'
 
 Route::group(['middleware' => 'auth'], function () {
 
-    Route::post('setup', 'SetupController@postSetup');
-    Route::get('setup', 'SetupController@getSetup');
+	Route::post('setup', 'SetupController@postSetup');
+	Route::get('setup', 'SetupController@getSetup');
 });
 
 // routes defended by auth middleware
 
 Route::group(['middleware' => ['auth', 'setup']], function () {
 //    Route::post('home', 'StartController@postNation');
-    Route::get('home', 'HomeController@getHome');
-    Route::get('map', 'MapController@showMap');
+	Route::get('home', 'HomeController@getHome');
+	Route::get('map', 'MapController@showMap');
+
+	Route::get('city/{id}', 'CityController@getCity');
+
+	Route::get('city/{city_id}/build/{slot_id}', 'BuildingController@getBuild');
+	Route::post('city/{city_id}/build/{slot_id}', 'BuildingController@postBuild');
+
+	Route::get('city/{city_id}/building/{slot_id}', 'BuildingController@getBuilding');
+	Route::post('city/{city_id}/building/{slot_id}', 'BuildingController@postBuilding');
 });

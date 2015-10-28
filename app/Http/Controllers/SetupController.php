@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\BuildingSlot;
 use App\City;
 use App\Grid;
+use App\Resource;
 use Illuminate\Database\Eloquent\Collection;
 use App\User;
 use Illuminate\Http\Request;
@@ -85,7 +87,7 @@ class SetupController extends Controller
     public function createCity(User $user, $capital, $hex_id, $name)
     {
 //        $fillable = ['name', 'nation', 'capital', 'owner', 'hex_id'];
-        City::create([
+        $city = City::create([
             'name' => $name,
             'nation' => $user->nation,
             'capital' => $capital,
@@ -93,9 +95,11 @@ class SetupController extends Controller
             'hex_id' => $hex_id,
         ]);
 
-        $hex = Grid::where('id', $hex_id);
-        $hex->update(['owner' => $user->id]);
+        BuildingSlot::create(['city' => $city->id]);
+        Resource::create(['city' => $city->id]);
 
+        $hex = Grid::find($hex_id);
+        $hex->update(['owner' => $user->id, 'layer2' => 100, 'city' => $city->id]);
     }
 
     /**
@@ -107,7 +111,7 @@ class SetupController extends Controller
     public function randomHex()
     {
         $inhabitable = Grid::$inhabitable;
-        $grid = Grid::whereNotIn('type', $inhabitable)->get();
+        $grid = Grid::whereNotIn('layer1', $inhabitable)->get();
         $hex = $grid->random();
         $hex->update(['type' => 100]);
         return $hex->id;

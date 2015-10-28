@@ -14,7 +14,7 @@
         <h3>1. Válaszd ki melyik nép vezére akarsz lenni!</h3>
 
         <form method="POST" action="/setup">
-            {!! csrf_field() !!}
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
             <div class="checkbox">
                 <label>

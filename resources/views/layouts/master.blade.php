@@ -9,6 +9,9 @@
 }}" rel="stylesheet">
     <link href="{{ asset('css/font-awesome.min.css')
 }}" rel="stylesheet">
+    <script src="{{asset('js/jquery-2.1.4.min.js')}}"></script>
+    <script src="{{asset('js/bootstrap.min.js')}}"></script>
+
 </head>
 <body>
 @yield('navbar')
@@ -52,8 +55,6 @@
         </footer>
 </div>
 
-<script src="{{asset('js/jquery-2.1.4.min.js')}}"></script>
-<script src="{{asset('js/bootstrap.min.js')}}"></script>
 
 
 </body>

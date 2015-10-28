@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class CreateGridsTable extends Migration
 {
@@ -21,10 +22,16 @@ class CreateGridsTable extends Migration
             $table->integer('layer3');
             $table->integer('layer4');
             $table->integer('layer5');
-            $table->integer('owner');
-            $table->integer('city');
+
+            $table->integer('owner')->unsigned();
+
+            $table->integer('city')->unsigned();
+
         });
+
     }
+
+
     /**
      * Reverse the migrations.
      *
