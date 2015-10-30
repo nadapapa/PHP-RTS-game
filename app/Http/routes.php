@@ -15,7 +15,6 @@ Route::get('/', function () {
 });
 
 // Authentication routes...
-//Route::get('auth/login', 'Auth\AuthController@getLogin');
 Route::post('auth/login', 'Auth\AuthController@postLogin');
 Route::get('auth/logout', 'Auth\AuthController@getLogout');
 
@@ -27,7 +26,6 @@ Route::post('auth/register', 'Auth\AuthController@postRegister');
 Route::get('auth/verify/{id}', 'Auth\AuthController@getValidate');
 
 // Password reset link request routes...
-//Route::get('password/email', 'Auth\PasswordController@getEmail');
 Route::post('password/email', 'Auth\PasswordController@postEmail');
 
 // Password reset routes...
@@ -50,7 +48,7 @@ Route::group(['middleware' => 'auth'], function () {
 // routes defended by auth middleware
 
 Route::group(['middleware' => ['auth', 'setup']], function () {
-//    Route::post('home', 'StartController@postNation');
+
 	Route::get('home', 'HomeController@getHome');
 	Route::get('map', 'MapController@showMap');
 
@@ -61,4 +59,8 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
 
 	Route::get('city/{city_id}/building/{slot_id}', 'BuildingController@getBuilding');
 	Route::post('city/{city_id}/building/{slot_id}', 'BuildingController@postBuilding');
+
+	Route::get('city/{city_id}/building/{slot_id}/levelup', 'BuildingController@getLevelUpBuilding');
+	Route::get('city/{city_id}/building/{slot_id}/delete', 'BuildingController@getDeleteBuilding');
+	Route::get('city/{city_id}/building/{slot_id}/worker', 'BuildingController@getMakeWorker');
 });

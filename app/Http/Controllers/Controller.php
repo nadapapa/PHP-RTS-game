@@ -3,6 +3,7 @@
 use App\Building;
 use App\BuildingSlot;
 use App\City;
+use Carbon\Carbon;
 use ErrorException;
 use Illuminate\Foundation\Bus\DispatchesCommands;
 use Illuminate\Routing\Controller as BaseController;
@@ -37,5 +38,39 @@ abstract class Controller extends BaseController
 	}
 
 
+    /**
+     * @param City $city
+     * @param $thing
+     * @param array $price
+     */
+    public function levelUp($city, $thing, array $price, $time)
+    {
+        if ($city->hasEnoughResources($price)) {
+            $thing->level += 1;
+            $thing->finished_at = Carbon::now()->addSeconds($time);
+            $city->resources->subtract($price);
+            $thing->save();
+            return true;
+        }
+        return redirect("city/$city->id")->withErrors(['not_enough_resources' => 'Nincs elég nyersanyag']);
+    }
 
+
+    /**
+     * @param $city
+     * @param $thing
+     * @param $price
+     * @param $time
+     */
+    public function heal($city, $thing, $price, $time, $health)
+    {
+        if ($thing->health + $health > 100) {
+            return redirect("city/$city->id")->withErrors(['too_much_health' => '100%-nál nem lehet nagyobb']);
+        }
+        $thing->health += $health;
+        $thing->finished_at = Carbon::now()->addSeconds($time);
+        $city->resources->subtract($price);
+        $thing->save();
+        return true;
+    }
 }
