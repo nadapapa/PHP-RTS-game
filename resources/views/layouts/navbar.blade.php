@@ -17,7 +17,14 @@
                         <a href="/home">Profil</a>
                     </li>
                     <li>
-                        <a href="/map">Térkép</a>
+                        <?php
+                        if (isset($city)) {
+                            $coord = "x" . $city->hex->x . "y" . $city->hex->y;
+                        } else {
+                            $coord = "x2y2";
+                        }
+                        ?>
+                        <a href="/map/{{$coord}}">Térkép</a>
                     </li>
 
                 </ul>

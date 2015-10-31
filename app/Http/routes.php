@@ -16,6 +16,7 @@ Route::get('/', function () {
 
 // Authentication routes...
 Route::post('auth/login', 'Auth\AuthController@postLogin');
+
 Route::get('auth/logout', 'Auth\AuthController@getLogout');
 
 // Registration routes...
@@ -50,7 +51,10 @@ Route::group(['middleware' => 'auth'], function () {
 Route::group(['middleware' => ['auth', 'setup']], function () {
 
 	Route::get('home', 'HomeController@getHome');
-	Route::get('map', 'MapController@showMap');
+	Route::get('map/x{x?}y{y?}', 'MapController@getMap');
+
+	Route::post('map', 'MapController@ajaxMap');
+
 
 	Route::get('city/{id}', 'CityController@getCity');
 

@@ -7,8 +7,7 @@
     <title>php rts játék</title>
     <link href="{{ asset('css/bootstrap.min.css')
 }}" rel="stylesheet">
-    <link href="{{ asset('css/font-awesome.min.css')
-}}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <script src="{{asset('js/jquery-2.1.4.min.js')}}"></script>
     <script src="{{asset('js/bootstrap.min.js')}}"></script>
 

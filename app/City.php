@@ -23,7 +23,7 @@ class City extends Model
 
     public function hex()
     {
-        return $this->hasOne('App\Grid', 'city', 'hex_id');
+        return $this->hasOne('App\Grid', 'city');
     }
 
     public function building_slot()

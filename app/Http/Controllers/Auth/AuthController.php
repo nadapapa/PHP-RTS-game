@@ -145,23 +145,37 @@ class AuthController extends Controller {
 			'email' => 'required', 'password' => 'required',
 		]);
 
-
 		$credentials = $request->only('email', 'password');
-//		$credentials['verified'] = 1;
 
-		if (Auth::attempt([
+		if ($this->auth->attempt([
 			'email' => $credentials['email'],
 			'password' => $credentials['password'],
 			'verified' => 1],
 			$request->has('remember'))
 		) {
-
-			return redirect('home');
+			return redirect()->intended($this->redirectPath());
 		}
 
-		return redirect('/')
+		return redirect($this->loginPath())
 			->withInput($request->only('email', 'remember'))
-			->withErrors(['email' => $this->getFailedLoginMessage(),]);
+			->withErrors([
+				'email' => $this->getFailedLoginMessage(),
+			]);
+
+
+//		if (Auth::attempt([
+//			'email' => $credentials['email'],
+//			'password' => $credentials['password'],
+//			'verified' => 1],
+//			$request->has('remember'))
+//		) {
+//
+//			return redirect('home');
+//		}
+//
+//		return redirect('/')
+//			->withInput($request->only('email', 'remember'))
+//			->withErrors(['email' => $this->getFailedLoginMessage(),]);
 	}
 
 
