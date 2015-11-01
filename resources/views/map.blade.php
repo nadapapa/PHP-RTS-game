@@ -92,7 +92,7 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                             $title = "title='név: $city \nnép: $nation \ntulajdonos: $owner_name'";
                         }
                         // --- Output the image tag for this hex
-                        echo "<img id='$id' data-x='$x' data-y='$y' data-current-x='$nx' data-current-y='$ny' data-owner='$owner_name' data-nation='$nation' data-city='$city' data-layer1='$layer1' $title src='$img' class='hex' style='z-index:1;$style'>\n";
+                        echo "<img id='$id' data-x='$x' data-y='$y' data-current_x='$nx' data-current_y='$ny' data-owner='$owner_name' data-nation='$nation' data-city='$city' data-layer1='$layer1' $title src='$img' class='hex' style='z-index:1;$style'>\n";
 
                         if ($row['layer2'] > 0) {
                             $img = "/img/grid/" . $row['layer2'] . ".png";
@@ -191,45 +191,41 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
             switch (direction) {
                 case "right":
                     x += jump;
-                    highlight.dataset.x -= jump;
+                    highlight.dataset.x = parseInt(highlight.dataset.x) - jump;
                     break;
                 case "left":
                     x -= jump;
-                    highlight.dataset.x += jump;
+                    highlight.dataset.x = parseInt(highlight.dataset.x) + jump;
                     break;
                 case "up":
                     y -= jump;
-                    highlight.dataset.y += jump;
+                    highlight.dataset.y = parseInt(highlight.dataset.y) + jump;
                     break;
                 case "down":
                     y += jump;
-                    highlight.dataset.y -= jump;
+                    highlight.dataset.y = parseInt(highlight.dataset.y) - jump;
                     break;
                 case "coord":
                     x = $('#x').val();
                     y = $('#y').val();
-
-                    highlight.style.display = 'none';
+                    var hex = $("[data-current_x='" + x + "'][data-current_y='" + y + "']");
+                    highlight.dataset.x = hex.dataset.current_x;
+                    highlight.dataset.y = hex.dataset.current_y;
                     break;
             }
 
-
             if (x < (view_width - 1) / 2) {
                 x = (view_width - 1) / 2;
-//                return;
             }
             if (y < (view_height - 1) / 2) {
                 y = (view_height - 1) / 2;
-//                return;
             }
 
             if (x > map_width - ((view_width - 1) / 2)) {
                 x = map_width - ((view_width - 1) / 2);
-//                return;
             }
             if (y > map_height - ((view_height - 1) / 2)) {
                 y = map_height - ((view_height - 1) / 2);
-//                return;
             }
 
             $.ajax({
@@ -274,7 +270,6 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                             highlight.dataset.x = 0;
                             highlight.dataset.y = 0;
                         }
-//                        console.log(tx, ty);
                     }
                     var grid = JSON.parse(data);
 
@@ -295,7 +290,7 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                             city = grid[i].city;
                         }
                         $('.hexmap').append(
-                                "<img id='" + grid[i].id + "' data-current-x='" + grid[i].nx + "' data-current-y='" + grid[i].ny + "' data-x='" + grid[i].x + "' data-y='" + grid[i].y + "' data-owner='" + owner + "' data-nation='" + nation + "' data-city='" + city + "' data-layer1='" + grid[i].layer1 + "' src='" + img + "' class='hex' style='z-index:10;" + style + "'>\n"
+                                "<img id='" + grid[i].id + "' data-current_x='" + grid[i].nx + "' data-current_y='" + grid[i].ny + "' data-x='" + grid[i].x + "' data-y='" + grid[i].y + "' data-owner='" + owner + "' data-nation='" + nation + "' data-city='" + city + "' data-layer1='" + grid[i].layer1 + "' src='" + img + "' class='hex' style='z-index:10;" + style + "'>\n"
                         );
                         if (grid[i].layer2 > 0) {
                             var img = "/img/grid/" + grid[i].layer2 + ".png";
@@ -376,8 +371,6 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
         posx = posx - map.left;
         posy = posy - map.top - window.scrollY;
 
-//        console.log(posx, posy);
-
         var hex_height = 72;
         var x = (posx - (hex_height / 2)) / (hex_height * 0.75);
         var y = (posy - (hex_height / 2)) / hex_height;
@@ -429,11 +422,10 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
         highlight.dataset.x = map_x;
         highlight.dataset.y = map_y;
 
-        var hex = $("[data-current-x='" + map_x + "'][data-current-y='" + map_y + "']");
+        var hex = $("[data-current_x='" + map_x + "'][data-current_y='" + map_y + "']");
 
         var hex_x = hex.data('x');
         var hex_y = hex.data('y');
-        console.log(hex_x, hex_y);
 
         var terrain = "";
         switch (hex.data('layer1')) {
