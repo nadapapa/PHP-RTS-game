@@ -167,16 +167,17 @@ class BuildingController extends Controller
         $city = $this->validateOwner($city_id);
 
         if ($building = $this->buildingCompleted($city, $slot_num)) {
-            if ($building->workers > 0 &&
-                $building->type == 7 &&
-                $city->hasEnoughResources(City::$worker_price[$city->nation])
-            ) {
+            if ($building->workers > 0 && $building->type == 7) {
+                if ($city->hasEnoughResources(City::$worker_price[$city->nation])) {
+
                 $city->resources->population -= 1;
                 $city->resources->workers += 1;
 
                 $city->resources->save();
 
                 return redirect("/city/$city_id/building/$slot_num");
+                }
+                return redirect("/city/$city_id/building/$slot_num")->withErrors(['not_enough_resources' => 'Nincs elég nyersanyag']);
             }
             return redirect("/city/$city_id/building/$slot_num")->withErrors(['not_enough_worker' => 'Az épületben nem dolgozik munkás']);
         }
