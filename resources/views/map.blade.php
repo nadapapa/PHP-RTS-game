@@ -208,25 +208,38 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                 case "coord":
                     x = $('#x').val();
                     y = $('#y').val();
-                    var hex = $("[data-current_x='" + x + "'][data-current_y='" + y + "']");
-                    highlight.dataset.x = hex.dataset.current_x;
-                    highlight.dataset.y = hex.dataset.current_y;
+
                     break;
             }
 
-            if (x < (view_width - 1) / 2) {
-                x = (view_width - 1) / 2;
-            }
-            if (y < (view_height - 1) / 2) {
-                y = (view_height - 1) / 2;
+//            console.log(highlight.dataset.x, highlight.dataset.y);
+
+
+            switch (direction) {
+                case "up":
+                case "down":
+                case "right":
+                case "left":
+                    if
+                    (x < ((view_width - 1) / 2) - 1) {
+                        x = (view_width - 1) / 2;
+                        return;
+                    }
+                    if (y < ((view_height - 1) / 2) - 1) {
+                        y = (view_height - 1) / 2;
+                        return;
+                    }
+
+                    if (x > map_width - ((view_width - 1) / 2) + 1) {
+                        x = map_width - ((view_width - 1) / 2);
+                        return;
+                    }
+                    if (y > map_height - ((view_height - 1) / 2) + 1) {
+                        y = map_height - ((view_height - 1) / 2);
+                        return;
+                    }
             }
 
-            if (x > map_width - ((view_width - 1) / 2)) {
-                x = map_width - ((view_width - 1) / 2);
-            }
-            if (y > map_height - ((view_height - 1) / 2)) {
-                y = map_height - ((view_height - 1) / 2);
-            }
 
             $.ajax({
                 url: '/map',
@@ -245,32 +258,9 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                 },
 
                 success: function (data) {
+
                     $('.hexmap').contents(':not(#highlight)').remove();
-                    if (typeof map_x != 'undefined') {
 
-                        if (highlight.dataset.x > view_width || highlight.dataset.y > view_height) {
-                            highlight.style.left = 0 + 'px';
-                            highlight.style.top = 0 + 'px';
-                            highlight.style.display = 'none';
-                            highlight.dataset.x = 0;
-                            highlight.dataset.y = 0;
-                        }
-
-                        tx = highlight.dataset.x * HEX_SIDE * 1.5;
-                        ty = highlight.dataset.y * HEX_SCALED_HEIGHT + (map_x % 2) * HEX_SCALED_HEIGHT / 2;
-
-
-                        highlight.style.left = tx + 'px';
-                        highlight.style.top = ty + 'px';
-
-                        if (tx < 0 || ty < 0) {
-                            highlight.style.left = 0 + 'px';
-                            highlight.style.top = 0 + 'px';
-                            highlight.style.display = 'none';
-                            highlight.dataset.x = 0;
-                            highlight.dataset.y = 0;
-                        }
-                    }
                     var grid = JSON.parse(data);
 
                     for (var i in grid) {
@@ -292,6 +282,7 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                         $('.hexmap').append(
                                 "<img id='" + grid[i].id + "' data-current_x='" + grid[i].nx + "' data-current_y='" + grid[i].ny + "' data-x='" + grid[i].x + "' data-y='" + grid[i].y + "' data-owner='" + owner + "' data-nation='" + nation + "' data-city='" + city + "' data-layer1='" + grid[i].layer1 + "' src='" + img + "' class='hex' style='z-index:10;" + style + "'>\n"
                         );
+
                         if (grid[i].layer2 > 0) {
                             var img = "/img/grid/" + grid[i].layer2 + ".png";
 
@@ -325,7 +316,61 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                             )
                         }
 
+                        if (direction === "coord" && grid[i].x == x && grid[i].y == y) {
+                            highlight.style.left = tx + 'px';
+                            highlight.style.top = ty + 'px';
+                            highlight.style.display = 'inline';
+                            highlight.dataset.hex_id = grid[i].id;
+                        }
+
+                        if (parseInt(highlight.dataset.hex_id) === parseInt(grid[i].id)) {
+                            highlight.style.left = tx + 'px';
+                            highlight.style.top = ty + 'px';
+                            highlight.style.display = 'inline';
+                            var hex_exist = true;
+                        }
+
                     }
+                    if (!hex_exist) {
+                        highlight.style.display = 'none';
+                    }
+
+//                    var hex = document.querySelector("[data-x='" + x + "'][data-y='" + y + "']");
+////                    console.log("[data-current_x='" + x + "'][data-current_y='" + y + "']");
+//
+//                    highlight.dataset.x = hex.dataset.current_x;
+//                    highlight.dataset.y = hex.dataset.current_y;
+
+//                    if (typeof map_x != 'undefined') {
+//
+//                        if (highlight.dataset.x > view_width || highlight.dataset.y > view_height) {
+//                            highlight.style.left = 0 + 'px';
+//                            highlight.style.top = 0 + 'px';
+//                            highlight.style.display = 'none';
+//                            highlight.dataset.x = 0;
+//                            highlight.dataset.y = 0;
+//                        }
+//
+//                        tx = highlight.dataset.x * HEX_SIDE * 1.5;
+//                        ty = highlight.dataset.y * HEX_SCALED_HEIGHT + (map_x % 2) * HEX_SCALED_HEIGHT / 2;
+//
+//
+//                        highlight.style.left = tx + 'px';
+//                        highlight.style.top = ty + 'px';
+//
+//                        if (tx < 0 || ty < 0) {
+//                            highlight.style.left = 0 + 'px';
+//                            highlight.style.top = 0 + 'px';
+//                            highlight.style.display = 'none';
+//                            highlight.dataset.x = 0;
+//                            highlight.dataset.y = 0;
+//                        }
+//                    }
+
+
+
+
+
                 },
                 error: function (xhr, desc, err) {
                     console.log(xhr);
@@ -422,13 +467,22 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
         highlight.dataset.x = map_x;
         highlight.dataset.y = map_y;
 
-        var hex = $("[data-current_x='" + map_x + "'][data-current_y='" + map_y + "']");
+//        var hex = $("[data-current_x='" + map_x + "'][data-current_y='" + map_y + "']");
+        var hex = document.querySelector("[data-current_x='" + map_x + "'][data-current_y='" + map_y + "']");
 
-        var hex_x = hex.data('x');
-        var hex_y = hex.data('y');
+//        var hex_x = hex.data('x');
+//        var hex_y = hex.data('y');
+
+        var hex_x = hex.dataset.x;
+        var hex_y = hex.dataset.y;
+
+
+        highlight.dataset.hex_id = hex.id;
+
+        console.log(highlight.dataset.hex_id);
 
         var terrain = "";
-        switch (hex.data('layer1')) {
+        switch (parseInt(hex.dataset.layer1)) {
             case 0:
                 terrain = "tenger";
                 break;
@@ -467,13 +521,13 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
         $(".hex_data").html(
                 "<p>Koordináták: <br> x: " + hex_x + " y: " + hex_y + "</p>"
         );
-        if (hex.data('owner') == "") {
+        if (hex.dataset.owner == "") {
             $(".hex_data").append("<p>Terület: " + terrain + "</p>");
         }
 
-        if (hex.data('owner') != "") {
+        if (hex.dataset.owner != "") {
             $(".hex_data").append(
-                    "<p><br>Város: " + hex.data('city') + "<br>Tulajdonos: " + hex.data('owner') + "<br>Nép: " + hex.data('nation') + "</p>"
+                    "<p><br>Város: " + hex.dataset.city + "<br>Tulajdonos: " + hex.dataset.owner + "<br>Nép: " + hex.dataset.nation + "</p>"
             );
         }
     });
