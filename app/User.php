@@ -47,4 +47,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		return $this->hasMany('App\Grid', 'owner');
 	}
+
+    public function task()
+    {
+        return $this->hasOne('App\Task', 'user');
+    }
 }

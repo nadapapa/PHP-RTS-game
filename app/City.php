@@ -36,6 +36,11 @@ class City extends Model
         return $this->hasOne('App\Resource', 'city');
     }
 
+    public function task()
+    {
+        return $this->hasOne('App\Task', 'city');
+    }
+
     /**
      * Finds out if the city has enough resources for the action.
      *
@@ -66,6 +71,14 @@ class City extends Model
             'iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10
         ],
     ];
+
+    public static $worker_time = [
+        1 => 60,
+        2 => 60,
+        3 => 60,
+        4 => 60,
+    ];
+
 
     public static $unit_prices = [
         1 => [ // római

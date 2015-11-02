@@ -3,6 +3,8 @@
 use App\Building;
 use App\BuildingSlot;
 use App\City;
+use App\Task;
+use App\User;
 use Carbon\Carbon;
 use ErrorException;
 use Illuminate\Foundation\Bus\DispatchesCommands;
@@ -42,6 +44,8 @@ abstract class Controller extends BaseController
      * @param City $city
      * @param $thing
      * @param array $price
+     * @param $time
+     * @return $this|bool
      */
     public function levelUp($city, $thing, array $price, $time)
     {
@@ -61,6 +65,8 @@ abstract class Controller extends BaseController
      * @param $thing
      * @param $price
      * @param $time
+     * @param $health
+     * @return $this|bool
      */
     public function heal($city, $thing, $price, $time, $health)
     {
@@ -72,5 +78,86 @@ abstract class Controller extends BaseController
         $city->resources->subtract($price);
         $thing->save();
         return true;
+    }
+
+
+    /**
+     * @param $owner
+     * @param $type
+     * @param $time
+     */
+    public function createTask($owner, $type, $time)
+    {
+
+        $task = Task::create([
+            'type' => $type,
+            'finished_at' => Carbon::now()->addSeconds($time)
+        ]);
+
+        switch (get_class($owner)) {
+            case 'App\User':
+                $task->user = $owner->id;
+                break;
+            case 'App\City':
+                $task->city = $owner->id;
+                break;
+            case 'App\Building':
+                $task->building = $owner->id;
+                break;
+        }
+
+        $task->save();
+
+        return $task;
+
+    }
+
+
+    /**
+     * @param Task $task
+     * @return bool
+     * @throws \Exception
+     */
+    public function finishedTask(Task $task = null)
+    {
+        $now = new Carbon;
+        if ($task != null) {
+            if ($task->finished_at->lte($now)) {
+                $task->delete();
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public function checkTasks()
+    {
+        $user = Auth::user();
+        if ($user->task) {
+            foreach ($user->task->get() as $task) {
+                return "user";
+                $this->finishedTask($task);
+            }
+        }
+
+        if ($user->cities) {
+            foreach ($user->cities as $city) {
+                if ($city->task) {
+                    foreach ($city->task->get() as $city_task) {
+                        return "city";
+                        $this->finishedTask($city_task);
+                    }
+                }
+
+                foreach ($city->building_slot->building as $building) {
+                    if ($building->task) {
+                        foreach ($building->task->get() as $building_task) {
+                            $this->finishedTask($building_task);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

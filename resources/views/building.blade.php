@@ -1,8 +1,13 @@
 @extends('layouts.master')
+<?php
+use Carbon\Carbon;
+$now = Carbon::now();
 
+?>
 @section('navbar')
     @include('layouts.navbar')
 @stop
+
 @section('header')
     <div class="clearfix">
         <h1 class="pull-left">
@@ -20,7 +25,7 @@
         <div class="panel panel-default">
             <div class="panel-heading text-center">
                 <b>
-                    <p>{{App\Building::$building_names[$building->nation][$building->type]}}</p>
+                    {{App\Building::$building_names[$building->nation][$building->type]}}
                 </b>
             </div>
 
@@ -91,7 +96,15 @@
                 {{--fórum--}}
                 @if($building->type == 7)
                     <hr>
-                    <a href="{{Request::url()}}/worker" class="btn btn-info btn-xs">Munkás képzése</a>
+                    @if($building->task)
+                        <script src="{{asset('js/jquery.countdown.min.js')}}"></script>
+
+                        <a href="{{Request::url()}}/worker" class="btn btn-info btn-xs disabled">Munkás képzése
+                            <br>
+                            <span data-countdown="{{$building->task->finished_at->format('Y/m/d/ H:i:s')}}"></span></a>
+                    @else
+                        <a href="{{Request::url()}}/worker" class="btn btn-info btn-xs">Munkás képzése</a>
+                    @endif
                 @endif
 
                 <hr>
@@ -123,4 +136,22 @@
             </div>
         </div>
     </div>
+    @if($building->task)
+        <script type="text/javascript">
+            $('[data-countdown]').each(function () {
+                var $this = $(this), finalDate = $(this).data('countdown');
+                $this.countdown(finalDate, function (event) {
+                    $this.html(event.strftime('%H:%M:%S'));
+                })
+                        .on('finish.countdown', function (event) {
+                            $(this).parent().removeClass('disabled');
+                            $(this).remove();
+                        })
+            });
+        </script>
+
+
+
+    @endif
+
 @stop

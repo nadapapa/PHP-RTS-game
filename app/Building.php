@@ -177,4 +177,12 @@ class Building extends Model
             '7' => 'Munkást termel'
         ],
     ];
+
+    public function task()
+    {
+        return $this->hasOne('App\Task', 'building');
+    }
+
+
+
 }

@@ -41,6 +41,7 @@
                                     <div>
                                         <a href="/city/{{$city->id}}/building/{{$i}}"
                                            class="btn btn-primary disabled">{{App\Building::$building_names[$city->nation][$building->type]}}
+                                            ({{$building->level}})
                                             <br>
                                             <span data-countdown="{{$building->finished_at->format('Y/m/d/ H:i:s')}}"></span></a>
 

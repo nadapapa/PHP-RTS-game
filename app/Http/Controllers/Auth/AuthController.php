@@ -153,6 +153,8 @@ class AuthController extends Controller {
 			'verified' => 1],
 			$request->has('remember'))
 		) {
+            $this->checkTasks();
+
 			return redirect()->intended($this->redirectPath());
 		}
 
@@ -224,7 +226,9 @@ class AuthController extends Controller {
 		}
 
 
-		//after login redirecting to home page
+        $this->checkTasks();
+
+        //after login redirecting to home page
 		return redirect('home');
 	}
 

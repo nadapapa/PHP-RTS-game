@@ -19,6 +19,8 @@ class CityController extends Controller
      */
     public function getCity($id)
     {
+        $this->checkTasks();
+
         $city = $this->validateOwner($id);
 
         $building_slot = $city->building_slot;
