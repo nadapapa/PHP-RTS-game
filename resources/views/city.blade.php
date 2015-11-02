@@ -11,25 +11,7 @@
             <small>szint: {{$city->level}}</small>
         </h1>
 
-        <div class="panel panel-default pull-right">
-            <div class="panel-heading text-center">
-                <b>
-                    Nyersanyagok
-                </b>
-            </div>
-
-            <table class="panel-body table">
-                <tr>
-                    <td><b>Népesség:</b> {{$city->resources->population}}</td>
-                    <td><b>Munkások:</b> {{$city->resources->workers}}</td>
-                    <td><b>Élelmiszer:</b> {{$city->resources->food}}</td>
-                    <td><b>Vas:</b> {{$city->resources->iron}}</td>
-                    <td><b>Fa:</b> {{$city->resources->lumber}}</td>
-                    <td><b>Kő:</b> {{$city->resources->stone}}</td>
-                </tr>
-            </table>
-
-        </div>
+        @include('layouts.resources')
     </div>
 @stop
 
