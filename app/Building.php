@@ -15,7 +15,7 @@ class Building extends Model
 
     protected $dates = array('finished_at');
 
-    protected $fillable = ['type', 'city', 'slot', 'nation', 'finished_at'];
+    protected $fillable = ['type', 'city_id', 'slot', 'nation', 'finished_at'];
 
     //----------------------------------------------------------------------------
 
@@ -180,9 +180,13 @@ class Building extends Model
 
     public function task()
     {
-        return $this->hasOne('App\Task', 'building');
+        return $this->hasOne('App\Task', 'building_id');
     }
 
+    public function city()
+    {
+        return $this->belongsTo('App\City', 'city_id');
+    }
 
 
 }

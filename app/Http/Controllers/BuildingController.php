@@ -144,6 +144,7 @@ class BuildingController extends Controller
         return redirect("/city/$city_id");
     }
 
+
     /**
      * @param $city_id
      * @param $slot_num
@@ -165,6 +166,7 @@ class BuildingController extends Controller
         return redirect("/city/$city_id")->withErrors(['not_yet' => 'Az épület még nincs kész']);
     }
 
+
     /**
      * @param $city_id
      * @param $slot_num
@@ -174,17 +176,12 @@ class BuildingController extends Controller
         $city = $this->validateOwner($city_id);
 
         if ($building = $this->buildingCompleted($city, $slot_num)) {
-            $this->finishedTask($building->task);
+            $this->deleteFinishedTask($building->task);
 
             if ($building->workers > 0 && $building->type == 7) {
                 if ($city->hasEnoughResources(City::$worker_price[$city->nation])) {
-
+                    $city->resources->subtract(City::$worker_price[$city->nation]);
                     $this->createTask($building, 1, City::$worker_time[$city->nation]);
-
-//                $city->resources->population -= 1;
-//                $city->resources->workers += 1;
-//
-//                $city->resources->save();
 
                 return redirect("/city/$city_id/building/$slot_num");
                 }

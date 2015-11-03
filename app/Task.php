@@ -17,20 +17,26 @@ class Task extends Model
      *
      * @var array
      */
-    protected $fillable = ['type', 'user', 'city', 'building', 'finished_at'];
+    protected $fillable = ['type', 'user_id', 'city_id', 'building_id', 'finished_at'];
 
     protected $dates = array('finished_at');
 
 
     public function city()
     {
-        return $this->belongsTo('App\City');
+        return $this->belongsTo('App\City', 'city_id');
     }
 
     public function building()
     {
-        return $this->belongsTo('App\Building');
+        return $this->belongsTo('App\Building', 'building_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'user_id');
+    }
+
 
     private $types = [
         1 => 'create a worker',

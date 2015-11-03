@@ -16,7 +16,7 @@ class CreateBuildingsTable extends Migration
         Schema::create('buildings', function (Blueprint $table) {
             $table->increments('id')->unsigned();
 
-            $table->integer('city')->unsigned();
+            $table->integer('city_id')->unsigned();
             $table->integer('slot')->unsigned();
 
             $table->integer('nation');

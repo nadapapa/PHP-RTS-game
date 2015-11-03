@@ -146,6 +146,7 @@ $now = Carbon::now();
                         .on('finish.countdown', function (event) {
                             $(this).parent().removeClass('disabled');
                             $(this).remove();
+                            location.reload(true);
                         })
             });
         </script>

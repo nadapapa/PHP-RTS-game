@@ -38,7 +38,7 @@ class City extends Model
 
     public function task()
     {
-        return $this->hasOne('App\Task', 'city');
+        return $this->hasOne('App\Task', 'city_id');
     }
 
     /**

@@ -56,7 +56,7 @@ abstract class Controller extends BaseController
             $thing->save();
             return true;
         }
-        return redirect("city/$city->id")->withErrors(['not_enough_resources' => 'Nincs elég nyersanyag']);
+        return redirect()->back()->withErrors(['not_enough_resources' => 'Nincs elég nyersanyag']);
     }
 
 
@@ -88,7 +88,6 @@ abstract class Controller extends BaseController
      */
     public function createTask($owner, $type, $time)
     {
-
         $task = Task::create([
             'type' => $type,
             'finished_at' => Carbon::now()->addSeconds($time)
@@ -96,13 +95,13 @@ abstract class Controller extends BaseController
 
         switch (get_class($owner)) {
             case 'App\User':
-                $task->user = $owner->id;
+                $task->user_id = $owner->id;
                 break;
             case 'App\City':
-                $task->city = $owner->id;
+                $task->city_id = $owner->id;
                 break;
             case 'App\Building':
-                $task->building = $owner->id;
+                $task->building_id = $owner->id;
                 break;
         }
 
@@ -118,7 +117,7 @@ abstract class Controller extends BaseController
      * @return bool
      * @throws \Exception
      */
-    public function finishedTask(Task $task = null)
+    public function deleteFinishedTask(Task $task = null)
     {
         $now = new Carbon;
         if ($task != null) {
@@ -136,8 +135,8 @@ abstract class Controller extends BaseController
         $user = Auth::user();
         if ($user->task) {
             foreach ($user->task->get() as $task) {
-                return "user";
-                $this->finishedTask($task);
+                $this->finishTask($task);
+                $this->deleteFinishedTask($task);
             }
         }
 
@@ -145,19 +144,35 @@ abstract class Controller extends BaseController
             foreach ($user->cities as $city) {
                 if ($city->task) {
                     foreach ($city->task->get() as $city_task) {
-                        return "city";
-                        $this->finishedTask($city_task);
+                        $this->finishTask($task);
+                        $this->deleteFinishedTask($city_task);
                     }
                 }
 
                 foreach ($city->building_slot->building as $building) {
                     if ($building->task) {
                         foreach ($building->task->get() as $building_task) {
-                            $this->finishedTask($building_task);
+                            $this->finishTask($building_task);
+                            $this->deleteFinishedTask($building_task);
                         }
                     }
                 }
             }
+        }
+    }
+
+
+    /**
+     * @param Task $task
+     */
+    public function finishTask(Task $task)
+    {
+        switch ($task->type) {
+            case 1:
+//                var_dump($task->building->city->resources->population);
+                $task->building->city->resources->population -= 1;
+                $task->building->city->resources->workers += 1;
+                $task->building->city->resources->save();
         }
     }
 }

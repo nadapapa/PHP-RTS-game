@@ -50,6 +50,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function task()
     {
-        return $this->hasOne('App\Task', 'user');
+		return $this->hasOne('App\Task', 'user_id');
     }
 }
