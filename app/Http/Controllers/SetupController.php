@@ -76,44 +76,4 @@ class SetupController extends Controller
         ]);
     }
 
-    /**
-     * creates a new city
-     *
-     * @param User $user
-     * @param int $capital
-     * @param int $hex_id
-     * @param string $name
-     */
-    public function createCity(User $user, $capital, $hex_id, $name)
-    {
-//        $fillable = ['name', 'nation', 'capital', 'owner', 'hex_id'];
-        $city = City::create([
-            'name' => $name,
-            'nation' => $user->nation,
-            'capital' => $capital,
-            'owner' => $user->id,
-            'hex_id' => $hex_id,
-        ]);
-
-        BuildingSlot::create(['city' => $city->id]);
-        Resource::create(['city' => $city->id]);
-
-        $hex = Grid::find($hex_id);
-        $hex->update(['owner' => $user->id, 'layer2' => 100, 'city' => $city->id]);
-    }
-
-    /**
-     * Returns a random hex id. Only habitable hexes can be chosen.
-     *
-     * @param array $habitable
-     * @return
-     */
-    public function randomHex()
-    {
-        $inhabitable = Grid::$inhabitable;
-        $grid = Grid::whereNotIn('layer1', $inhabitable)->get();
-        $hex = $grid->random();
-        $hex->update(['type' => 100]);
-        return $hex->id;
-    }
 }

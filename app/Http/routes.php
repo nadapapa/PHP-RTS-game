@@ -67,4 +67,9 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
 	Route::get('city/{city_id}/building/{slot_id}/levelup', 'BuildingController@getLevelUpBuilding');
 	Route::get('city/{city_id}/building/{slot_id}/delete', 'BuildingController@getDeleteBuilding');
 	Route::get('city/{city_id}/building/{slot_id}/worker', 'BuildingController@getMakeWorker');
+
+
+	Route::get('newcity', 'CityController@getNewCity');
+
+
 });

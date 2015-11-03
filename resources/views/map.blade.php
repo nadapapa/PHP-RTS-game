@@ -51,8 +51,6 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                         $x = $row['x'];
                         $y = $row['y'];
                         $id = $row['id'];
-                        $owner_id = $row['owner'];
-
 
                         $nx = $row['nx'];
                         $ny = $row['ny'];
@@ -69,30 +67,18 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                         $nation = '';
                         $layer1 = $row['layer1'];
 
-                        if ($owner_id > 0) {
-                            switch ($row['nation']) {
-                                case 0:
-                                    $nation = '';
-                                    break;
-                                case 1:
-                                    $nation = 'római';
-                                    break;
-                                case 2:
-                                    $nation = 'görög';
-                                    break;
-                                case 3:
-                                    $nation = 'germán';
-                                    break;
-                                case 4:
-                                    $nation = 'szarmata';
-                                    break;
-                            }
-                            $city = $row['city'];
+                        if ($row['owner'] > 0) {
+
                             $owner_name = $row['owner_name'];
-                            $title = "title='név: $city \nnép: $nation \ntulajdonos: $owner_name'";
+                            $nation = $row['nation'];
                         }
+
+                        if ($row['city']) {
+                            $city = $row['city'];
+                        }
+
                         // --- Output the image tag for this hex
-                        echo "<img id='$id' data-x='$x' data-y='$y' data-current_x='$nx' data-current_y='$ny' data-owner='$owner_name' data-nation='$nation' data-city='$city' data-layer1='$layer1' $title src='$img' class='hex' style='z-index:1;$style'>\n";
+                        echo "<img id='$id' data-x='$x' data-y='$y' data-current_x='$nx' data-current_y='$ny' data-owner='$owner_name' data-nation='$nation' data-city='$city' data-layer1='$layer1' src='$img' class='hex' style='z-index:1;$style'>\n";
 
                         if ($row['layer2'] > 0) {
                             $img = "/img/grid/" . $row['layer2'] . ".png";
@@ -279,40 +265,41 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                             nation = grid[i].nation;
                             city = grid[i].city;
                         }
+
                         $('.hexmap').append(
                                 "<img id='" + grid[i].id + "' data-current_x='" + grid[i].nx + "' data-current_y='" + grid[i].ny + "' data-x='" + grid[i].x + "' data-y='" + grid[i].y + "' data-owner='" + owner + "' data-nation='" + nation + "' data-city='" + city + "' data-layer1='" + grid[i].layer1 + "' src='" + img + "' class='hex' style='z-index:10;" + style + "'>\n"
                         );
 
-                        if (grid[i].layer2 > 0) {
+                        if (grid[i].city != 0) {
                             var img = "/img/grid/" + grid[i].layer2 + ".png";
 
-                            if (grid[i].owner > 0) {
-                                switch (grid[i].nation) {
-                                    case 0:
-                                        var nation = '';
-                                        break;
-                                    case 1:
-                                        var nation = 'római';
-                                        break;
-                                    case 2:
-                                        var nation = 'görög';
-                                        break;
-                                    case 3:
-                                        var nation = 'germán';
-                                        break;
-                                    case 4:
-                                        var nation = 'szarmata';
-                                        break;
-                                }
-                                var city = grid[i].city;
-                                var owner_name = grid[i].owner_name;
-                                var title = "title='név: " + city + "\n" +
-                                        "nép: " + nation + "\n" +
-                                        "tulajdonos: " + owner_name + "' ";
-                            }
+//                            if (grid[i].owner > 0) {
+//                                switch (grid[i].nation) {
+//                                    case 0:
+//                                        var nation = '';
+//                                        break;
+//                                    case 1:
+//                                        var nation = 'római';
+//                                        break;
+//                                    case 2:
+//                                        var nation = 'görög';
+//                                        break;
+//                                    case 3:
+//                                        var nation = 'germán';
+//                                        break;
+//                                    case 4:
+//                                        var nation = 'szarmata';
+//                                        break;
+//                                }
+//                                var city = grid[i].city;
+//                                var owner_name = grid[i].owner_name;
+//                                var title = "title='név: " + city + "\n" +
+//                                        "nép: " + nation + "\n" +
+//                                        "tulajdonos: " + owner_name + "' ";
+//                            }
 
                             $('.hexmap').append(
-                                    "<img " + title + " id='" + grid[i].id + "' data-x='" + grid[i].x + "' data-y='" + grid[i].x + "' src='" + img + "' class='hex' style='z-index:20;" + style + "'>\n"
+                                    "<img id='" + grid[i].id + "' data-x='" + grid[i].x + "' data-y='" + grid[i].x + "' src='" + img + "' class='hex' style='z-index:20;" + style + "'>\n"
                             )
                         }
 
@@ -331,45 +318,10 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                         }
 
                     }
+
                     if (!hex_exist) {
                         highlight.style.display = 'none';
                     }
-
-//                    var hex = document.querySelector("[data-x='" + x + "'][data-y='" + y + "']");
-////                    console.log("[data-current_x='" + x + "'][data-current_y='" + y + "']");
-//
-//                    highlight.dataset.x = hex.dataset.current_x;
-//                    highlight.dataset.y = hex.dataset.current_y;
-
-//                    if (typeof map_x != 'undefined') {
-//
-//                        if (highlight.dataset.x > view_width || highlight.dataset.y > view_height) {
-//                            highlight.style.left = 0 + 'px';
-//                            highlight.style.top = 0 + 'px';
-//                            highlight.style.display = 'none';
-//                            highlight.dataset.x = 0;
-//                            highlight.dataset.y = 0;
-//                        }
-//
-//                        tx = highlight.dataset.x * HEX_SIDE * 1.5;
-//                        ty = highlight.dataset.y * HEX_SCALED_HEIGHT + (map_x % 2) * HEX_SCALED_HEIGHT / 2;
-//
-//
-//                        highlight.style.left = tx + 'px';
-//                        highlight.style.top = ty + 'px';
-//
-//                        if (tx < 0 || ty < 0) {
-//                            highlight.style.left = 0 + 'px';
-//                            highlight.style.top = 0 + 'px';
-//                            highlight.style.display = 'none';
-//                            highlight.dataset.x = 0;
-//                            highlight.dataset.y = 0;
-//                        }
-//                    }
-
-
-
-
 
                 },
                 error: function (xhr, desc, err) {
@@ -521,13 +473,17 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
         $(".hex_data").html(
                 "<p>Koordináták: <br> x: " + hex_x + " y: " + hex_y + "</p>"
         );
-        if (hex.dataset.owner == "") {
+        if (hex.dataset.city == "") {
             $(".hex_data").append("<p>Terület: " + terrain + "</p>");
         }
 
-        if (hex.dataset.owner != "") {
+        if (hex.dataset.city > "0") {
             $(".hex_data").append(
                     "<p><br>Város: " + hex.dataset.city + "<br>Tulajdonos: " + hex.dataset.owner + "<br>Nép: " + hex.dataset.nation + "</p>"
+            );
+        } else if (hex.dataset.owner > "0") {
+            $(".hex_data").append(
+                    "<p><br>Tulajdonos: " + hex.dataset.owner + "<br>Nép: " + hex.dataset.nation + "</p>"
             );
         }
     });

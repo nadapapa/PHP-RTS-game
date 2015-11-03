@@ -28,7 +28,7 @@ class MapController extends Controller
         $grid = $this->showMap($x, $y, $view_width, $view_height);
 
 //        print_r(var_dump($grid));
-        return view('map', ['grid' => $grid, 'view_width' => $view_width, 'view_height' => $view_height])->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));;
+        return view('map', ['grid' => $grid, 'view_width' => $view_width, 'view_height' => $view_height])->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));
     }
 
     public function ajaxMap(Request $request)
@@ -81,35 +81,54 @@ class MapController extends Controller
             if ($row['owner'] > 0) {
                 $user = User::find($row['owner']);
                 $username = $user->name;
+                $row['owner_name'] = $username;
+                switch ($user->nation) {
+                    case 0:
+                        $row['nation'] = 'nincs';
+                        break;
+                    case 1:
+                        $row['nation'] = 'római';
+                        break;
+                    case 2:
+                        $row['nation'] = 'görög';
+                        break;
+                    case 3:
+                        $row['nation'] = 'germán';
+                        break;
+                    case 4:
+                        $row['nation'] = 'szarmata';
+                        break;
+                }
+            }
 
-                $city = City::find($row['city']);
-                $cityname = $city->name;
 
-                $nation = $city->nation;
+            if ($row['city'] > 0) {
+                $user = User::find($row['owner']);
+                $username = $user->name;
 
                 $row['owner_name'] = $username;
-                $row['city'] = $cityname;
+                $row['city'] = City::find($row['city'])->name;
 
-                switch ($nation) {
+                switch ($user->nation) {
                     case 0:
                         $nation = '';
                         break;
                     case 1:
-                        $nation = 'római';
+                        $row['nation'] = 'római';
                         break;
                     case 2:
-                        $nation = 'görög';
+                        $row['nation'] = 'görög';
                         break;
                     case 3:
-                        $nation = 'germán';
+                        $row['nation'] = 'germán';
                         break;
                     case 4:
-                        $nation = 'szarmata';
+                        $row['nation'] = 'szarmata';
                         break;
                 }
-
-                $row['nation'] = $nation;
             }
+
+
             $row['nx'] = $nx;
             $row['ny'] = $ny;
 
@@ -118,7 +137,7 @@ class MapController extends Controller
                 $ny++;
                 $nx = -1;
             }
-        };
+        }
 
         return $grid;
     }

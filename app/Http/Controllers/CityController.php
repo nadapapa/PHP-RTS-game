@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 
+use App\Grid;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Building;
@@ -19,6 +20,11 @@ class CityController extends Controller
      */
     public function getCity($id)
     {
+
+//        $hex = Grid::find(100);
+
+//        return $this->randomHex();
+
         $this->checkTasks();
 
         $city = $this->validateOwner($id);
@@ -39,4 +45,14 @@ class CityController extends Controller
     }
 
 
+    public function getNewCity()
+    {
+        $hex_id = $this->randomHex();
+
+        echo $hex_id;
+        $name = "róma2";
+        $this->createCity(Auth::user(), 0, $hex_id, $name);
+        return "ok";
+
+    }
 }

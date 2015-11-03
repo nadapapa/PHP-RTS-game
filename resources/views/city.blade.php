@@ -73,7 +73,7 @@
                 </b>
             </div>
             <div class="panel-body">
-
+                <a href="/newcity" class="btn btn-primary">új város random helyen</a>
             </div>
         </div>
     </div>
