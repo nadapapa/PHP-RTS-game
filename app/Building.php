@@ -181,7 +181,7 @@ class Building extends Model
 
     public function task()
     {
-        return $this->hasOne('App\Task', 'building_id');
+        return $this->hasMany('App\Task', 'building_id');
     }
 
     public function city()

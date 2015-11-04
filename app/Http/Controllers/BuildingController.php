@@ -63,12 +63,10 @@ class BuildingController extends Controller
      */
     public function getBuilding($city_id, $slot_num, $building_id)
     {
-        $this->checkTasks();
+//        $this->checkTasks();
 
         $city = $this->validateOwner($city_id);
-
         if ($building = $this->buildingCompleted($building_id)) {
-
             return view('building', ['city' => $city, 'building' => $building]);
         }
 
@@ -138,52 +136,6 @@ class BuildingController extends Controller
 
 
     /**
-     * @param Request $request
-     * @param $city_id
-     * @param $slot_num
-     * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-//    public function postBuilding(Request $request, $city_id, $slot_num, $building_id)
-//    {
-//        $city = $this->validateOwner($city_id);
-//
-//
-//        if ($request->has('workers')) {
-//            if ($building = $this->buildingCompleted($building_id)) {
-//                $this->checkTasks();
-//
-//                return $this->setWorkers($city, $building, $request);
-//            }
-//
-//        }
-//        if ($request->has('health')) {
-//            $this->validate($request, [
-//                'health' => 'required|integer|max:100',
-//            ]);
-//            $health = $request->input('health');
-//            if ($building = $this->buildingCompleted($building_id)) {
-//                if ($building->workers > 0) {
-//                    $price = [
-//                        'iron' => $health,
-//                        'food' => $health,
-//                        'stone' => $health,
-//                        'lumber' => $health,
-//                    ];
-//
-//                    $time = $health;
-//
-//                    $this->heal($city, $building, $price, $time, $health);
-//
-//                    return redirect("/city/$city_id");
-//                }
-//            }
-//        }
-//
-//        return redirect("/city/$city_id")->withErrors(['no_building' => "Ezen az építési területen nem található épület"]);
-//    }
-
-
-    /**
      * Creates a new building
      *
      * @param $type @int The type of the building.
@@ -216,5 +168,33 @@ class BuildingController extends Controller
         }
 
     }
+
+
+    /**
+     * @param $city_id
+     * @param $slot_num
+     */
+    public function getDeleteBuilding($city_id, $slot_num, $building_id)
+    {
+        $city = $this->validateOwner($city_id);
+
+        if ($building = $this->buildingCompleted($building_id)) {
+            $city->resources->add(['workers' => $building->workers]);
+            $slot = "slot$slot_num";
+            $city->building_slot->$slot = 0;
+            $city->building_slot->save();
+
+            $building->task->each(function ($task) {
+                $this->undoTask($task);
+                $task->delete();
+            });
+
+            $building->delete();
+
+            return redirect("/city/$city_id");
+        }
+        return redirect("/city/$city_id")->withErrors(['not_yet' => 'Az épület még nincs kész']);
+    }
+
 
 }

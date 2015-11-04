@@ -39,27 +39,6 @@ trait BuildingTraits
     }
 
 
-    /**
-     * @param $city_id
-     * @param $slot_num
-     */
-    public function getDeleteBuilding($city_id, $slot_num, $building_id)
-    {
-        $city = $this->validateOwner($city_id);
-
-        if ($building = $this->buildingCompleted($building_id)) {
-            $city->resources->add(['workers' => $building->workers]);
-            $slot = "slot$slot_num";
-            $city->building_slot->$slot = 0;
-
-            $city->building_slot->save();
-            $building->delete();
-
-            return redirect("/city/$city_id");
-        }
-        return redirect("/city/$city_id")->withErrors(['not_yet' => 'Az épület még nincs kész']);
-    }
-
 
     /**
      * @param City $city

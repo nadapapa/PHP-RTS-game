@@ -116,48 +116,41 @@ abstract class Controller extends BaseController
 
 
     /**
-     * @param Task $task
-     * @return bool
-     * @throws \Exception
+     *
      */
-    public function deleteFinishedTask(Task $task = null)
-    {
-        $now = new Carbon;
-        if ($task != null) {
-            if ($task->finished_at->lte($now)) {
-                $task->delete();
-                return true;
-            }
-        }
-        return false;
-    }
-
-
     public function checkTasks()
     {
         $user = Auth::user();
-        if ($user->task) {
-            foreach ($user->task->get() as $task) {
-                $this->finishTask($task);
-                $this->deleteFinishedTask($task);
-            }
+//        $now = new Carbon;
+
+        if (!empty($user->task)) {
+            $user->task->each(function ($user_task) {
+                if ($user_task->finished_at->lte(Carbon::now())) {
+                    $this->finishTask($user_task);
+                    $user_task->delete();
+                }
+            });
         }
 
         if ($user->cities) {
             foreach ($user->cities as $city) {
-                if ($city->task) {
-                    foreach ($city->task->get() as $city_task) {
-                        $this->finishTask($task);
-                        $this->deleteFinishedTask($city_task);
-                    }
+                if (!empty($city->task)) {
+                    $city->task->each(function ($city_task) {
+                        if ($city_task->finished_at->lte(Carbon::now())) {
+                            $this->finishTask($city_task);
+                            $city_task->delete();
+                        }
+                    });
                 }
 
                 foreach ($city->building_slot->building as $building) {
-                    if ($building->task) {
-                        foreach ($building->task->get() as $building_task) {
-                            $this->finishTask($building_task);
-                            $this->deleteFinishedTask($building_task);
-                        }
+                    if (!empty($building->task)) {
+                        $building->task->each(function ($building_task) {
+                            if ($building_task->finished_at->lte(Carbon::now())) {
+                                $this->finishTask($building_task);
+                                $building_task->delete();
+                            }
+                        });
                     }
                 }
             }
@@ -171,14 +164,37 @@ abstract class Controller extends BaseController
     public function finishTask(Task $task)
     {
         switch ($task->type) {
-            case 1:
-//                var_dump($task->building->city->resources->population);
-                $task->building->city->resources->population -= 1;
+            case 1: // create worker
                 $task->building->city->resources->workers += 1;
                 $task->building->city->resources->save();
+                break;
+            case 2: // create settler
+                $task->building->city->resources->settlers += 1;
+                $task->building->city->resources->save();
+                break;
         }
     }
 
+    /**
+     * Undo task. For example when deleting a building which has an unfinished task
+     * this method deletes the task and gives back the resources
+     * @param Task $task
+     */
+    public function undoTask(Task $task)
+    {
+        switch ($task->type) {
+            case 1: // create worker
+                $task->building->city->resources->add(City::$worker_price[$task->building->city->nation]);
+                $task->building->city->resources->population += 1;
+                $task->building->city->resources->save();
+                break;
+            case 2: // create settler
+                $task->building->city->resources->add(City::$settler_price[$task->building->city->nation]);
+                $task->building->city->resources->workers += 5;
+                $task->building->city->resources->save();
+                break;
+        }
+    }
 
     /**
      * creates a new city

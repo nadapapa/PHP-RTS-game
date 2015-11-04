@@ -130,6 +130,8 @@ $now = Carbon::now();
         </div>
     </div>
     @if($building->task)
+        <script src="{{asset('js/jquery.countdown.min.js')}}"></script>
+
         <script type="text/javascript">
             $('[data-countdown]').each(function () {
                 var $this = $(this), finalDate = $(this).data('countdown');
