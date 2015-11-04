@@ -39,7 +39,7 @@
                                 ?>
                                 @if($building->finished_at->gte($now))
                                     <div>
-                                        <a href="/city/{{$city->id}}/building/{{$i}}"
+                                        <a href="/city/{{$city->id}}/slot/{{$i}}/building/{{$building->id}}"
                                            class="btn btn-primary disabled">{{App\Building::$building_names[$city->nation][$building->type]}}
                                             ({{$building->level}})
                                             <br>
@@ -47,13 +47,13 @@
 
                                     </div>
                                 @else
-                                    <a href="/city/{{$city->id}}/building/{{$i}}"
+                                        <a href="/city/{{$city->id}}/slot/{{$i}}/building/{{$building->id}}"
                                        class="btn btn-primary">{{App\Building::$building_names[$city->nation][$building->type]}}
                                         ({{$building->level}})</a>
                                 @endif
 
                             @else
-                                <a href="/city/{{$city->id}}/build/{{$i}}" class="btn btn-primary">Építési
+                                <a href="/city/{{$city->id}}/slot/{{$i}}" class="btn btn-primary">Építési
                                     hely {{$i}}</a>
                             @endif
 
@@ -71,9 +71,6 @@
                 <b>
                     Hadsereg
                 </b>
-            </div>
-            <div class="panel-body">
-                <a href="/newcity" class="btn btn-primary">új város random helyen</a>
             </div>
         </div>
     </div>

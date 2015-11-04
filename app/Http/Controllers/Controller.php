@@ -19,27 +19,28 @@ abstract class Controller extends BaseController
 
 	use DispatchesCommands, ValidatesRequests;
 
-	/**
-	 * Finds out if the logged in user is the owner of the city.
-	 *
-	 * @param $city_id
-	 * @return $this|\Illuminate\Support\Collection|null|static
-	 */
-	public function validateOwner($city_id)
-	{
-		$city = City::find($city_id);
-		$userid = Auth::user()->id;
 
-		try {
-			if ($city->owner != $userid) {
-				return redirect('/home')->withErrors('Ez nem a te városod');
-			}
-		} catch (ErrorException $e) {
-			return redirect('/home')->withErrors(['Nincs ilyen város']);
-		}
+    /**
+     * Finds out if the logged in user is the owner of the city.
+     *
+     * @param $city_id
+     * @return $this|\Illuminate\Support\Collection|null|static
+     */
+    public function validateOwner($city_id)
+    {
+        $city = City::find($city_id);
+        $userid = Auth::user()->id;
 
-		return $city;
-	}
+        try {
+            if ($city->owner != $userid) {
+                return redirect('/home')->withErrors('Ez nem a te városod');
+            }
+        } catch (ErrorException $e) {
+            return redirect('/home')->withErrors(['Nincs ilyen város']);
+        }
+
+        return $city;
+    }
 
 
     /**
@@ -210,6 +211,7 @@ abstract class Controller extends BaseController
         }
 
     }
+
 
     /**
      * Returns a random hex id. Only habitable hexes can be chosen.

@@ -4,13 +4,16 @@
     @include('layouts.navbar')
 @stop
 @section('header')
-    <h1>{{$city->name}} <br>
+    <h1>
+        <a href="/city/{{$city->id}}">
+            {{$city->name}}
+        </a>
         <small>Építés</small>
     </h1>
 @stop
 @section('content')
     <div class="col-md-8 col-md-offset-2">
-        <form method="POST" action="/city/{{$city->id}}/build/{{$slot_num}}">
+        <form method="POST" action="/city/{{$city->id}}/slot/{{$slot_num}}/build">
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
             @foreach(App\Building::$building_names[$city->nation] as $num => $name)

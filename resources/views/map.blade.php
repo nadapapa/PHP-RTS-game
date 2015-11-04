@@ -273,31 +273,6 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                         if (grid[i].city != 0) {
                             var img = "/img/grid/" + grid[i].layer2 + ".png";
 
-//                            if (grid[i].owner > 0) {
-//                                switch (grid[i].nation) {
-//                                    case 0:
-//                                        var nation = '';
-//                                        break;
-//                                    case 1:
-//                                        var nation = 'római';
-//                                        break;
-//                                    case 2:
-//                                        var nation = 'görög';
-//                                        break;
-//                                    case 3:
-//                                        var nation = 'germán';
-//                                        break;
-//                                    case 4:
-//                                        var nation = 'szarmata';
-//                                        break;
-//                                }
-//                                var city = grid[i].city;
-//                                var owner_name = grid[i].owner_name;
-//                                var title = "title='név: " + city + "\n" +
-//                                        "nép: " + nation + "\n" +
-//                                        "tulajdonos: " + owner_name + "' ";
-//                            }
-
                             $('.hexmap').append(
                                     "<img id='" + grid[i].id + "' data-x='" + grid[i].x + "' data-y='" + grid[i].x + "' src='" + img + "' class='hex' style='z-index:20;" + style + "'>\n"
                             )

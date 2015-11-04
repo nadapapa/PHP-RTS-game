@@ -10,9 +10,11 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('/', function () {
+use App\Building;
+
+Route::get('/', ['middleware' => 'guest', function () {
 	return view('welcome');
-});
+}]);
 
 // Authentication routes...
 Route::post('auth/login', 'Auth\AuthController@postLogin');
@@ -58,15 +60,18 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
 
 	Route::get('city/{id}', 'CityController@getCity');
 
-	Route::get('city/{city_id}/build/{slot_id}', 'BuildingController@getBuild');
-	Route::post('city/{city_id}/build/{slot_id}', 'BuildingController@postBuild');
+    Route::get('city/{city_id}/slot/{slot_num}', 'BuildingController@getBuild');
+    Route::post('city/{city_id}/slot/{slot_num}/build', 'BuildingController@postBuild');
 
-	Route::get('city/{city_id}/building/{slot_id}', 'BuildingController@getBuilding');
-	Route::post('city/{city_id}/building/{slot_id}', 'BuildingController@postBuilding');
+    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}', 'BuildingController@getBuilding');
 
-	Route::get('city/{city_id}/building/{slot_id}/levelup', 'BuildingController@getLevelUpBuilding');
-	Route::get('city/{city_id}/building/{slot_id}/delete', 'BuildingController@getDeleteBuilding');
-	Route::get('city/{city_id}/building/{slot_id}/worker', 'BuildingController@getMakeWorker');
+    Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/workers', 'BuildingController@postSetWorkers');
+    Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/heal', 'BuildingController@postHeal');
+
+    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/levelup', 'BuildingController@getLevelUpBuilding');
+    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/delete', 'BuildingController@getDeleteBuilding');
+
+    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/worker', 'ForumController@getMakeWorker');
 
 
 	Route::get('newcity', 'CityController@getNewCity');

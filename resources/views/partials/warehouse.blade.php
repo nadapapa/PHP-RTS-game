@@ -30,7 +30,7 @@ $now = Carbon::now();
             </div>
 
             <div class="panel-body">
-                <form method="POST" action="{{Request::url()}}/workers">
+                <form method="POST" action="{{Request::url()}}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                     {{App\Building::$building_description[$building->nation][$building->type]}}
@@ -50,8 +50,7 @@ $now = Carbon::now();
 
                     <p @if($building->workers == 0)
                        class="bg-warning"
-                            @endif> Munkások: {{$building->workers}} <input placeholder="{{$building->workers}}"
-                                                                            type="number" name="workers"
+                            @endif> Munkások: <input placeholder="{{$building->workers}}" type="number" name="workers"
                                                      min="0" max="{{$building->level * 10}}"> fő
                         <button class="btn btn-info btn-xs" type="submit">Beállít</button>
                     </p>
@@ -80,7 +79,7 @@ $now = Carbon::now();
 
                 <p>Épség: {{$building->health}}%
                 @if ($building->health < 100 && $building->workers > 0)
-                    <form method="POST" action="{{Request::url()}}/heal">
+                    <form method="POST" action="{{Request::url()}}">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <input type="number" name="health" min="0" max="{{100- $building->health}}">
                         <button class="btn btn-info btn-xs" type="submit">Javítás</button>
@@ -90,14 +89,22 @@ $now = Carbon::now();
 
                 {{--barakk--}}
                 @if($building->type == 5)
-                    @include('partials.barrack')
-
+                    <hr>
+                    <button class="btn btn-info btn-xs" type="submit">Katona képzése</button>
                 @endif
 
                 {{--fórum--}}
                 @if($building->type == 7)
-                    @include('partials.forum')
+                    <hr>
+                    @if($building->task)
+                        <script src="{{asset('js/jquery.countdown.min.js')}}"></script>
 
+                        <a href="{{Request::url()}}/worker" class="btn btn-info btn-xs disabled">Munkás képzése
+                            <br>
+                            <span data-countdown="{{$building->task->finished_at->format('Y/m/d/ H:i:s')}}"></span></a>
+                    @else
+                        <a href="{{Request::url()}}/worker" class="btn btn-info btn-xs">Munkás képzése</a>
+                    @endif
                 @endif
 
                 <hr>
@@ -143,6 +150,9 @@ $now = Carbon::now();
                         })
             });
         </script>
+
+
+
     @endif
 
 @stop

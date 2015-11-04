@@ -10,10 +10,11 @@
 @stop
 
 @section('content')
-    <div class="col-md-4 col-md-offset-1">
+    <div class="col-md-8 col-md-offset-1">
         <h2>Városok</h2>
 
         @foreach ($cities as $city)
+            <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading text-center">
                 <b>
@@ -47,7 +48,12 @@
                 </table>
             </div>
         </div>
+            </div>
         @endforeach
+
+        <div class="panel-body">
+            <a href="/newcity" class="btn btn-primary">új város random helyen</a>
+        </div>
     </div>
 
 @endsection
