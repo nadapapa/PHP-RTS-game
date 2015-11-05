@@ -29,12 +29,15 @@ class ForumController extends Controller
             if ($building->workers > 0) {
                 if ($building->type == 7) {
                     if ($city->hasEnoughResources(City::$worker_price[$city->nation])) {
-                        $city->resources->population -= 1;
-                        $city->resources->save();
-                        $city->resources->subtract(City::$worker_price[$city->nation]);
-                        $this->createTask($building, 1, City::$worker_time[$city->nation]);
+                        if ($city->resources->population > 0) {
+                            $city->resources->population -= 1;
+                            $city->resources->save();
+                            $city->resources->subtract(City::$worker_price[$city->nation]);
+                            $this->createTask($building, 1, City::$worker_time[$city->nation]);
 
-                        return redirect("/city/$city_id/slot/$slot_num/building/$building_id");
+                            return redirect("/city/$city_id/slot/$slot_num/building/$building_id");
+                        }
+                        return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_population' => 'Nincs elég népesség']);
                     }
                     return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_resources' => 'Nincs elég nyersanyag']);
                 }
@@ -61,13 +64,16 @@ class ForumController extends Controller
                 if ($building->type == 7) {
                     if ($city->hasEnoughResources(City::$settler_price[$city->nation])) {
                         if ($city->resources->workers >= 5) {
-                            $city->resources->workers -= 5;
-                            $city->resources->population -= 10;
-                            $city->resources->save();
-                            $city->resources->subtract(City::$settler_price[$city->nation]);
-                            $this->createTask($building, 2, City::$settler_time[$city->nation]);
+                            if ($city->resources->population >= 10) {
+                                $city->resources->workers -= 5;
+                                $city->resources->population -= 10;
+                                $city->resources->save();
+                                $city->resources->subtract(City::$settler_price[$city->nation]);
+                                $this->createTask($building, 2, City::$settler_time[$city->nation]);
 
-                            return redirect("/city/$city_id/slot/$slot_num/building/$building_id");
+                                return redirect("/city/$city_id/slot/$slot_num/building/$building_id");
+                            }
+                            return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_population' => 'Nincs elég népesség']);
                         }
                         return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_worker' => 'Nincs elég munkás']);
                     }

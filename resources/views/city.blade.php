@@ -72,12 +72,28 @@
                     Hadsereg
                 </b>
             </div>
-            <div class="panel-body">
 
-            </div>
+            <table class="panel-body table">
+                <tr>
+
+                    @if($city->hex->army_id > 0)
+                        @foreach(App\Army::$unit_names[$city->nation] as $key => $name)
+                            <?php
+                            $unit = "unit" . $key;
+                            ?>
+                            <td><b>{{$name}}:</b> {{$city->hex->army->$unit}}</td>
+                        @endforeach
+
+                    @else
+                        @foreach(App\Army::$unit_names[$city->nation] as $key => $name)
+                            <td><b>{{$name}}:</b> 0</td>
+                        @endforeach
+                    @endif
+                </tr>
+            </table>
+
+
         </div>
-
-
     </div>
 
     @if(isset($building))

@@ -106,6 +106,9 @@ abstract class Controller extends BaseController
             case 'App\Building':
                 $task->building_id = $owner->id;
                 break;
+            case 'App\Army':
+                $task->army_id = $owner->id;
+                break;
         }
 
         $task->save();
@@ -156,6 +159,22 @@ abstract class Controller extends BaseController
                 }
             }
         }
+
+        if ($user->armies) {
+            foreach ($user->armies as $army) {
+                if (!empty($army->task)) {
+                    $army->task->each(function ($army_task) {
+                        if ($army_task->finished_at->lte(Carbon::now())) {
+                            $this->finishTask($army_task);
+                            $army_task->delete();
+                        }
+                    });
+                }
+            }
+        }
+
+
+
     }
 
 
@@ -173,6 +192,19 @@ abstract class Controller extends BaseController
                 $task->building->city->resources->settlers += 1;
                 $task->building->city->resources->save();
                 break;
+            case 11: // create unit
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+                $unit_type = 'unit' . ($task->type - 10);
+
+                $task->building->city->hex->army->$unit_type += 1;
+                $task->building->city->hex->army->save();
+                break;
+
         }
     }
 
@@ -192,6 +224,17 @@ abstract class Controller extends BaseController
             case 2: // create settler
                 $task->building->city->resources->add(City::$settler_price[$task->building->city->nation]);
                 $task->building->city->resources->workers += 5;
+                $task->building->city->resources->save();
+                break;
+            case 11: // create unit
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+                $task->building->city->resources->add(City::$worker_price[$task->building->city->nation]);
+                $task->building->city->resources->population += 1;
                 $task->building->city->resources->save();
                 break;
         }
@@ -257,6 +300,25 @@ abstract class Controller extends BaseController
         }
 
         return $hex->id;
+    }
+
+    /**
+     * @param Grid $hex
+     * @return bool
+     */
+    public function checkNeighbors(Grid $hex)
+    {
+        foreach ($this->hexNeighbors($hex) as $neighbor) {
+            if (empty($neighbor)) {
+                continue;
+            }
+            if ($neighbor[0]['owner'] > 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
     }
 
 

@@ -52,6 +52,30 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
 
                 <div id="down" class="btn btn-default"><i class="fa fa-arrow-down"></i></div>
             </div>
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                    <b>
+                        Ugrás koordinátára
+                    </b>
+                </div>
+                <div class="panel-body">
+
+                    <div class="form-group">
+
+                        <label for="x">X:</label>
+                        <input class="form-control" id="x" type="number" min="0" max="19" name="x"
+                               value="{{ old('x') }}" placeholder="0-19">
+
+                        <label for="y">Y:</label>
+                        <input class="form-control" id="y" type="number" min="0" max="9" name="y" value="{{ old('y') }}"
+                               placeholder="0-9">
+                    </div>
+                    <div>
+                        <div id="coord" class="btn btn-info">Ugrás</div>
+                    </div>
+
+                </div>
+            </div>
         </div>
         <div class="col-md-6">
             <div class="panel panel-default">
@@ -117,27 +141,15 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                 <div class="panel-body hex_data">
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
-                    <b>
-                        Ugrás koordinátára
-                    </b>
+                    Egységek a városban
                 </div>
-                <div class="panel-body">
-
-                    <div class="form-group">
-
-                        <label for="x">X:</label>
-                        <input class="form-control" id="x" type="number" min="0" max="19" name="x"
-                               value="{{ old('x') }}" placeholder="0-19">
-
-                        <label for="y">Y:</label>
-                        <input class="form-control" id="y" type="number" min="0" max="9" name="y" value="{{ old('y') }}"
-                               placeholder="0-9">
-                    </div>
-                    <div>
-                        <div id="coord" class="btn btn-info">Ugrás</div>
-                    </div>
+                <div id="city_units" class="panel-body">
 
                 </div>
             </div>
@@ -200,9 +212,6 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
 
                     break;
             }
-
-//            console.log(highlight.dataset.x, highlight.dataset.y);
-
 
             switch (direction) {
                 case "up":
@@ -399,48 +408,53 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
 
 //        var hex = $("[data-current_x='" + map_x + "'][data-current_y='" + map_y + "']");
         var hex = document.querySelector("[data-current_x='" + map_x + "'][data-current_y='" + map_y + "']");
-
-//        var hex_x = hex.data('x');
-//        var hex_y = hex.data('y');
-
         var hex_x = hex.dataset.x;
         var hex_y = hex.dataset.y;
-
 
         highlight.dataset.hex_id = hex.id;
 
         console.log(highlight.dataset.hex_id);
 
         var terrain = "";
+        var speed = 1;
         switch (parseInt(hex.dataset.layer1)) {
             case 0:
                 terrain = "tenger";
+                speed = 0.5;
                 break;
             case 1:
                 terrain = "jég";
+                speed = 0.4;
                 break;
             case 5:
                 terrain = "erdő";
+                speed = 0.5;
                 break;
             case 8:
                 terrain = "fenyves";
+                speed = 0.5;
                 break;
             case 10:
             case 21:
             case 22:
                 terrain = "hegy";
+                speed = 0.2;
                 break;
             case 13:
                 terrain = "havas fenyőerdő";
+                speed = 0.4;
                 break;
             case 41:
                 terrain = "dombvidék";
+                speed = 0.7;
                 break;
             case 42:
                 terrain = "sivatag";
+                speed = 0.5;
                 break;
             case 91:
                 terrain = "füves mező";
+                speed = 1;
                 break;
             case 100:
                 terrain = "város";
@@ -448,22 +462,52 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
         }
 
 
-        $(".hex_data").html(
-                "<p>Koordináták: <br> x: " + hex_x + " y: " + hex_y + "</p>"
-        );
+        $(".hex_data").html("<p>Koordináták: <br> x: " + hex_x + " y: " + hex_y + "</p>");
+
         if (hex.dataset.city == "") {
-            $(".hex_data").append("<p>Terület: " + terrain + "</p>");
+            $(".hex_data").append("<p>Terület: " + terrain + "</p><p>Sebesség: " + speed + "</p>");
         }
 
         if (hex.dataset.city > "0") {
             $(".hex_data").append(
                     "<p><br>Város: " + hex.dataset.city + "<br>Tulajdonos: " + hex.dataset.owner + "<br>Nép: " + hex.dataset.nation + "</p>"
             );
+
+            $.ajax({
+                url: '/map/city',
+                beforeSend: function (xhr) {
+                    var token = $('meta[name="csrf_token"]').attr('content');
+
+                    if (token) {
+                        return xhr.setRequestHeader('X-XSRF-TOKEN', token);
+                    }
+                },
+
+                type: 'post',
+                data: {
+                    'city': hex.dataset.city
+                },
+
+                success: function (data) {
+                    $('#city_units').append(data);
+                },
+
+                error: function (xhr, desc, err) {
+                    console.log(xhr);
+                    console.log("Details: " + desc + "\nError:" + err);
+                }
+            });
+
+
+
+
         } else if (hex.dataset.owner > "0") {
             $(".hex_data").append(
                     "<p><br>Tulajdonos: " + hex.dataset.owner + "<br>Nép: " + hex.dataset.nation + "</p>"
             );
         }
+
+
     });
 
 </script>

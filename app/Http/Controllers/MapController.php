@@ -47,6 +47,7 @@ class MapController extends Controller
         return json_encode($grid);
     }
 
+
     /**
      * Display the specified resource.
      *
@@ -146,8 +147,25 @@ class MapController extends Controller
         return $grid;
     }
 
+
+    /**
+     * @param $hex1
+     * @param $hex2
+     */
     public function calculateDistance($hex1, $hex2)
     {
 
+    }
+
+
+    /**
+     * @param Request $request
+     */
+    public function ajaxCity(Request $request)
+    {
+        $city = City::where('name', $request->input('city'))->first();
+        $units = $city->resources->settlers;
+
+        return json_encode($units);
     }
 }

@@ -37,9 +37,18 @@ class Task extends Model
         return $this->belongsTo('App\User', 'user_id');
     }
 
+    public function army()
+    {
+        return $this->belongsTo('App\Army', 'task_id');
+    }
+
 
     private $types = [
         1 => 'create a worker',
-        2 => 'create a unit'
+        2 => 'create a settler',
+        3 => 'move a settler',
+
+        11 => 'train a light infantry',
+        12 => 'train a heavy infantry, etc...',
     ];
 }

@@ -56,6 +56,7 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
 	Route::get('map/x{x?}y{y?}', 'MapController@getMap');
 
 	Route::post('map', 'MapController@ajaxMap');
+    Route::post('map/city', 'MapController@ajaxCity');
 
 
 	Route::get('city/{id}', 'CityController@getCity');
@@ -63,19 +64,21 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
     Route::get('city/{city_id}/slot/{slot_num}', 'BuildingController@getBuild');
     Route::post('city/{city_id}/slot/{slot_num}/build', 'BuildingController@postBuild');
 
+    // all buildings
     Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}', 'BuildingController@getBuilding');
-
     Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/workers', 'BuildingController@postSetWorkers');
     Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/heal', 'BuildingController@postHeal');
-
     Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/levelup', 'BuildingController@getLevelUpBuilding');
     Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/delete', 'BuildingController@getDeleteBuilding');
 
+    // forum
     Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/worker', 'ForumController@getMakeWorker');
     Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/settler', 'ForumController@getMakeSettler');
 
+    // barracks
+    Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/train', 'BarrackController@postTrainUnit');
 
-	Route::get('newcity', 'CityController@getNewCity');
+//	Route::get('city/{city_id}/newcity', 'CityController@getNewCity');
 
 
 });

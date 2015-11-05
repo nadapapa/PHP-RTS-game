@@ -102,48 +102,4 @@ class City extends Model
         4 => 60,
     ];
 
-
-    public static $unit_prices = [
-        1 => [ // római
-            // worker
-            '1' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            // swordman
-            '2' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            // pikeman
-            '3' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            // horseman
-            '4' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            // archer
-            '5' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '6' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10]
-        ],
-        2 => [ // görög
-            '1' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '2' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '3' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '4' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '5' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '6' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10]
-        ],
-        3 => [ // germán
-            '1' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '2' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '3' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '4' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '5' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '6' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10]
-        ],
-        4 => [ // szarmata
-            '1' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '2' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '3' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '4' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '5' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '6' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10]
-        ],
-    ];
 }

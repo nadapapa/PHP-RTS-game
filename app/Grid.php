@@ -38,4 +38,9 @@ class Grid extends Model
     {
         return $this->belongsTo('App\City', 'hex_id');
     }
+
+    public function army()
+    {
+        return $this->belongsTo('App\Army');
+    }
 }

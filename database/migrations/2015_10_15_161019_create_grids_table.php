@@ -26,6 +26,7 @@ class CreateGridsTable extends Migration
             $table->integer('owner')->unsigned();
 
             $table->integer('city')->unsigned();
+            $table->integer('army_id');
 
         });
 

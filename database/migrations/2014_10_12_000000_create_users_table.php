@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
 			$table->string('password', 60);
 			$table->string('avatar');
 			$table->integer('nation');
+            $table->integer('alliance_id');
 			$table->rememberToken();
 			$table->timestamps();
 		});
