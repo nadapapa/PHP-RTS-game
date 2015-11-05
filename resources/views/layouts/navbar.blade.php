@@ -16,15 +16,7 @@
                     <li>
                         <a href="/home">Profil</a>
                     </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">Városok <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            @foreach (Auth::user()->cities as $city)
-                                <li><a href="/city/{{$city->id}}">{{$city->name}}</a></li>
-                            @endforeach
-                        </ul>
-                    </li>
+
                     <li>
                         <?php
                         if (isset($city)) {
@@ -35,7 +27,15 @@
                         ?>
                         <a href="/map/{{$coord}}">Térkép</a>
                     </li>
-
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">Városok <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            @foreach (Auth::user()->cities as $city)
+                                <li><a href="/city/{{$city->id}}">{{$city->name}}</a></li>
+                            @endforeach
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>

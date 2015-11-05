@@ -63,7 +63,7 @@ class BuildingController extends Controller
      */
     public function getBuilding($city_id, $slot_num, $building_id)
     {
-//        $this->checkTasks();
+        $this->checkTasks();
 
         $city = $this->validateOwner($city_id);
         if ($building = $this->buildingCompleted($building_id)) {

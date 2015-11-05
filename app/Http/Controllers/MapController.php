@@ -31,6 +31,10 @@ class MapController extends Controller
         return view('map', ['grid' => $grid, 'view_width' => $view_width, 'view_height' => $view_height])->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));
     }
 
+    /**
+     * @param Request $request
+     * @return string
+     */
     public function ajaxMap(Request $request)
     {
         $view_width = 9;
@@ -140,5 +144,10 @@ class MapController extends Controller
         }
 
         return $grid;
+    }
+
+    public function calculateDistance($hex1, $hex2)
+    {
+
     }
 }

@@ -72,7 +72,12 @@
                     Hadsereg
                 </b>
             </div>
+            <div class="panel-body">
+
+            </div>
         </div>
+
+
     </div>
 
     @if(isset($building))
@@ -85,6 +90,7 @@
                         .on('finish.countdown', function (event) {
                             $(this).parent().removeClass('disabled');
                             $(this).remove();
+                            location.reload(true);
                         })
             });
         </script>

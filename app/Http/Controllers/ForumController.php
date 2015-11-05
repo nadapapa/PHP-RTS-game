@@ -60,7 +60,7 @@ class ForumController extends Controller
             if ($building->workers > 0) {
                 if ($building->type == 7) {
                     if ($city->hasEnoughResources(City::$settler_price[$city->nation])) {
-                        if ($city->resources->workers > 5) {
+                        if ($city->resources->workers >= 5) {
                             $city->resources->workers -= 5;
                             $city->resources->population -= 10;
                             $city->resources->save();

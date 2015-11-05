@@ -144,7 +144,8 @@ abstract class Controller extends BaseController
                 }
 
                 foreach ($city->building_slot->building as $building) {
-                    if (!empty($building->task)) {
+
+                    if ($building->task) {
                         $building->task->each(function ($building_task) {
                             if ($building_task->finished_at->lte(Carbon::now())) {
                                 $this->finishTask($building_task);

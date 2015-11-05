@@ -41,7 +41,19 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
         <h2>Térkép</h2>
     </div>
     <div class="row">
-        <div class="col-md-6 col-md-offset-2">
+        <div class="col-md-2">
+            <div class="panel panel-default text-center">
+                <div id="up" class="btn btn-default"><i class="fa fa-arrow-up"></i></div>
+                <br>
+
+                <div id="left" class="btn btn-default"><i class="fa fa-arrow-left"></i></div>
+                <div id="right" class="btn btn-default"><i class="fa fa-arrow-right"></i></div>
+                <br>
+
+                <div id="down" class="btn btn-default"><i class="fa fa-arrow-down"></i></div>
+            </div>
+        </div>
+        <div class="col-md-6">
             <div class="panel panel-default">
                 <div id='hexmap' class="panel-body hexmap">
                     <?php
@@ -95,16 +107,7 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
         </div>
 
         <div class="col-md-2">
-            <div class="panel panel-default text-center">
-                <div id="up" class="btn btn-default"><i class="fa fa-arrow-up"></i></div>
-                <br>
 
-                <div id="left" class="btn btn-default"><i class="fa fa-arrow-left"></i></div>
-                <div id="right" class="btn btn-default"><i class="fa fa-arrow-right"></i></div>
-                <br>
-
-                <div id="down" class="btn btn-default"><i class="fa fa-arrow-down"></i></div>
-            </div>
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
                     <b>

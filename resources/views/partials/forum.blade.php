@@ -23,3 +23,9 @@
     <a href="{{Request::url()}}/settler" class="btn btn-info btn-xs">Telepes képzése</a>
 @endif
 
+@if($city->resources->settlers > 0)
+    <hr>
+    Telepesek: {{$city->resources->settlers}} <br>
+    <a href="{{Request::url()}}/settler" class="btn btn-info btn-xs">Telepes képzése</a>
+@endif
+
