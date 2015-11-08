@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Army;
 use App\City;
 use App\Grid;
 use App\User;
@@ -161,11 +162,40 @@ class MapController extends Controller
     /**
      * @param Request $request
      */
-    public function ajaxCity(Request $request)
+    public function ajaxArmy(Request $request)
     {
-        $city = City::where('name', $request->input('city'))->first();
-        $units = $city->resources->settlers;
 
+        if($request->input('army') == 0){
+            return json_encode([
+            'könnyűgyalogos' => 0,
+            'nehézgyalogos' => 0,
+            'pikás' => 0,
+            'könnyűlovas' => 0,
+            'nehézlovas' => 0,
+            'íjász' => 0,
+            'katapult' => 0
+        ]);
+
+        }
+
+        $army = Army::where('id', $request->input('army'))->first();
+
+
+//
+
+
+//        if($city->hex->army_id > 0) {
+            $units = [
+//                'telepes' => $city->resources->settlers,
+                'könnyűgyalogos' => $army->unit1,
+                'nehézgyalogos' => $army->unit2,
+                'pikás' => $army->unit3,
+                'könnyűlovas' => $army->unit4,
+                'nehézlovas' => $army->unit5,
+                'íjász' => $army->unit6,
+                'katapult' => $army->unit7
+            ];
+//        }
         return json_encode($units);
     }
 }

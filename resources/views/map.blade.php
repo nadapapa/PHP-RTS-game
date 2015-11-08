@@ -88,6 +88,8 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                         $y = $row['y'];
                         $id = $row['id'];
 
+                        $army = $row['army_id'];
+
                         $nx = $row['nx'];
                         $ny = $row['ny'];
 
@@ -114,7 +116,7 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                         }
 
                         // --- Output the image tag for this hex
-                        echo "<img id='$id' data-x='$x' data-y='$y' data-current_x='$nx' data-current_y='$ny' data-owner='$owner_name' data-nation='$nation' data-city='$city' data-layer1='$layer1' src='$img' class='hex' style='z-index:1;$style'>\n";
+                        echo "<img id='$id' data-x='$x' data-y='$y' data-current_x='$nx' data-current_y='$ny' data-owner='$owner_name' data-nation='$nation' data-city='$city' data-layer1='$layer1' data-army='$army' src='$img' class='hex' style='z-index:1;$style'>\n";
 
                         if ($row['layer2'] > 0) {
                             $img = "/img/grid/" . $row['layer2'] . ".png";
@@ -145,12 +147,16 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
     </div>
     <div class="row">
         <div class="col-md-6 col-md-offset-2">
-            <div class="panel panel-default">
+            <div id="army_panel" class="panel panel-default">
                 <div class="panel-heading text-center">
-                    Egységek a városban
+                    Hadsereg mozgatása
                 </div>
-                <div id="city_units" class="panel-body">
-
+                <div id="army_movement" class="panel-body">
+                    A sereg jelenlegi koordinátája: <span id="current_coord"></span><br>
+                    Áthelezés ide: <span id="destination_coord"></span><br>
+                    Távolság: <span id="travel_distance"></span><br>
+                    Idő: <span id="travel_time"></span><br>
+                    <div id="moving_button" class="btn btn-default">Mozgás!</div>
                 </div>
             </div>
         </div>
@@ -186,6 +192,7 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
 
     // ajax
     $(function () {
+        $('#army_panel').hide();
         $(".hexmap").on("buttonClick", function (event, direction) {
             var highlight = document.getElementById('highlight');
 
@@ -279,7 +286,7 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                         }
 
                         $('.hexmap').append(
-                                "<img id='" + grid[i].id + "' data-current_x='" + grid[i].nx + "' data-current_y='" + grid[i].ny + "' data-x='" + grid[i].x + "' data-y='" + grid[i].y + "' data-owner='" + owner + "' data-nation='" + nation + "' data-city='" + city + "' data-layer1='" + grid[i].layer1 + "' src='" + img + "' class='hex' style='z-index:10;" + style + "'>\n"
+                                "<img id='" + grid[i].id + "' data-current_x='" + grid[i].nx + "' data-current_y='" + grid[i].ny + "' data-x='" + grid[i].x + "' data-y='" + grid[i].y + "' data-owner='" + owner + "' data-nation='" + nation + "' data-city='" + city + "' data-layer1='" + grid[i].layer1 + "' data-army='" + grid[i].army_id + "' src='" + img + "' class='hex' style='z-index:10;" + style + "'>\n"
                         );
 
                         if (grid[i].city != 0) {
@@ -394,12 +401,10 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
         tx = map_x * HEX_SIDE * 1.5;
         ty = map_y * HEX_SCALED_HEIGHT + (map_x % 2) * HEX_SCALED_HEIGHT / 2;
 
-//        var hex = document.elementFromPoint(tx, ty);
         var highlight = document.getElementById('highlight');
         highlight.style.display = 'inline';
-        // ----------------------------------------------------------------------
-        // --- Set position to be over the clicked on hex
-        // ----------------------------------------------------------------------
+
+        // Set position to be over the clicked on hex
         highlight.style.left = tx + 'px';
         highlight.style.top = ty + 'px';
 
@@ -413,8 +418,7 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
 
         highlight.dataset.hex_id = hex.id;
 
-        console.log(highlight.dataset.hex_id);
-
+        // display hex data
         var terrain = "";
         var speed = 1;
         switch (parseInt(hex.dataset.layer1)) {
@@ -461,10 +465,10 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
                 break;
         }
 
-
         $(".hex_data").html("<p>Koordináták: <br> x: " + hex_x + " y: " + hex_y + "</p>");
 
         if (hex.dataset.city == "") {
+//            $('#units_panel').hide();
             $(".hex_data").append("<p>Terület: " + terrain + "</p><p>Sebesség: " + speed + "</p>");
         }
 
@@ -472,40 +476,62 @@ $HEX_SIDE = $HEX_SCALED_HEIGHT / 2;
             $(".hex_data").append(
                     "<p><br>Város: " + hex.dataset.city + "<br>Tulajdonos: " + hex.dataset.owner + "<br>Nép: " + hex.dataset.nation + "</p>"
             );
-
-            $.ajax({
-                url: '/map/city',
-                beforeSend: function (xhr) {
-                    var token = $('meta[name="csrf_token"]').attr('content');
-
-                    if (token) {
-                        return xhr.setRequestHeader('X-XSRF-TOKEN', token);
-                    }
-                },
-
-                type: 'post',
-                data: {
-                    'city': hex.dataset.city
-                },
-
-                success: function (data) {
-                    $('#city_units').append(data);
-                },
-
-                error: function (xhr, desc, err) {
-                    console.log(xhr);
-                    console.log("Details: " + desc + "\nError:" + err);
-                }
-            });
-
-
-
-
         } else if (hex.dataset.owner > "0") {
             $(".hex_data").append(
                     "<p><br>Tulajdonos: " + hex.dataset.owner + "<br>Nép: " + hex.dataset.nation + "</p>"
             );
         }
+
+        // display army data
+        if (hex.dataset.army > 0){
+        $.ajax({
+            url: '/map/army',
+            beforeSend: function (xhr) {
+                var token = $('meta[name="csrf_token"]').attr('content');
+
+                if (token) {
+                    return xhr.setRequestHeader('X-XSRF-TOKEN', token);
+                }
+            },
+
+            type: 'post',
+            data: {
+                'army': hex.dataset.army
+            },
+
+            success: function (data) {
+                var units = JSON.parse(data);
+                $('.hex_data').append("<p>Hadsereg: <br>");
+                for (var i in units){
+                    $('.hex_data').append(
+                            i+": "+units[i]+"<br>");
+                }
+                $('.hex_data').append("<div id='move' class='btn btn-default'>Sereg mozgatása</div></p>");
+
+            },
+
+            error: function (xhr, desc, err) {
+                console.log(xhr);
+                console.log("Details: " + desc + "\nError:" + err);
+            }
+        });
+        } else {
+            $('#city_units').html('');
+        }
+
+        // destination calculation
+        $('#destination_coord').html("x: "+ hex_x +" y: "+hex_y)
+
+
+    });
+
+    $(document).on('click', '#move', function(){
+        $('#army_panel').show();
+        var hex_id = $('#highlight').data('hex_id');
+        var x = $('#'+hex_id).data('x');
+        var y = $('#'+hex_id).data('y');
+        $("#current_coord").html("x: "+ x +" y: "+y).data('x', x).data('y', y);
+
 
 
     });
