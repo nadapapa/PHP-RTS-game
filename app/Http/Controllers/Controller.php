@@ -263,7 +263,7 @@ abstract class Controller extends BaseController
         Resource::create(['city' => $city->id]);
 
         $hex = Grid::find($hex_id);
-        $hex->update(['owner' => $user->id, 'layer2' => 100, 'city' => $city->id]);
+        $hex->update(['owner' => $user->id, 'city' => $city->id]);
 
         foreach ($this->hexNeighbors($hex) as $neighbor) {
             $nhex = Grid::find($neighbor[0]['id']);
@@ -286,6 +286,11 @@ abstract class Controller extends BaseController
 
         while ($optimal === false) {
             $hex = $grid->random();
+
+            if ($hex->x == 0 || $hex->x == 39 || $hex->y == 0 || $hex->y == 39) {
+                continue;
+            }
+
             foreach ($this->hexNeighbors($hex) as $neighbor) {
                 if (empty($neighbor)) {
                     continue;

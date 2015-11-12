@@ -34,12 +34,50 @@ var highlight4 = L.icon({
     //popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
 });
 
+var city1 = L.icon({
+    iconUrl: '/img/map/tiles/city.png',
+
+    iconSize: [9, 9], // size of the icon
+
+    iconAnchor: [0, 0] // point of the icon which will correspond to marker's location
+    //popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+});
+
+var city2 = L.icon({
+    iconUrl: '/img/map/tiles/city.png',
+
+    iconSize: [18, 18], // size of the icon
+
+    iconAnchor: [0, 0] // point of the icon which will correspond to marker's location
+    //popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+});
+
+var city3 = L.icon({
+    iconUrl: '/img/map/tiles/city.png',
+
+    iconSize: [36, 36], // size of the icon
+
+    iconAnchor: [0, 0] // point of the icon which will correspond to marker's location
+    //popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+});
+
+var city4 = L.icon({
+    iconUrl: '/img/map/tiles/city.png',
+
+    iconSize: [72, 72], // size of the icon
+
+    iconAnchor: [0, 0] // point of the icon which will correspond to marker's location
+    //popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+});
+
 // some constants
 var margin_x = 27;
 var margin_y = 36;
 var HEX_HEIGHT = 72;
 var HEX_SCALED_HEIGHT = HEX_HEIGHT * 1.0;
 var HEX_SIDE = HEX_SCALED_HEIGHT / 2;
+var firstLoad = true;
+
 
 function init() {
     var mapMinZoom = 1;
@@ -86,27 +124,40 @@ function init() {
     }).addTo(map);
     map.panBy([1, 0]);
     //L.Util.requestAnimFrame(map.invalidateSize, map, !1, map._container);
-    map.on('click', onMapClick);
 
-    map.on('zoomend', function () {
-        if (typeof highlightMarker == 'undefined') {
-            return false;
+    $.ajaxSetup({cache: false});
+    $.getJSON("/map/get_cities", function (data) {
+        console.log(data);
+        //var cities = JSON.parse(data);
+
+        for (var i in data) {
+            tx = data[i].x * HEX_SIDE * 1.5;
+            ty = data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2;
+
+            console.log(tx + ", " + ty);
+            console.log(rc.unproject([tx + margin_x, ty + margin_y]));
+
+            var city = window["city" + map.getZoom()];
+
+            cityMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {icon: city}).addTo(map)
         }
-        switch (map.getZoom()) {
-            case 1:
-                highlightMarker.setIcon(highlight1);
-                break;
-            case 2:
-                highlightMarker.setIcon(highlight2);
-                break;
-            case 3:
-                highlightMarker.setIcon(highlight3);
-                break;
-            case 4:
-                highlightMarker.setIcon(highlight4);
-                break;
+    }).complete(function () {
+        if (firstLoad == true) {
+            map.fitBounds(map.getBounds());
+            firstLoad = false;
         }
     });
+
+    map.on('zoomend', function () {
+        cityMarker.setIcon(window["city" + map.getZoom()]);
+
+        if (typeof highlightMarker != 'undefined') {
+            highlightMarker.setIcon(window["highlight" + map.getZoom()]);
+        }
+
+    });
+
+    map.on('click', onMapClick);
 }
 
 function onMapClick(e) {
@@ -151,26 +202,16 @@ function onMapClick(e) {
     ty = map_y * HEX_SCALED_HEIGHT + (map_x % 2) * HEX_SCALED_HEIGHT / 2;
 
 
-
-
     if (typeof highlightMarker != 'undefined') {
         map.removeLayer(highlightMarker);
     }
 
-    switch (map.getZoom()) {
-        case 1:
-            var highlight = highlight1;
-            break;
-        case 2:
-            var highlight = highlight2;
-            break;
-        case 3:
-            var highlight = highlight3;
-            break;
-        case 4:
-            var highlight = highlight4;
-            break;
-    }
+    var highlight = window["highlight" + map.getZoom()];
+
 
     highlightMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {icon: highlight}).addTo(map);
 }
+
+//$(document).ready(function(){
+//
+//});

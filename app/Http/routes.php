@@ -53,9 +53,11 @@ Route::group(['middleware' => 'auth'], function () {
 Route::group(['middleware' => ['auth', 'setup']], function () {
 
 	Route::get('home', 'HomeController@getHome');
-	Route::get('map/x{x?}y{y?}', 'MapController@getMap');
 
-	Route::post('map', 'MapController@ajaxMap');
+    // map
+	Route::get('map/x{x?}y{y?}', 'MapController@getMap');
+    Route::get('map/get_cities', 'MapController@getCities');
+    Route::post('map', 'MapController@ajaxMap');
     Route::post('map/army', 'MapController@ajaxArmy');
 
 

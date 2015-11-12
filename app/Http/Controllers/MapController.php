@@ -23,14 +23,26 @@ class MapController extends Controller
     public function getMap($x, $y)
     {
         // the shown map dimensions in numbers of hexes
-        $view_width = 9;
-        $view_height = 5;
-
-        $grid = $this->showMap($x, $y, $view_width, $view_height);
+//        $view_width = 9;
+//        $view_height = 5;
+//
+//        $grid = $this->showMap($x, $y, $view_width, $view_height);
 
 //        print_r(var_dump($grid));
-        return view('map', ['grid' => $grid, 'view_width' => $view_width, 'view_height' => $view_height])->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));
+        return view('map')->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));
     }
+
+    public function getCities()
+    {
+        return Grid::where("city", '>', 0)->get()->toJson();
+    }
+
+
+
+
+
+
+
 
     /**
      * @param Request $request
