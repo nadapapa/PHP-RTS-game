@@ -117,14 +117,44 @@ function init() {
         continuousWorld: true,
         bounds: mapBounds
     });
+
     new L.Control.MiniMap(minimap, {
         toggleDisplay: true,
-        position: 'topright',
-        height: 200
+        height: 200,
+        position: 'bottomleft'
     }).addTo(map);
+
     map.panBy([1, 0]);
     //L.Util.requestAnimFrame(map.invalidateSize, map, !1, map._container);
 
+
+    // info box ===========================================================================
+    info = L.control();
+
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
+
+// method that we will use to update the control based on feature properties passed
+    info.update = function (data) {
+
+        if (data) {
+            var info = '<b>Koordináták</b><br><b>x: </b>' + data.x + '<br><b>y: </b>' + data.y + (data.city ? '' : '<br><b>Típus: </b>' + data.type + (data.owner ? '<br><b>Tulajdonos: </b>' + data.owner : ''));
+
+            if (data.city) {
+                info += '<br><br> <b>Város</b><br> <b>Név:</b> ' + data.city + '<br><b>Tulajdonos:</b> ' + data.owner + '<br><b>Nép: </b>' + data.nation;
+            }
+        }
+        this._div.innerHTML = '<h4>Információk a hexről</h4>' + (data ? info : 'Jelölj ki egy hexet');
+
+    };
+
+    info.addTo(map);
+
+
+    //  ajax cities ===================================================================
     $.ajaxSetup({cache: false});
     $.getJSON("/map/get_cities", function (data) {
         console.log(data);
@@ -137,9 +167,7 @@ function init() {
             console.log(tx + ", " + ty);
             console.log(rc.unproject([tx + margin_x, ty + margin_y]));
 
-            var city = window["city" + map.getZoom()];
-
-            cityMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {icon: city}).addTo(map)
+            cityMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {icon: window["city" + map.getZoom()]}).addTo(map)
         }
     }).complete(function () {
         if (firstLoad == true) {
@@ -148,6 +176,8 @@ function init() {
         }
     });
 
+
+    // zoom adjusting ===================================================================
     map.on('zoomend', function () {
         cityMarker.setIcon(window["city" + map.getZoom()]);
 
@@ -157,10 +187,12 @@ function init() {
 
     });
 
+
     map.on('click', onMapClick);
 }
 
 function onMapClick(e) {
+    // calculate clicked hex coordinates ==================================================
     var x = (rc.project(e.latlng).x - margin_x - (HEX_HEIGHT / 2)) / (HEX_HEIGHT * 0.75);
     var y = (rc.project(e.latlng).y - margin_y - (HEX_HEIGHT / 2)) / HEX_HEIGHT;
     var z = -0.5 * x - y;
@@ -190,14 +222,13 @@ function onMapClick(e) {
     if (map_x < 0 || map_y < 0 || map_x > 39 || map_y > 39) {
         return false;
     }
-
-    console.log(rc.project(e.latlng));
-
-    console.log(map_x + ", " + map_y);
+    //
+    //console.log(rc.project(e.latlng));
+    //
+    //console.log(map_x + ", " + map_y);
 
     // --- Calculate coordinates of this hex.  We will use this
     // --- to place the highlight image.
-
     tx = map_x * HEX_SIDE * 1.5;
     ty = map_y * HEX_SCALED_HEIGHT + (map_x % 2) * HEX_SCALED_HEIGHT / 2;
 
@@ -206,12 +237,75 @@ function onMapClick(e) {
         map.removeLayer(highlightMarker);
     }
 
-    var highlight = window["highlight" + map.getZoom()];
+    highlightMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {icon: window["highlight" + map.getZoom()]}).addTo(map);
 
 
-    highlightMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {icon: highlight}).addTo(map);
+    // ajax hex info ================================================================
+    $.getJSON("/map/get_hex_data", {x: map_x, y: map_y}, function (data) {
+        console.log(data);
+
+        switch (data.nation) {
+            case 0:
+                var nation = '';
+                break;
+            case 1:
+                var nation = 'római';
+                break;
+            case 2:
+                var nation = 'görög';
+                break;
+            case 3:
+                var nation = 'germán';
+                break;
+            case 4:
+                var nation = 'szarmata';
+                break;
+        }
+
+        switch (data.layer1) {
+            case 1:
+                var type = 'mély víz';
+                break;
+            case 2:
+                var type = 'homokos part';
+                break;
+            case 3:
+                var type = 'füves rét';
+                break;
+            case 4:
+                var type = 'fenyőerdő';
+                break;
+            case 5:
+                var type = 'hómező';
+                break;
+            case 6:
+                var type = 'dombvidék';
+                break;
+            case 7:
+                var type = 'havas dombok';
+                break;
+            case 8:
+                var type = 'hegy';
+                break;
+            case 9:
+                var type = 'sekély víz';
+                break;
+            case 10:
+                var type = 'jég';
+                break;
+            case 11:
+                var type = 'mocsár';
+                break;
+        }
+
+        info.update({
+            x: map_x,
+            y: map_y,
+            type: type,
+            owner: data.owner,
+            city: data.city,
+            nation: nation
+        });
+    });
+
 }
-
-//$(document).ready(function(){
-//
-//});

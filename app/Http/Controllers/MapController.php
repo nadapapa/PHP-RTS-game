@@ -37,8 +37,30 @@ class MapController extends Controller
         return Grid::where("city", '>', 0)->get()->toJson();
     }
 
+    public function getHexData(Request $request)
+    {
+        $hex = Grid::
+        where("x", $request->input('x'))
+            ->where('y', $request->input('y'))
+            ->select('layer1', 'owner', 'city')
+            ->first()->toArray();
 
+        if ($hex['owner'] > 0) {
+            $hex['owner'] = User::find($hex['owner'])->name;
+        }
+        if ($hex['city'] > 0) {
+            $city = City::find($hex['city']);
+            $hex['nation'] = $city->nation;
+            $hex['city'] = $city->name;
+        }
 
+        return $hex;
+    }
+
+    public function getCityData(Request $request)
+    {
+        return City::where('id', $request->input('city'))->first()->toJson();
+    }
 
 
 
