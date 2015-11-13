@@ -59,7 +59,7 @@ $now = Carbon::now();
 
                 <p>Szint: {{$building->level}}.
 
-                    @if ($building->workers > 0)
+                    @if ($building->workers > 0 && $building->task->first() == NULL)
                         <a href="{{Request::url()}}/levelup" class="btn btn-info btn-xs">Fejlesztés
                             a {{$building->level + 1}}. szintre</a> ára:
                         Élelmiszer: {{App\Building::$building_prices[$building->nation][$building->type]['food'] * ($building->level + 1)}}
@@ -75,6 +75,10 @@ $now = Carbon::now();
 
                         Idő: {{(App\Building::$building_times[$building->nation][$building->type] * ($building->level + 1)) / $building->workers}}
                         másodperc
+
+                    @else
+                        <a href="{{Request::url()}}/levelup" class="btn btn-info btn-xs disabled">Fejlesztés
+                            a {{$building->level + 1}}. szintre</a>
                     @endif
                 </p>
 

@@ -26,6 +26,10 @@ class ForumController extends Controller
         if ($building = $this->buildingCompleted($building_id)) {
             $this->checkTasks();
 
+            if ($building->task->where('building_id', $building->id)->first()) {
+                return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['already_training' => 'Az épület használatban van']);
+            }
+
             if ($building->workers > 0) {
                 if ($building->type == 7) {
                     if ($city->hasEnoughResources(City::$worker_price[$city->nation])) {
@@ -59,6 +63,10 @@ class ForumController extends Controller
 
         if ($building = $this->buildingCompleted($building_id)) {
             $this->checkTasks();
+
+            if ($building->task->where('building_id', $building->id)->first()) {
+                return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['already_training' => 'Az épület használatban van']);
+            }
 
             if ($building->workers > 0) {
                 if ($building->type == 7) {

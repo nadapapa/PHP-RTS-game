@@ -147,7 +147,7 @@ class Building extends Model
             '4' => 'Fát termel',
             '5' => 'Katonákat termel',
             '6' => 'Raktároz',
-            '7' => 'Munkást termel'
+            '7' => 'Munkást és telepest termel'
         ],
         2 => [ // görög
             '1' => 'Élelmiszert termel',
@@ -156,7 +156,7 @@ class Building extends Model
             '4' => 'Fát termel',
             '5' => 'Katonákat termel',
             '6' => 'Raktároz',
-            '7' => 'Munkást termel'
+            '7' => 'Munkást és telepest termel'
         ],
         3 => [ // germán
             '1' => 'Élelmiszert termel',
@@ -165,7 +165,7 @@ class Building extends Model
             '4' => 'Fát termel',
             '5' => 'Katonákat termel',
             '6' => 'Raktároz',
-            '7' => 'Munkást termel'
+            '7' => 'Munkást és telepest termel'
         ],
         4 => [ // szarmata
             '1' => 'Élelmiszert termel',
@@ -174,7 +174,7 @@ class Building extends Model
             '4' => 'Fát termel',
             '5' => 'Katonákat termel',
             '6' => 'Raktároz',
-            '7' => 'Munkást termel'
+            '7' => 'Munkást és telepest termel'
         ],
     ];
 

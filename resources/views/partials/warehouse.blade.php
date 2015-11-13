@@ -87,26 +87,6 @@ $now = Carbon::now();
                     </form>
                 @endif
 
-                {{--barakk--}}
-                @if($building->type == 5)
-                    <hr>
-                    <button class="btn btn-info btn-xs" type="submit">Katona képzése</button>
-                @endif
-
-                {{--fórum--}}
-                @if($building->type == 7)
-                    <hr>
-                    @if($building->task)
-                        <script src="{{asset('js/jquery.countdown.min.js')}}"></script>
-
-                        <a href="{{Request::url()}}/worker" class="btn btn-info btn-xs disabled">Munkás képzése
-                            <br>
-                            <span data-countdown="{{$building->task->finished_at->format('Y/m/d/ H:i:s')}}"></span></a>
-                    @else
-                        <a href="{{Request::url()}}/worker" class="btn btn-info btn-xs">Munkás képzése</a>
-                    @endif
-                @endif
-
                 <hr>
                 <div class="text-right">
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal">

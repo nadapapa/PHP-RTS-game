@@ -44,12 +44,16 @@ class MapController extends Controller
             ->select('layer1', 'owner', 'city')
             ->first()->toArray();
 
+        foreach ($hex as $key => &$value) {
+            $value = intval($value);
+        }
+
         if ($hex['owner'] > 0) {
             $hex['owner'] = User::find($hex['owner'])->name;
         }
         if ($hex['city'] > 0) {
             $city = City::find($hex['city']);
-            $hex['nation'] = $city->nation;
+            $hex['nation'] = intval($city->nation);
             $hex['city'] = $city->name;
         }
 

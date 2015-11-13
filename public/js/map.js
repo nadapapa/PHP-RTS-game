@@ -94,6 +94,8 @@ function init() {
         crs: L.CRS.Simple
     }).setView([0, 0], mapMinZoom);
 
+    var city_markers = L.layerGroup().addTo(map);
+
     rc = new L.RasterCoords(map, img);
 
     var mapBounds = new L.LatLngBounds(
@@ -137,7 +139,8 @@ function init() {
             tx = data[i].x * HEX_SIDE * 1.5;
             ty = data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2;
 
-            cityMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {icon: window["city" + map.getZoom()]}).addTo(map)
+            var city_marker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {icon: window["city" + map.getZoom()]}).addTo(map);
+            city_markers.addLayer(city_marker);
         }
     }).complete(function () {
         if (typeof coord != 'undefined') {
@@ -159,7 +162,7 @@ function init() {
         return this._div;
     };
 
-// method that we will use to update the control based on feature properties passed
+    // method that we will use to update the control based on feature properties passed
     info.update = function (data) {
         if (data) {
             var info = '<b>Koordináták</b><br><b>x: </b>' + data.x + '<br><b>y: </b>' + data.y + (data.city ? '' : '<br><b>Típus: </b>' + data.type + (data.owner ? '<br><b>Tulajdonos: </b>' + data.owner : ''));
@@ -172,11 +175,15 @@ function init() {
     };
     info.addTo(map);
 
+
     map.on('click', onMapClick);
 
     // zoom adjusting ===================================================================
     map.on('zoomend', function () {
-        cityMarker.setIcon(window["city" + map.getZoom()]);
+
+        city_markers.eachLayer(function (layer) {
+            layer.setIcon(window["city" + map.getZoom()]);
+        });
 
         if (typeof highlightMarker != 'undefined') {
             highlightMarker.setIcon(window["highlight" + map.getZoom()]);
@@ -190,6 +197,7 @@ function onMapClick(e) {
     var coord = calculateHexCoord(e.latlng);
     placeHighlightHex(coord.x, coord.y);
     getHexData(coord.x, coord.y);
+
 }
 
 // calculating hex coordinates from latlng
@@ -303,6 +311,7 @@ function getHexData(x, y) {
                 var type = 'mocsár';
                 break;
         }
+
 
         info.update({
             x: x,
