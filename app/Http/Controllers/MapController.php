@@ -20,17 +20,16 @@ class MapController extends Controller
      * @param $y
      * @return \Illuminate\View\View
      */
-    public function getMap($x, $y)
+    public function getMap()
     {
-        // the shown map dimensions in numbers of hexes
-//        $view_width = 9;
-//        $view_height = 5;
-//
-//        $grid = $this->showMap($x, $y, $view_width, $view_height);
-
-//        print_r(var_dump($grid));
         return view('map')->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));
     }
+
+    public function getMapCoord($x, $y)
+    {
+        return view('map')->with()->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));
+    }
+
 
     public function getCities()
     {

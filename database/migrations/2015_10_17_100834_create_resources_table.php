@@ -19,7 +19,7 @@ class CreateResourcesTable extends Migration
             $table->integer('city')->unsigned();
 
             $table->integer('population')->unsigned()->default(100);
-            $table->integer('workers')->unsigned();
+            $table->integer('workers')->unsigned()->default(5);
 
             $table->integer('iron')->unsigned()->default(100);
             $table->integer('stone')->unsigned()->default(100);

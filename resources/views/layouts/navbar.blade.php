@@ -21,11 +21,12 @@
                         <?php
                         if (isset($city)) {
                             $coord = "x" . $city->hex->x . "y" . $city->hex->y;
+                            echo '<a href="/map/' . $coord . '">Térkép</a>';
                         } else {
-                            $coord = "x2y2";
+                            echo '<a href="/map">Térkép</a>';
                         }
                         ?>
-                        <a href="/map/{{$coord}}">Térkép</a>
+
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"

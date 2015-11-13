@@ -22,7 +22,7 @@ class CreateBuildingsTable extends Migration
             $table->integer('nation');
             $table->integer('type');
             $table->integer('level')->default(1);
-            $table->integer('worker');
+            $table->integer('workers');
             $table->integer('health')->default('100');
 
             $table->timestamps();

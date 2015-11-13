@@ -55,12 +55,14 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
 	Route::get('home', 'HomeController@getHome');
 
     // map routes
-	Route::get('map/x{x?}y{y?}', 'MapController@getMap');
+//    Route::get('map/x{x}y{y}', 'MapController@getMapCoord');
     Route::get('map/get_cities', 'MapController@getCities');
     Route::get('map/get_hex_data', 'MapController@getHexData');
     Route::get('map/get_city_data', 'MapController@getCityData');
-    Route::post('map', 'MapController@ajaxMap');
-    Route::post('map/army', 'MapController@ajaxArmy');
+    Route::get('map/{coord?}', 'MapController@getMap');
+
+//    Route::post('map', 'MapController@ajaxMap');
+//    Route::post('map/army', 'MapController@ajaxArmy');
 
     // city routes
 	Route::get('city/{id}', 'CityController@getCity');

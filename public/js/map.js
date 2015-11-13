@@ -127,35 +127,8 @@ function init() {
     map.panBy([1, 0]);
     //L.Util.requestAnimFrame(map.invalidateSize, map, !1, map._container);
 
-
-    // info box ===========================================================================
-    info = L.control();
-
-    info.onAdd = function (map) {
-        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-        this.update();
-        return this._div;
-    };
-
-// method that we will use to update the control based on feature properties passed
-    info.update = function (data) {
-
-        if (data) {
-            var info = '<b>Koordináták</b><br><b>x: </b>' + data.x + '<br><b>y: </b>' + data.y + (data.city ? '' : '<br><b>Típus: </b>' + data.type + (data.owner ? '<br><b>Tulajdonos: </b>' + data.owner : ''));
-
-            if (data.city) {
-                info += '<br><br> <b>Város</b><br> <b>Név:</b> ' + data.city + '<br><b>Tulajdonos:</b> ' + data.owner + '<br><b>Nép: </b>' + data.nation;
-            }
-        }
-        this._div.innerHTML = '<h4>Információk a hexről</h4>' + (data ? info : 'Jelölj ki egy hexet');
-
-    };
-
-    info.addTo(map);
-
-
     //  ajax cities ===================================================================
-    $.ajaxSetup({cache: false});
+    //$.ajaxSetup({cache: false});
     $.getJSON("/map/get_cities", function (data) {
         console.log(data);
         //var cities = JSON.parse(data);
@@ -164,18 +137,42 @@ function init() {
             tx = data[i].x * HEX_SIDE * 1.5;
             ty = data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2;
 
-            console.log(tx + ", " + ty);
-            console.log(rc.unproject([tx + margin_x, ty + margin_y]));
-
             cityMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {icon: window["city" + map.getZoom()]}).addTo(map)
         }
     }).complete(function () {
+        if (typeof coord != 'undefined') {
+            placeHighlightHex(coord[0], coord[1]);
+            getHexData(coord[0], coord[1]);
+            map.setView(highlightMarker.getLatLng(), 4);
+        }
         if (firstLoad == true) {
             map.fitBounds(map.getBounds());
             firstLoad = false;
         }
     });
 
+    // info box ===========================================================================
+    info = L.control();
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
+
+// method that we will use to update the control based on feature properties passed
+    info.update = function (data) {
+        if (data) {
+            var info = '<b>Koordináták</b><br><b>x: </b>' + data.x + '<br><b>y: </b>' + data.y + (data.city ? '' : '<br><b>Típus: </b>' + data.type + (data.owner ? '<br><b>Tulajdonos: </b>' + data.owner : ''));
+
+            if (data.city) {
+                info += '<br><br> <b>Város</b><br> <b>Név:</b> ' + data.city + '<br><b>Tulajdonos:</b> ' + data.owner + '<br><b>Nép: </b>' + data.nation;
+            }
+        }
+        this._div.innerHTML = '<h4>Információk a hexről</h4>' + (data ? info : 'Jelölj ki egy hexet');
+    };
+    info.addTo(map);
+
+    map.on('click', onMapClick);
 
     // zoom adjusting ===================================================================
     map.on('zoomend', function () {
@@ -187,14 +184,19 @@ function init() {
 
     });
 
-
-    map.on('click', onMapClick);
 }
 
 function onMapClick(e) {
+    var coord = calculateHexCoord(e.latlng);
+    placeHighlightHex(coord.x, coord.y);
+    getHexData(coord.x, coord.y);
+}
+
+// calculating hex coordinates from latlng
+function calculateHexCoord(latlng) {
     // calculate clicked hex coordinates ==================================================
-    var x = (rc.project(e.latlng).x - margin_x - (HEX_HEIGHT / 2)) / (HEX_HEIGHT * 0.75);
-    var y = (rc.project(e.latlng).y - margin_y - (HEX_HEIGHT / 2)) / HEX_HEIGHT;
+    var x = (rc.project(latlng).x - margin_x - (HEX_HEIGHT / 2)) / (HEX_HEIGHT * 0.75);
+    var y = (rc.project(latlng).y - margin_y - (HEX_HEIGHT / 2)) / HEX_HEIGHT;
     var z = -0.5 * x - y;
     var y = -0.5 * x + y;
 
@@ -219,18 +221,18 @@ function onMapClick(e) {
     map_x = ix;
     map_y = (iy - iz + (1 - ix % 2 ) ) / 2 - 0.5;
 
-    if (map_x < 0 || map_y < 0 || map_x > 39 || map_y > 39) {
+    return {x: map_x, y: map_y};
+}
+
+function placeHighlightHex(x, y) {
+    if (x < 0 || y < 0 || x > 39 || y > 39) {
         return false;
     }
-    //
-    //console.log(rc.project(e.latlng));
-    //
-    //console.log(map_x + ", " + map_y);
 
     // --- Calculate coordinates of this hex.  We will use this
     // --- to place the highlight image.
-    tx = map_x * HEX_SIDE * 1.5;
-    ty = map_y * HEX_SCALED_HEIGHT + (map_x % 2) * HEX_SCALED_HEIGHT / 2;
+    tx = x * HEX_SIDE * 1.5;
+    ty = y * HEX_SCALED_HEIGHT + (x % 2) * HEX_SCALED_HEIGHT / 2;
 
 
     if (typeof highlightMarker != 'undefined') {
@@ -238,10 +240,14 @@ function onMapClick(e) {
     }
 
     highlightMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {icon: window["highlight" + map.getZoom()]}).addTo(map);
+}
 
-
+function getHexData(x, y) {
     // ajax hex info ================================================================
-    $.getJSON("/map/get_hex_data", {x: map_x, y: map_y}, function (data) {
+    if (x < 0 || y < 0 || x > 39 || y > 39) {
+        return false;
+    }
+    $.getJSON("/map/get_hex_data", {x: x, y: y}, function (data) {
         console.log(data);
 
         switch (data.nation) {
@@ -299,8 +305,8 @@ function onMapClick(e) {
         }
 
         info.update({
-            x: map_x,
-            y: map_y,
+            x: x,
+            y: y,
             type: type,
             owner: data.owner,
             city: data.city,
@@ -309,3 +315,4 @@ function onMapClick(e) {
     });
 
 }
+
