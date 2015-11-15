@@ -57,8 +57,10 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
     // map routes
 //    Route::get('map/x{x}y{y}', 'MapController@getMapCoord');
     Route::get('map/get_cities', 'MapController@getCities');
+    Route::get('map/get_armies', 'MapController@getArmies');
     Route::get('map/get_hex_data', 'MapController@getHexData');
     Route::get('map/get_city_data', 'MapController@getCityData');
+    Route::get('map/get_army_data', 'MapController@getArmyData');
     Route::get('map/{coord?}', 'MapController@getMap');
 
 //    Route::post('map', 'MapController@ajaxMap');

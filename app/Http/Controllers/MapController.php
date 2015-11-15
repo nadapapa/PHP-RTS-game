@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class MapController extends Controller
 {
@@ -25,15 +26,14 @@ class MapController extends Controller
         return view('map')->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));
     }
 
-    public function getMapCoord($x, $y)
-    {
-        return view('map')->with()->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));
-    }
-
-
     public function getCities()
     {
         return Grid::where("city", '>', 0)->get()->toJson();
+    }
+
+    public function getArmies()
+    {
+        return Grid::where("army_id", '>', 0)->get()->toJson();
     }
 
     public function getHexData(Request $request)
@@ -41,7 +41,7 @@ class MapController extends Controller
         $hex = Grid::
         where("x", $request->input('x'))
             ->where('y', $request->input('y'))
-            ->select('layer1', 'owner', 'city')
+            ->select('layer1', 'owner', 'city', 'army_id')
             ->first()->toArray();
 
         foreach ($hex as $key => &$value) {
@@ -51,11 +51,28 @@ class MapController extends Controller
         if ($hex['owner'] > 0) {
             $hex['owner'] = User::find($hex['owner'])->name;
         }
+
         if ($hex['city'] > 0) {
             $city = City::find($hex['city']);
             $hex['nation'] = intval($city->nation);
             $hex['city'] = $city->name;
         }
+
+//        if($hex['army_id'] > 0){
+//            $army = Army::find($hex['army_id']);
+//            $user = User::find($army->user_id);
+//            $hex['army_owner'] = $user->name;
+//            $hex['nation'] = intval($user->nation);
+//            if ($user == Auth::user()){
+//                $hex['unit1'] = $army->unit1;
+//                $hex['unit2'] = $army->unit2;
+//                $hex['unit3'] = $army->unit3;
+//                $hex['unit4'] = $army->unit4;
+//                $hex['unit5'] = $army->unit5;
+//                $hex['unit6'] = $army->unit6;
+//                $hex['unit7'] = $army->unit7;
+//            }
+//        }
 
         return $hex;
     }
@@ -65,6 +82,42 @@ class MapController extends Controller
         return City::where('id', $request->input('city'))->first()->toJson();
     }
 
+    public function getArmyData(Request $request)
+    {
+        $army = Army::where('id', $request->input('army_id'))->first()->toArray();
+
+        $hex = Grid::find($army['current_hex_id']);
+
+        // if there's a city on the current hex
+        if ($hex->city > 0) {
+            $city = City::find($hex->city);
+            $army['city_nation'] = intval($city->nation);
+            $army['city_name'] = $city->name;
+        }
+
+        $army['hex_layer1'] = $hex->layer1;
+        $army['hex_owner'] = User::find($hex->owner)->name;
+
+        if (Auth::user()->id === $army['user_id']) {
+            return $army;
+        } else {
+            $units = [
+                'unit1' => 0,
+                'unit2' => 0,
+                'unit3' => 0,
+                'unit4' => 0,
+                'unit5' => 0,
+                'unit6' => 0,
+                'unit7' => 0];
+
+            $army = array_diff_key($army, $units);
+            $user = User::find($army['user_id']);
+            $army['army_owner'] = $user->name;
+            $army['nation'] = intval($user->nation);
+
+            return $army;
+        }
+    }
 
 
 
@@ -183,16 +236,6 @@ class MapController extends Controller
         }
 
         return $grid;
-    }
-
-
-    /**
-     * @param $hex1
-     * @param $hex2
-     */
-    public function calculateDistance($hex1, $hex2)
-    {
-
     }
 
 

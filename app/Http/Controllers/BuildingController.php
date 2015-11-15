@@ -20,7 +20,11 @@ class BuildingController extends Controller
      */
     public function getBuild($city_id, $slot_num)
     {
-        $city = $this->validateOwner($city_id);
+        if ($this->validateOwner($city_id)) {
+            $city = City::find($city_id);
+        } else {
+            return redirect('/home')->withErrors('Nem a te városod');
+        }
 
         $building_slot = $city->building_slot;
         $slot_arr = array_slice($building_slot->toArray(), 3, $building_slot['active_slots']);
@@ -45,7 +49,11 @@ class BuildingController extends Controller
      */
     public function postBuild(Request $request, $city_id, $slot_num)
     {
-        $city = $this->validateOwner($city_id);
+        if ($this->validateOwner($city_id)) {
+            $city = City::find($city_id);
+        } else {
+            return redirect('/home')->withErrors('Nem a te városod');
+        }
 
         $type = $request->input('type');
 
@@ -65,7 +73,12 @@ class BuildingController extends Controller
     {
         $this->checkTasks();
 
-        $city = $this->validateOwner($city_id);
+        if ($this->validateOwner($city_id)) {
+            $city = City::find($city_id);
+        } else {
+            return redirect('/home')->withErrors('Nem a te városod');
+        }
+
         if ($building = $this->buildingCompleted($building_id)) {
             return view('building', ['city' => $city, 'building' => $building]);
         }
@@ -88,7 +101,11 @@ class BuildingController extends Controller
             'workers' => 'required|integer',
         ]);
 
-        $city = $this->validateOwner($city_id);
+        if ($this->validateOwner($city_id)) {
+            $city = City::find($city_id);
+        } else {
+            return redirect('/home')->withErrors('Nem a te városod');
+        }
 
         if ($building = $this->buildingCompleted($building_id)) {
 
@@ -109,7 +126,11 @@ class BuildingController extends Controller
      */
     public function postHeal(Request $request, $city_id, $slot_num, $building_id)
     {
-        $city = $this->validateOwner($city_id);
+        if ($this->validateOwner($city_id)) {
+            $city = City::find($city_id);
+        } else {
+            return redirect('/home')->withErrors('Nem a te városod');
+        }
 
         $this->validate($request, [
             'health' => 'required|integer|max:100',
@@ -176,7 +197,11 @@ class BuildingController extends Controller
      */
     public function getDeleteBuilding($city_id, $slot_num, $building_id)
     {
-        $city = $this->validateOwner($city_id);
+        if ($this->validateOwner($city_id)) {
+            $city = City::find($city_id);
+        } else {
+            return redirect('/home')->withErrors('Nem a te városod');
+        }
 
         if ($building = $this->buildingCompleted($building_id)) {
             $city->resources->add(['workers' => $building->workers]);

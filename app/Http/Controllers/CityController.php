@@ -23,7 +23,11 @@ class CityController extends Controller
 
         $this->checkTasks();
 
-        $city = $this->validateOwner($id);
+        if ($this->validateOwner($id)) {
+            $city = City::find($id);
+        } else {
+            return redirect('/home')->withErrors('Nem a te városod');
+        }
 
         $building_slot = $city->building_slot;
 

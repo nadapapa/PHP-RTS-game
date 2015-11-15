@@ -33,13 +33,12 @@ abstract class Controller extends BaseController
 
         try {
             if ($city->owner != $userid) {
-                return redirect('/home')->withErrors('Ez nem a te városod');
+                return false;
             }
         } catch (ErrorException $e) {
-            return redirect('/home')->withErrors(['Nincs ilyen város']);
+            return false;
         }
-
-        return $city;
+        return true;
     }
 
 
