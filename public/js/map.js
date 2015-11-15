@@ -137,7 +137,9 @@ function init() {
     map = L.map('map', {
         maxZoom: mapMaxZoom,
         minZoom: mapMinZoom,
-        crs: L.CRS.Simple
+        crs: L.CRS.Simple,
+        contextmenu: true,
+        contextmenuItems: [{text: 'ide'}]
     }).setView([0, 0], mapMinZoom);
 
     var city_markers = L.layerGroup().addTo(map);
@@ -214,6 +216,7 @@ function init() {
                 icon: window["army" + map.getZoom()],
                 zIndexOffset: 2000,
                 contextmenu: true,
+                contextmenuInheritItems: false,
                 contextmenuItems: [{
                     text: 'hadsereg',
                     disabled: true
@@ -275,8 +278,15 @@ function init() {
     info.addTo(map);
 
     map.on('click', onMapClick);
+
+    //map.on('contextmenu.show', function () {
+    //    map.fireEvent('click');
+    //});
+
     map.on('contextmenu.show', function (e) {
-        var coord = calculateHexCoord(e.relatedTarget.getLatLng());
+        //map.fireEvent('click', e);
+        console.log(e);
+        var coord = calculateHexCoord(e.contextmenu._showLocation.latlng);
         placeHighlightHex(coord.x, coord.y);
         onArmyClick(e.relatedTarget, coord.x, coord.y)
     });
@@ -434,8 +444,7 @@ function placeHighlightHex(x, y) {
         highlightMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
             icon: window["highlight" + map.getZoom()],
             zIndexOffset: 1500,
-            contextmenu: true,
-            contextmenuItems: [{text: 'ide'}]
+            clickable: false,
         }).addTo(map);
     }
 }
