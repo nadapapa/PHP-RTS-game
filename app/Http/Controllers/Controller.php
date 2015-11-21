@@ -265,8 +265,8 @@ abstract class Controller extends BaseController
         $hex->update(['owner' => $user->id, 'city' => $city->id]);
 
         foreach ($this->hexNeighbors($hex) as $neighbor) {
-            $nhex = Grid::find($neighbor[0]['id']);
-            $nhex->update(['owner' => $user->id]);
+//            $nhex = Grid::find($neighbor[0]['id']);
+            $neighbor->update(['owner' => $user->id]);
         }
 
     }
@@ -294,7 +294,7 @@ abstract class Controller extends BaseController
                 if (empty($neighbor)) {
                     continue;
                 }
-                if ($neighbor[0]['owner'] > 0) {
+                if ($neighbor->owner > 0) {
                     continue;
                 } else {
                     $optimal = true;
@@ -365,7 +365,7 @@ abstract class Controller extends BaseController
             $nx = $x + $dir['x'];
             $ny = $y + $dir['y'];
 
-            $nhex = Grid::where('x', $nx)->where('y', $ny)->get()->toArray();
+            $nhex = Grid::where('x', $nx)->where('y', $ny)->first();
 
             array_push($neighbors, $nhex);
         }

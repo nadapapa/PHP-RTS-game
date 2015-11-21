@@ -116,7 +116,6 @@ var HEX_SCALED_HEIGHT = HEX_HEIGHT * 1.0;
 var HEX_SIDE = HEX_SCALED_HEIGHT / 2;
 var firstLoad = true;
 
-
 $.ajaxPrefilter(function (options, originalOptions, xhr) {
     var token = $('meta[name="csrf_token"]').attr('content');
 
@@ -139,11 +138,16 @@ function init() {
         minZoom: mapMinZoom,
         crs: L.CRS.Simple,
         contextmenu: true,
-        contextmenuItems: [{text: 'ide'}]
+        contextmenuItems: [{
+            text: 'ide',
+            callback: moveToHex
+        }]
     }).setView([0, 0], mapMinZoom);
 
     var city_markers = L.layerGroup().addTo(map);
     var army_markers = L.layerGroup().addTo(map);
+    path_markers = L.layerGroup().addTo(map);
+
 
     rc = new L.RasterCoords(map, img);
 
@@ -193,9 +197,9 @@ function init() {
             city_markers.addLayer(city_marker);
         }
     }).complete(function () {
-        if (typeof coord != 'undefined') {
-            placeHighlightHex(coord[0], coord[1]);
-            getHexData(coord[0], coord[1]);
+        if (start_coord != 0) {
+            placeHighlightHex(start_coord[0], start_coord[1]);
+            getHexData(start_coord[0], start_coord[1]);
             map.setView(highlightMarker.getLatLng(), 4);
         }
         if (firstLoad == true) {
@@ -207,10 +211,9 @@ function init() {
     //  ajax armies ===================================================================
     $.getJSON("/map/get_armies", function (data) {
         for (var i in data) {
+
             tx = (data[i].x * HEX_SIDE * 1.5) + 36;
             ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
-
-            console.log(data[i].army_id);
 
             var army_marker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
                 icon: window["army" + map.getZoom()],
@@ -218,16 +221,22 @@ function init() {
                 contextmenu: true,
                 contextmenuInheritItems: false,
                 contextmenuItems: [{
-                    text: 'hadsereg',
-                    disabled: true
+                    text: 'hadsereg mozgatása',
+                    disabled: true,
+                    callback: selectArmy
                 }]
             }).addTo(map)
                 .on('click', function (e) {
                     var coord = calculateHexCoord(e.latlng);
                     placeHighlightHex(coord.x, coord.y);
-                    onArmyClick(this, coord.x, coord.y);
+                    getHexData(coord.x, coord.y);
                 });
-            army_marker.army_id = data[i].army_id;
+            if (typeof data[i].army != 'undefined') {
+                army_marker.options.contextmenuItems[0].disabled = false;
+
+                army_marker.army = data[i].army;
+            }
+
             army_markers.addLayer(army_marker);
         }
     });
@@ -246,32 +255,33 @@ function init() {
             var info = '<b>Koordináták</b><br>' +
                 '<b>x: </b>' + data.x + '<br>' +
                 '<b>y: </b>' + data.y +
-                (data.city ? '' : '<br>' +
+                (data.city_name ? '' : '<br>' +
                 '<b>Típus: </b>' + data.type +
-                (data.owner ? '<br>' +
-                '<b>Tulajdonos: </b>' + data.owner : ''));
+                (data.hex_owner ? '<br>' +
+                '<b>Tulajdonos: </b>' + data.hex_owner : ''));
 
-            if (data.city) {
+            if (data.city_name) {
                 info += '<br><br> <b>Város</b><br> ' +
-                    '<b>Név:</b> ' + data.city + '<br>' +
-                    '<b>Tulajdonos:</b> ' + data.owner + '<br>' +
-                    '<b>Nép: </b>' + data.nation;
+                    '<b>Név:</b> ' + data.city_name + '<br>' +
+                    '<b>Tulajdonos:</b> ' + data.city_owner + '<br>' +
+                    '<b>Nép: </b>' + data.city_nation;
             }
             if (data.army_id) {
                 info += '<br><br> <b>Hadsereg</b><br>' +
                     (data.army_owner ? ' <b>Tulajdonos:</b> ' + data.army_owner : "") +
-                    (data.nation ? '<br><b>Nép:</b> ' + data.nation : '');
-                if (typeof data.unit1 != 'undefined') {
-                    info += '<br><b>Egységek</b><br>' +
-                        'könnyűgyalogos: ' + data.unit1 + '<br>' +
-                        'nehézgyalogos: ' + data.unit2 + '<br>' +
-                        'pikás: ' + data.unit3 + '<br>' +
-                        'könnyűlovas: ' + data.unit4 + '<br>' +
-                        'nehézlovas: ' + data.unit5 + '<br>' +
-                        'íjász: ' + data.unit6 + '<br>' +
-                        'katapult: ' + data.unit7;
-                }
+                    (data.army_nation ? '<br><b>Nép:</b> ' + data.army_nation : '');
             }
+            if (typeof data.army != 'undefined') {
+                    info += '<br><b>Egységek</b><br>' +
+                        'könnyűgyalogos: ' + data.army.unit1 + '<br>' +
+                        'nehézgyalogos: ' + data.army.unit2 + '<br>' +
+                        'pikás: ' + data.army.unit3 + '<br>' +
+                        'könnyűlovas: ' + data.army.unit4 + '<br>' +
+                        'nehézlovas: ' + data.army.unit5 + '<br>' +
+                        'íjász: ' + data.army.unit6 + '<br>' +
+                        'katapult: ' + data.army.unit7;
+                }
+
         }
         this._div.innerHTML = '<h4>Információk</h4>' + (data ? info : 'Jelölj ki egy hexet');
     };
@@ -279,16 +289,10 @@ function init() {
 
     map.on('click', onMapClick);
 
-    //map.on('contextmenu.show', function () {
-    //    map.fireEvent('click');
-    //});
-
     map.on('contextmenu.show', function (e) {
-        //map.fireEvent('click', e);
-        console.log(e);
         var coord = calculateHexCoord(e.contextmenu._showLocation.latlng);
         placeHighlightHex(coord.x, coord.y);
-        onArmyClick(e.relatedTarget, coord.x, coord.y)
+        getHexData(coord.x, coord.y)
     });
 
     // zoom adjusting ===================================================================
@@ -302,10 +306,18 @@ function init() {
             layer.setIcon(window["army" + map.getZoom()]);
         });
 
+        path_markers.eachLayer(function (layer) {
+            layer.setIcon(window["highlight" + map.getZoom()]);
+        });
 
         if (typeof highlightMarker != 'undefined') {
             highlightMarker.setIcon(window["highlight" + map.getZoom()]);
         }
+
+        if (typeof highlightMarkerFrom != 'undefined') {
+            highlightMarkerFrom.setIcon(window["highlight" + map.getZoom()]);
+        }
+
 
     });
 }
@@ -315,84 +327,6 @@ function onMapClick(e) {
     var coord = calculateHexCoord(e.latlng);
     placeHighlightHex(coord.x, coord.y);
     getHexData(coord.x, coord.y);
-}
-
-function onArmyClick(army_marker, x, y) {
-    $.getJSON("/map/get_army_data", {army_id: army_marker.army_id}, function (data) {
-        switch (data.city_nation) {
-            case 0:
-                var nation = '';
-                break;
-            case 1:
-                var nation = 'római';
-                break;
-            case 2:
-                var nation = 'görög';
-                break;
-            case 3:
-                var nation = 'germán';
-                break;
-            case 4:
-                var nation = 'szarmata';
-                break;
-        }
-        switch (data.hex_layer1) {
-            case 1:
-                var type = 'mély víz';
-                break;
-            case 2:
-                var type = 'homokos part';
-                break;
-            case 3:
-                var type = 'füves rét';
-                break;
-            case 4:
-                var type = 'fenyőerdő';
-                break;
-            case 5:
-                var type = 'hómező';
-                break;
-            case 6:
-                var type = 'dombvidék';
-                break;
-            case 7:
-                var type = 'havas dombok';
-                break;
-            case 8:
-                var type = 'hegy';
-                break;
-            case 9:
-                var type = 'sekély víz';
-                break;
-            case 10:
-                var type = 'jég';
-                break;
-            case 11:
-                var type = 'mocsár';
-                break;
-        }
-        info.update({
-            x: x,
-            y: y,
-            type: type,
-            owner: data.hex_owner,
-            city: data.city_name,
-            nation: nation,
-            army_id: data.id,
-            army_owner: data.army_owner,
-            unit1: data.unit1,
-            unit2: data.unit2,
-            unit3: data.unit3,
-            unit4: data.unit4,
-            unit5: data.unit5,
-            unit6: data.unit6,
-            unit7: data.unit7
-        });
-        if (auth_user_id == parseInt(data.user_id)) {
-            army_marker.options.contextmenuItems[0].disabled = false;
-            //.setDisabled(1, false);
-        }
-    });
 }
 
 // calculating hex coordinates from latlng
@@ -456,21 +390,39 @@ function getHexData(x, y) {
     }
     $.getJSON("/map/get_hex_data", {x: x, y: y}, function (data) {
 
-        switch (data.nation) {
+        switch (data.city_nation) {
             case 0:
-                var nation = '';
+                var city_nation = '';
                 break;
             case 1:
-                var nation = 'római';
+                var city_nation = 'római';
                 break;
             case 2:
-                var nation = 'görög';
+                var city_nation = 'görög';
                 break;
             case 3:
-                var nation = 'germán';
+                var city_nation = 'germán';
                 break;
             case 4:
-                var nation = 'szarmata';
+                var city_nation = 'szarmata';
+                break;
+        }
+
+        switch (data.army_nation) {
+            case 0:
+                var army_nation = '';
+                break;
+            case 1:
+                var army_nation = 'római';
+                break;
+            case 2:
+                var army_nation = 'görög';
+                break;
+            case 3:
+                var army_nation = 'germán';
+                break;
+            case 4:
+                var army_nation = 'szarmata';
                 break;
         }
 
@@ -514,21 +466,90 @@ function getHexData(x, y) {
             x: x,
             y: y,
             type: type,
-            owner: data.owner,
-            city: data.city,
-            nation: nation,
+            hex_owner: data.owner,
+
+            city_owner: data.city_owner,
+            city_name: data.city_name,
+            city_nation: city_nation,
+
             army_id: data.army_id,
             army_owner: data.army_owner,
-            unit1: data.unit1,
-            unit2: data.unit2,
-            unit3: data.unit3,
-            unit4: data.unit4,
-            unit5: data.unit5,
-            unit6: data.unit6,
-            unit7: data.unit7
+            army_nation: army_nation,
+            army: data.army
         });
-
-        //setContextMenu(data);
     });
 }
 
+function selectArmy(a) {
+    armycoord = calculateHexCoord(a.latlng);
+    console.log(armycoord);
+
+    // --- Calculate coordinates of this hex.  We will use this
+    // --- to place the highlight image.
+    tx = (armycoord.x * HEX_SIDE * 1.5) + 36;
+    ty = (armycoord.y * HEX_SCALED_HEIGHT + (armycoord.x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
+
+    if (typeof pathMarker != 'undefined') {
+        console.log("van");
+    }
+
+    if (typeof highlightMarkerFrom != 'undefined') {
+        highlightMarkerFrom.setLatLng(rc.unproject([tx + margin_x, ty + margin_y]));
+        //map.removeLayer(highlightMarker);
+    } else {
+        highlightMarkerFrom = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
+            icon: window["highlight" + map.getZoom()],
+            zIndexOffset: 1400,
+            clickable: false,
+        }).addTo(map);
+    }
+
+}
+
+function moveToHex(b) {
+    //console.log(armycoord);
+    var finishcoord = calculateHexCoord(b.latlng);
+
+    $.getJSON("/map/get_path", {
+        x1: armycoord.x,
+        y1: armycoord.y,
+        x2: finishcoord.x,
+        y2: finishcoord.y
+    }, function (data) {
+        console.log(data);
+
+        for (var i in data) {
+            tx = (data[i].x * HEX_SIDE * 1.5) + 36;
+            ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
+
+            var pathMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
+                icon: window["highlight" + map.getZoom()],
+                zIndexOffset: 1500,
+                clickable: false
+            }).addTo(map);
+            path_markers.addLayer(pathMarker)
+        }
+    });
+
+
+    //map.removeLayer(highlightMarkerFrom);
+    //highlightMarkerFrom = undefined;
+    //
+    //console.log(finishcoord);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//                              TODO
+////////////////////////////////////////////////////////////////////////////////
+// hadsereg kijelölése: jobbklikk -> menü -> klikk a kijelölésre
+// utána ha másik hexre kattint akkor egy új highlight jön létre
+// a másik hexen jobb klikk -> hadsereg ide -> hadsereg áthelyezése az új hexre
+//
+//
+//
+//
+//
+//
+//
+//

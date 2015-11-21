@@ -26,6 +26,11 @@ class City extends Model
         return $this->hasOne('App\Grid', 'city');
     }
 
+    public function owner()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     public function building_slot()
     {
         return $this->hasOne('App\BuildingSlot', 'city');
