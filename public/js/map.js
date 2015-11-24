@@ -234,7 +234,7 @@ function cubeLerp(a, b, t) {
 function calculateLine(a, b) {
     var N = cubeDistance(a, b);
     var results = [];
-    for (var i = 1; i < N; i++) {
+    for (var i = 0; i < N; i++) {
         results.push(cubeToOffset(cubeRound(cubeLerp(a, b, 1.0 / N * i))));
     }
     return results;
@@ -263,6 +263,13 @@ function cubeRound(h) {
 
 //#############################################################################################
 //#############################################################################################
+//#############################################################################################
+
+
+
+
+
+
 
 
 function init() {
@@ -281,10 +288,6 @@ function init() {
         contextmenuItems: [{
             text: 'pont hozzáadása az útvonalhoz',
             callback: addPathPoint,
-            disabled: true
-        }, {
-            text: 'útvonal vége',
-            callback: endOfPath,
             disabled: true
         }]
     }).setView([0, 0], mapMinZoom);
@@ -356,7 +359,6 @@ function init() {
     //  ajax armies ===================================================================
     $.getJSON("/map/get_armies", function (data) {
         for (var i in data) {
-
             tx = (data[i].x * HEX_SIDE * 1.5) + 36;
             ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
 
@@ -437,7 +439,8 @@ function init() {
     map.on('contextmenu.show', function (e) {
         var coord = calculateHexCoord(e.contextmenu._showLocation.latlng);
         placeHighlightHex(coord.x, coord.y);
-        getHexData(coord.x, coord.y)
+        getHexData(coord.x, coord.y);
+        rightClicked = e.relatedTarget;
     });
 
     // zoom adjusting ===================================================================
@@ -470,6 +473,7 @@ function init() {
 
     });
 }
+
 
 function onMapClick(e) {
     map.contextmenu.hide();
@@ -644,10 +648,7 @@ function selectArmy(a) {
 
     points.push(armycoord);
 
-    path.push(armycoord);
-
     map.contextmenu.setDisabled(0, false);
-    map.contextmenu.setDisabled(1, false);
 
     // --- Calculate coordinates of this hex.  We will use this
     // --- to place the highlight image.
@@ -664,35 +665,6 @@ function selectArmy(a) {
             clickable: false
         }).addTo(map);
     }
-
-    //self.HandlerPolyline = new L.Draw.Path(map, this.options.polyline);
-    //self.HandlerPolyline.enable();
-}
-
-function moveToHex(b) {
-    var finishcoord = calculateHexCoord(b.latlng);
-
-    $.getJSON("/map/get_path", {
-        x1: armycoord.x,
-        y1: armycoord.y,
-        x2: finishcoord.x,
-        y2: finishcoord.y
-    }, function (data) {
-        console.log(data);
-
-        for (var i in data) {
-            tx = (data[i].x * HEX_SIDE * 1.5) + 36;
-            ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
-
-            var pathMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
-                icon: window["highlight" + map.getZoom()],
-                zIndexOffset: 1500,
-                clickable: false
-            }).addTo(map);
-            path_markers.addLayer(pathMarker)
-        }
-    });
-
 }
 
 function addPathPoint(b) {
@@ -712,26 +684,8 @@ function addPathPoint(b) {
     createPath();
     drawPathPoints();
     drawPath();
-
 }
 
-function endOfPath(c) {
-    var finishcoord = calculateHexCoord(c.latlng);
-    points.push(finishcoord);
-    path.push(finishcoord);
-
-    path_markers.clearLayers();
-    point_markers.clearLayers();
-
-    if (typeof highlightMarker != 'undefined') {
-        map.removeLayer(highlightMarker);
-        highlightMarker = undefined;
-    }
-
-    createPath();
-    drawPathPoints();
-    drawPath();
-}
 
 function createPath() {
     var l = points.length;
@@ -756,21 +710,32 @@ function drawPathPoints() {
             draggable: true,
             contextmenu: true,
             contextmenuInheritItems: false,
+            context: this,
             contextmenuItems: [{
+                disabled: false,
                 text: 'pont törlése',
                 callback: deletePathPoint
+            }, {
+                disabled: false,
+                text: 'út idejének kiszámítása',
+                callback: calculatePathTime
             }]
-        }).addTo(map)
+        })
+            .addTo(map)
+
             .on('drag', dragPathPoint)
             .on('contextmenu', function (e) {
                 point_marker_number = e.target.options.number;
             });
-        pointMarker.bindPopup("út hossza: " + (parseInt(path.length) + parseInt(points.length) - 1) + " hex").on('dragend', function (e) {
-            e.target._popup.setContent("út hossza: " + (parseInt(path.length) + parseInt(points.length) - 1) + " hex");
+
+        pointMarker.bindPopup("út hossza: " + path.length + " hex").on('dragend', function (e) {
+            e.target._popup.setContent("út hossza: " + path.length + " hex");
             e.target._popup.update();
             e.target.openPopup();
         });
+
         pointMarker.openPopup();
+
         point_markers.addLayer(pointMarker);
     }
 }
@@ -794,6 +759,7 @@ function drawPath() {
     }
 
 }
+
 
 function dragPathPoint(e) {
     if (typeof highlightMarker != 'undefined') {
@@ -835,231 +801,69 @@ function deletePathPoint() {
     drawPathPoints();
 }
 
-function addPointToPath(e) {
-    console.log(path_marker_number);
 
-    //points.splice(2, 0, "Lene");
-    //var coord = calculateHexCoord(e.latlng);
-    //points.push(coord);
-    ////path.push(coord);
-    //
-    //path_markers.clearLayers();
-    //point_markers.clearLayers();
-    //
-    //if(typeof highlightMarker != 'undefined') {
-    //    map.removeLayer(highlightMarker);
-    //    highlightMarker = undefined;
-    //}
-    //createPath();
-    //drawPathPoints();
-    //drawPath();
+function calculatePathTime(e) {
+    var coord = calculateHexCoord(e.latlng);
+    path.push(coord);
+    map.contextmenu.setDisabled(0, true);
+
+    point_markers.eachLayer(function (layer) {
+        layer.options.contextmenuItems[0].disabled = true;
+    });
+
+    $.post("/map", {path: path}, function (data) {
+        console.log(data);
+    });
+
 }
 
+function moveToHex(b) {
+    var finishcoord = calculateHexCoord(b.latlng);
 
-//L.Draw.Path = L.Draw.Polyline.extend({
-//    options: {
-//        allowIntersection: true,
-//        repeatMode: false,
-//        drawError: {
-//            color: '#b00b00',
-//            timeout: 2500
-//        },
-//        icon: highlight4,
-//        guidelineDistance: 40,
-//        maxGuideLineLength: 4000,
-//        shapeOptions: {
-//            stroke: false,
-//            color: '#111111',
-//            weight: 10,
-//            opacity: 0,
-//            fill: false,
-//            clickable: true
-//        },
-//        metric: true, // Whether to use the metric meaurement system or imperial
-//        showLength: true, // Whether to display distance in the tooltip
-//        zIndexOffset: 5000 // This should be > than the highest z-index any map layers
-//    },
+    $.getJSON("/map/get_path", {
+        x1: armycoord.x,
+        y1: armycoord.y,
+        x2: finishcoord.x,
+        y2: finishcoord.y
+    }, function (data) {
+        console.log(data);
+
+        for (var i in data) {
+            tx = (data[i].x * HEX_SIDE * 1.5) + 36;
+            ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
+
+            var pathMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
+                icon: window["highlight" + map.getZoom()],
+                zIndexOffset: 1500,
+                clickable: false
+            }).addTo(map);
+            path_markers.addLayer(pathMarker)
+        }
+    });
+
+}
+
+//function endOfPath(c) {
+//    map.contextmenu.setDisabled(0, true);
 //
-//    addHooks: function () {
-//        L.Draw.Feature.prototype.addHooks.call(this);
-//        if (this._map) {
-//            this._markers = [];
+//    var finishcoord = calculateHexCoord(c.latlng);
+//    points.push(finishcoord);
+//    path.push(finishcoord);
 //
-//            this.path = [];
+//    path_markers.clearLayers();
+//    point_markers.clearLayers();
 //
-//            this._markerGroup = new L.LayerGroup();
-//            this._map.addLayer(this._markerGroup);
+//    if (typeof highlightMarker != 'undefined') {
+//        map.removeLayer(highlightMarker);
+//        highlightMarker = undefined;
+//    }
 //
-//            this._poly = new L.Polyline([], this.options.shapeOptions);
-//
-//            this._tooltip.updateContent(this._getTooltipText());
-//
-//            // Make a transparent marker that will used to catch click events. These click
-//            // events will create the vertices. We need to do this so we can ensure that
-//            // we can create vertices over other map layers (markers, vector layers). We
-//            // also do not want to trigger any click handlers of objects we are clicking on
-//            // while drawing.
-//            if (!this._mouseMarker) {
-//                this._mouseMarker = L.marker(this._map.getCenter(), {
-//                    icon: L.divIcon({
-//                        className: 'leaflet-mouse-marker',
-//                        iconAnchor: [20, 20],
-//                        iconSize: [40, 40]
-//                    }),
-//                    opacity: 0,
-//                    zIndexOffset: this.options.zIndexOffset
-//                });
-//            }
-//
-//            this._mouseMarker
-//                .on('mousedown', this._onMouseDown, this)
-//                .addTo(this._map);
-//
-//            this._map
-//                .on('mousemove', this._onMouseMove, this)
-//                .on('mouseup', this._onMouseUp, this)
-//                .on('zoomend', this._onZoomEnd, this);
-//        }
-//    },
-//
-//    addVertex: function (latlng) {
-//        var markersLength = this._markers.length;
-//
-//        if (markersLength > 0 && !this.options.allowIntersection && this._poly.newLatLngIntersects(latlng)) {
-//            this._showErrorTooltip();
-//            return;
-//        }
-//        else if (this._errorShown) {
-//            this._hideErrorTooltip();
-//        }
-//
-//        this._markers.push(this._createMarker(latlng));
-//        this.path = this.path.concat(this.hexes);
-//
-//        this._poly.addLatLng(latlng);
-//
-//        if (this._poly.getLatLngs().length === 2) {
-//            this._map.addLayer(this._poly);
-//        }
-//
-//        this._vertexChanged(latlng, true);
-//    },
+//    createPath();
+//    drawPathPoints();
+//    drawPath();
 //
 //
-//
-//    _drawGuide: function (pointA, pointB) {
-//
-//            path_markers.clearLayers();
-//
-//        var A = map.latLngToLayerPoint(pointA);
-//        var B = map.latLngToLayerPoint(pointB);
-//
-//        var length = Math.floor(Math.sqrt(Math.pow((B.x - A.x), 2) + Math.pow((B.y - A.y), 2))),
-//            guidelineDistance = this.options.guidelineDistance,
-//            maxGuideLineLength = this.options.maxGuideLineLength,
-//        // Only draw a guideline with a max length
-//            i = length > maxGuideLineLength ? length - maxGuideLineLength : guidelineDistance,
-//            fraction,
-//            dashPoint,
-//            dash;
-//
-//        //create the guides container if we haven't yet
-//        if (!this._guidesContainer) {
-//            this._guidesContainer = L.DomUtil.create('div', 'leaflet-draw-guides', this._overlayPane);
-//        }
-//
-//
-//        this.hexes = [];
-//
-//        //draw a dash every GuildeLineDistance
-//        for (; i < length; i += this.options.guidelineDistance) {
-//            //work out fraction along line we are
-//            fraction = i / length;
-//
-//            //calculate new x,y point
-//            dashPoint = {
-//                x: Math.floor((A.x * (1 - fraction)) + (fraction * B.x)),
-//                y: Math.floor((A.y * (1 - fraction)) + (fraction * B.y))
-//            };
-//
-//            var coord = calculateHexCoord(map.layerPointToLatLng([dashPoint.x, dashPoint.y]));
-//            //console.log(coord.x+", "+coord.y);
-//
-//            var coordinates = 'x'+coord.x+'y'+coord.y;
-//
-//
-//            if ($.inArray(coordinates, this.hexes) == -1){
-//                this.hexes.push(coordinates);
-//            }
-//
-//            //add guide dash to guide container
-//            dash = L.DomUtil.create('div', 'leaflet-draw-guide-dash', this._guidesContainer);
-//
-//            dash.style.backgroundColor =
-//                !this._errorShown ? this.options.shapeOptions.color : this.options.drawError.color;
-//
-//            L.DomUtil.setPosition(dash, dashPoint);
-//        }
-//
-//        if(typeof this.path != 'undefined' && this.path.length > 0) {
-//            var l = this.path.length;
-//
-//            for (var a= 0; a<l; a++) {
-//
-//                var hex_coord = this.path[a].split('x')[1].split('y');
-//                var x = parseInt(hex_coord[0]);
-//                var y = parseInt(hex_coord[1]);
-//
-//
-//                tx = (x * HEX_SIDE * 1.5) + 36;
-//                ty = (y * HEX_SCALED_HEIGHT + (x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
-//
-//                pathMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
-//                    icon: window["highlight" + map.getZoom()],
-//                    zIndexOffset: 1500,
-//                    clickable: false
-//                }).addTo(map);
-//                path_markers.addLayer(pathMarker)
-//            }
-//        }
-//    },
-//
-//    _onMouseMove: function (e) {
-//        var newPos = e.layerPoint,
-//            latlng = e.latlng;
-//
-//        // Save latlng
-//        // should this be moved to _updateGuide() ?
-//        this._currentLatLng = latlng;
-//
-//        this._updateTooltip(latlng);
-//
-//        // Update the guide line
-//        this._updateGuide(latlng);
-//
-//        // Update the mouse marker position
-//        this._mouseMarker.setLatLng(latlng);
-//
-//        L.DomEvent.preventDefault(e.originalEvent);
-//    },
-//
-//    _updateGuide: function (newPos) {
-//        var markerCount = this._markers.length;
-//
-//
-//
-//        if (markerCount > 0) {
-//
-//
-//            // draw the guide line
-//            this._clearGuides();
-//            this._drawGuide(
-//                this._markers[markerCount - 1].getLatLng(),
-//                newPos
-//            );
-//        }
-//
-//    },
-//});
+//}
+
 
 
