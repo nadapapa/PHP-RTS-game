@@ -61,7 +61,8 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
     Route::get('map/get_hex_data', 'MapController@getHexData');
     Route::get('map/get_city_data', 'MapController@getCityData');
     Route::get('map/get_army_data', 'MapController@getArmyData');
-    Route::get('map/get_path', 'MapController@getPath');
+
+    Route::post('map', 'MapController@postPathPrice');
 
     Route::get('map/{coord?}', 'MapController@getMap');
 

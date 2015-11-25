@@ -43,4 +43,20 @@ class Grid extends Model
     {
         return $this->belongsTo('App\Army');
     }
+
+
+    public static $price = [
+        1 => 10,    //1  wo     Medium Deep Water
+        2 => 2,     //2  ds     Beach Sands
+        3 => 1,     //3  gg     Green Grass
+        4 => 3,     //4  Gs^Fp  Semi-dry Grass Pine Forest
+        5 => 2,     //5  Aa     Snow
+        6 => 3,     //6  Hh     Regular Hills
+        7 => 3,     //7  ha     Snow Hills
+        8 => 6,     //8  mm     Regular Mountains
+        9 => 6,     //9  ww     Medium Shallow Water
+        10 => 2,    //10 ai     Ice
+        11 => 6,    //11 ss     Swamp Water Reed
+    ];
+
 }

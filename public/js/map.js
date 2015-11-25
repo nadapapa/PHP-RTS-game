@@ -197,12 +197,16 @@ var path_point_zindex = 4000;
 var path_zindex = 3000;
 var highlight_zindex = 2000;
 
-$.ajaxPrefilter(function (options, originalOptions, xhr) {
-    var token = $('meta[name="csrf_token"]').attr('content');
+//$.ajaxPrefilter(function (options, originalOptions, xhr) {
+//    var token = $('meta[name="csrf_token"]').attr('content');
+//
+//    if (token) {
+//        return xhr.setRequestHeader('X-XSRF-TOKEN', token);
+//    }
+//});
 
-    if (token) {
-        return xhr.setRequestHeader('X-XSRF-TOKEN', token);
-    }
+$.ajaxSetup({
+    headers: {'X-CSRF-Token': $('meta[name=csrf_token]').attr('content')}
 });
 
 function offsetToCube(hex) {
@@ -670,7 +674,6 @@ function selectArmy(a) {
 function addPathPoint(b) {
     var coord = calculateHexCoord(b.latlng);
     points.push(coord);
-    //path.push(coord);
 
     path_markers.clearLayers();
     point_markers.clearLayers();
@@ -722,7 +725,6 @@ function drawPathPoints() {
             }]
         })
             .addTo(map)
-
             .on('drag', dragPathPoint)
             .on('contextmenu', function (e) {
                 point_marker_number = e.target.options.number;
@@ -807,13 +809,33 @@ function calculatePathTime(e) {
     path.push(coord);
     map.contextmenu.setDisabled(0, true);
 
-    point_markers.eachLayer(function (layer) {
-        layer.options.contextmenuItems[0].disabled = true;
+    $.post("/map", {'_token': $('meta[name=csrf-token]').attr('content'), path: path}, function (data) {
+        var sec_num = parseInt(data, 10);
+        var hours = Math.floor(sec_num / 3600);
+        var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+        var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+        var time = hours + ':' + minutes + ':' + seconds;
+        point_markers.eachLayer(function (layer) {
+            //console.log(layer);
+            layer._popup.setContent(
+                "út hossza: " + path.length + " hex<br>" +
+                "út ideje: " + time + "<br>" +
+                ""  // TODO buttons
+            );
+            layer.options.contextmenuItems[0].disabled = true;
+        });
     });
 
-    $.post("/map", {path: path}, function (data) {
-        console.log(data);
-    });
 
 }
 

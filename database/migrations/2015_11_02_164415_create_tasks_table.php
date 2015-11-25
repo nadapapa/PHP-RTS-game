@@ -22,6 +22,7 @@ class CreateTasksTable extends Migration
             $table->integer('city_id');
             $table->integer('building_id');
             $table->integer('army_id');
+            $table->integer('path_id');
 
             $table->timestamps();
             $table->timestamp('finished_at');

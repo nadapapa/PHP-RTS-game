@@ -42,6 +42,11 @@ class Task extends Model
         return $this->belongsTo('App\Army', 'task_id');
     }
 
+    public function path()
+    {
+        return $this->hasMany('App\Path', 'path_id');
+    }
+
 
     private $types = [
         1 => 'create a worker',
@@ -50,5 +55,6 @@ class Task extends Model
 
         11 => 'train a light infantry',
         12 => 'train a heavy infantry, etc...',
+        20 => 'moving'
     ];
 }

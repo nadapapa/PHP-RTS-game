@@ -12,27 +12,28 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use SplPriorityQueue;
+
+//use SplPriorityQueue;
 
 
-class PriQueue extends SplPriorityQueue
-{
-//    protected $direction='asc';
-
-//    protected $serial = 0;
+//class PriQueue extends SplPriorityQueue
+//{
+////    protected $direction='asc';
 //
-//    public function insert($value, $priority) {
-//        parent::insert($value, array($priority, $this->serial++));
+////    protected $serial = 0;
+////
+////    public function insert($value, $priority) {
+////        parent::insert($value, array($priority, $this->serial++));
+////    }
+//
+//    public function compare($p1, $p2)
+//    {
+//        if ($p1 === $p2) return 0;
+//        // in ascending order of priority, a lower value
+//        // means higher priority
+//        return ($p1 > $p2) ? 1 : -1;
 //    }
-
-    public function compare($p1, $p2)
-    {
-        if ($p1 === $p2) return 0;
-        // in ascending order of priority, a lower value
-        // means higher priority
-        return ($p1 > $p2) ? 1 : -1;
-    }
-}
+//}
 
 class MapController extends Controller
 {
@@ -67,6 +68,7 @@ class MapController extends Controller
 
         return $hexes;
     }
+
 
     public function getHexData(Request $request)
     {
@@ -147,6 +149,64 @@ class MapController extends Controller
         }
     }
 
+
+    public function postPathPrice(Request $request)
+    {
+        $path = $request->input('path');
+
+        $path_data = [];
+        foreach ($path as $hex) {
+            $path_data[] = Grid::
+            where("x", $hex['x'])
+                ->where('y', $hex['y'])
+                ->select('layer1', 'owner', 'city', 'army_id')
+                ->first();
+        }
+
+        $army = Army::where('id', $path_data[0]->army_id)->first();
+
+        $units = [
+            1 => intval($army->unit1),
+            2 => intval($army->unit2),
+            3 => intval($army->unit3),
+            4 => intval($army->unit4),
+            5 => intval($army->unit5),
+            6 => intval($army->unit6),
+            7 => intval($army->unit7)
+        ];
+
+        $speed = [];
+
+        foreach ($units as $key => $value) {
+            if ($value > 0) {
+                $speed[] = Army::$unit_speeds[$army->user->nation][$key];
+            }
+        }
+
+        $speed = max($speed);
+
+        $time = 0;
+
+        array_shift($path_data);
+
+        foreach ($path_data as $hex) {
+            $time += Grid::$price[intval($hex->layer1)] * $speed;
+        }
+
+        return $time;
+
+    }
+
+
+
+
+
+
+
+//######################################################################################################
+//##                                      A* Pathfinding                                              ##
+//######################################################################################################
+
     /**
      * A* pathfinding
      *
@@ -159,14 +219,14 @@ class MapController extends Controller
             1 => 100,   //1  wo     Medium Deep Water
             2 => 2,     //2  ds     Beach Sands
             3 => 1,     //3  gg     Green Grass
-            4 => 3,    //4  Gs^Fp  Semi-dry Grass Pine Forest
-            5 => 2,    //5  Aa     Snow
+            4 => 3,     //4  Gs^Fp  Semi-dry Grass Pine Forest
+            5 => 2,     //5  Aa     Snow
             6 => 3,     //6  Hh     Regular Hills
-            7 => 3,    //7  ha     Snow Hills
-            8 => 6,    //8  mm     Regular Mountains
-            9 => 6,   //9  ww     Medium Shallow Water
-            10 => 2,   //10 ai     Ice
-            11 => 6,   //11 ss     Swamp Water Reed
+            7 => 3,     //7  ha     Snow Hills
+            8 => 6,     //8  mm     Regular Mountains
+            9 => 6,     //9  ww     Medium Shallow Water
+            10 => 2,    //10 ai     Ice
+            11 => 6,    //11 ss     Swamp Water Reed
         ];
 
         $startx = $request->input('x1');
@@ -347,7 +407,6 @@ class MapController extends Controller
         return $neighbors;
     }
 
-
     public function offsetToCube($x, $y)
     {
         // odd-q to cube
@@ -361,6 +420,10 @@ class MapController extends Controller
     {
         return (abs($a['x'] - $b['x']) + abs($a['y'] - $b['y']) + abs($a['z'] - $b['z']));
     }
+
+//########################################################################################################
+//########################################################################################################
+
 
 //    /**
 //     * @param Request $request

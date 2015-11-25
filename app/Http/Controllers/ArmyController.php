@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 class ArmyController extends Controller
 {
 
-    public function postMove(Request $request){
+    public function postMove(Request $request)
+    {
 
     }
 
