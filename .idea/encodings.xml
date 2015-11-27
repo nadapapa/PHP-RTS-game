@@ -18,8 +18,8 @@
     <file url="file://$PROJECT_DIR$/resources/views/errors/503.blade.php" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/resources/views/home.blade.php" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/resources/views/layouts/master.blade.php" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/resources/views/layouts/navbar.blade.php" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/resources/views/map.blade.php" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/resources/views/partials/navbar.blade.php" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

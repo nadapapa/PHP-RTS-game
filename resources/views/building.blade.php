@@ -5,7 +5,7 @@ $now = Carbon::now();
 
 ?>
 @section('navbar')
-    @include('layouts.navbar')
+    @include('partials.navbar')
 @stop
 
 @section('header')
@@ -51,8 +51,8 @@ $now = Carbon::now();
                     <p @if($building->workers == 0)
                        class="bg-warning"
                             @endif> Munkások: {{$building->workers}} <input placeholder="{{$building->workers}}"
-                                                                            type="number" name="workers"
-                                                     min="0" max="{{$building->level * 10}}"> fő
+                                                                            type="number" name="workers" min="0"
+                                                                            max="{{$building->level * 10}}"> fő
                         <button class="btn btn-info btn-xs" type="submit">Beállít</button>
                     </p>
                 </form>

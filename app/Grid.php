@@ -18,7 +18,7 @@ class Grid extends Model
      *
      * @var array
      */
-    protected $fillable = ['id', 'x', 'y', 'layer1', 'layer2', 'layer3', 'layer4', 'layer5', 'owner', 'city'];
+    protected $fillable = ['id', 'x', 'y', 'layer1', 'layer2', 'layer3', 'layer4', 'layer5', 'owner', 'city', 'army_id'];
 
     /**
      * The hex types which are inhabitable i.e. city can not be founded on.

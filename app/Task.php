@@ -39,12 +39,12 @@ class Task extends Model
 
     public function army()
     {
-        return $this->belongsTo('App\Army', 'task_id');
+        return $this->belongsTo('App\Army', 'army_id');
     }
 
     public function path()
     {
-        return $this->hasMany('App\Path', 'path_id');
+        return $this->hasMany('App\Path', 'path_id', 'path_id');
     }
 
 

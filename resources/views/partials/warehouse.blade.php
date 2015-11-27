@@ -5,7 +5,7 @@ $now = Carbon::now();
 
 ?>
 @section('navbar')
-    @include('layouts.navbar')
+    @include('partials.navbar')
 @stop
 
 @section('header')

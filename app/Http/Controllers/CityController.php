@@ -21,7 +21,7 @@ class CityController extends Controller
     public function getCity($id)
     {
 
-        $this->checkTasks();
+        TaskController::checkTasks();
 
         if ($this->validateOwner($id)) {
             $city = City::find($id);
@@ -35,7 +35,7 @@ class CityController extends Controller
 
         $building_slot = array_slice($building_slot->toArray(), 3, $building_slot['active_slots']);
 
-        return view('city', ['city' => $city, 'building_slot' => $building_slot, 'buildings' => $buildings]);
+        return view('city', ['city' => $city, 'building_slot' => $building_slot, 'buildings' => $buildings, 'help' => '/help/city']);
     }
 
 

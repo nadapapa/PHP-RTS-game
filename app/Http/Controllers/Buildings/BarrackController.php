@@ -1,6 +1,7 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\Buildings;
 
 use App\Army;
+use App\Http\Controllers\TaskController;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -27,7 +28,7 @@ class BarrackController extends Controller
         $type = $request->input('type');
 
         if ($building = $this->buildingCompleted($building_id)) {
-            $this->checkTasks();
+            TaskController::checkTasks();
             if ($building->workers > 0) {
                 if ($building->type == 5) {
                     if ($city->hasEnoughResources(Army::$unit_prices[$city->nation][$type])) {
@@ -44,7 +45,7 @@ class BarrackController extends Controller
                             $city->resources->population -= 1;
                             $city->resources->save();
                             $city->resources->subtract(Army::$unit_prices[$city->nation][$type]);
-                            $this->createTask($building, $type + 10, Army::$unit_times[$city->nation][$type]);
+                            TaskController::createTask($building, $type + 10, Army::$unit_times[$city->nation][$type]);
 
 
                             return redirect("/city/$city_id");

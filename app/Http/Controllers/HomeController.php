@@ -18,8 +18,11 @@ class HomeController extends Controller
         $username = Auth::user()->name;
         $cities = Auth::user()->cities;
 
-        $this->checkTasks();
+        TaskController::checkTasks();
 
-        return view('home', ['username' => $username, 'cities' => $cities]);
+        return view('home', [
+            'username' => $username,
+            'cities' => $cities,
+            'help' => '/help/home']);
     }
 }

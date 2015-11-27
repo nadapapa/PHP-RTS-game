@@ -1,5 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\Buildings;
 
+use App\Http\Controllers\TaskController;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Building;
@@ -71,7 +72,7 @@ class BuildingController extends Controller
      */
     public function getBuilding($city_id, $slot_num, $building_id)
     {
-        $this->checkTasks();
+        TaskController::checkTasks();
 
         if ($this->validateOwner($city_id)) {
             $city = City::find($city_id);
@@ -109,7 +110,7 @@ class BuildingController extends Controller
 
         if ($building = $this->buildingCompleted($building_id)) {
 
-            $this->checkTasks();
+            TaskController::checkTasks();
 
             return $this->setWorkers($city, $building, $request);
         }
@@ -210,7 +211,7 @@ class BuildingController extends Controller
             $city->building_slot->save();
 
             $building->task->each(function ($task) {
-                $this->undoTask($task);
+                TaskController::undoTask($task);
                 $task->delete();
             });
 

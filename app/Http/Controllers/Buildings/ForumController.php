@@ -1,5 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\Buildings;
 
+use App\Http\Controllers\TaskController;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -28,7 +29,7 @@ class ForumController extends Controller
         }
 
         if ($building = $this->buildingCompleted($building_id)) {
-            $this->checkTasks();
+            TaskController::checkTasks();
 
             if ($building->task->where('building_id', $building->id)->first()) {
                 return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['already_training' => 'Az épület használatban van']);
@@ -41,7 +42,7 @@ class ForumController extends Controller
                             $city->resources->population -= 1;
                             $city->resources->save();
                             $city->resources->subtract(City::$worker_price[$city->nation]);
-                            $this->createTask($building, 1, City::$worker_time[$city->nation]);
+                            TaskController::createTask($building, 1, City::$worker_time[$city->nation]);
 
                             return redirect("/city/$city_id/slot/$slot_num/building/$building_id");
                         }
@@ -70,7 +71,7 @@ class ForumController extends Controller
         }
 
         if ($building = $this->buildingCompleted($building_id)) {
-            $this->checkTasks();
+            TaskController::checkTasks();
 
             if ($building->task->where('building_id', $building->id)->first()) {
                 return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['already_training' => 'Az épület használatban van']);
@@ -85,7 +86,7 @@ class ForumController extends Controller
                                 $city->resources->population -= 10;
                                 $city->resources->save();
                                 $city->resources->subtract(City::$settler_price[$city->nation]);
-                                $this->createTask($building, 2, City::$settler_time[$city->nation]);
+                                TaskController::createTask($building, 2, City::$settler_time[$city->nation]);
 
                                 return redirect("/city/$city_id/slot/$slot_num/building/$building_id");
                             }

@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Auth;
 
 
+use App\Http\Controllers\TaskController;
 use App\User;
 use App\Exceptions;
 use Illuminate\Database\QueryException;
@@ -153,7 +154,7 @@ class AuthController extends Controller {
 			'verified' => 1],
 			$request->has('remember'))
 		) {
-            $this->checkTasks();
+			TaskController::checkTasks();
 
 			return redirect()->intended($this->redirectPath());
 		}
@@ -226,7 +227,7 @@ class AuthController extends Controller {
 		}
 
 
-        $this->checkTasks();
+		TaskController::checkTasks();
 
         //after login redirecting to home page
 		return redirect('home');

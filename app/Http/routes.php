@@ -62,7 +62,9 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
     Route::get('map/get_city_data', 'MapController@getCityData');
     Route::get('map/get_army_data', 'MapController@getArmyData');
 
-    Route::post('map', 'MapController@postPathPrice');
+    Route::post('map/path_price', 'MapController@postPathPrice');
+    Route::post('map/move_army', 'ArmyController@postMoveArmy');
+
 
     Route::get('map/{coord?}', 'MapController@getMap');
 
@@ -73,22 +75,22 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
 	Route::get('city/{id}', 'CityController@getCity');
 
     // build routes
-    Route::get('city/{city_id}/slot/{slot_num}', 'BuildingController@getBuild');
-    Route::post('city/{city_id}/slot/{slot_num}/build', 'BuildingController@postBuild');
+    Route::get('city/{city_id}/slot/{slot_num}', 'Buildings\BuildingController@getBuild');
+    Route::post('city/{city_id}/slot/{slot_num}/build', 'Buildings\BuildingController@postBuild');
 
     // all buildings
-    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}', 'BuildingController@getBuilding');
-    Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/workers', 'BuildingController@postSetWorkers');
-    Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/heal', 'BuildingController@postHeal');
-    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/levelup', 'BuildingController@getLevelUpBuilding');
-    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/delete', 'BuildingController@getDeleteBuilding');
+    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}', 'Buildings\BuildingController@getBuilding');
+    Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/workers', 'Buildings\BuildingController@postSetWorkers');
+    Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/heal', 'Buildings\BuildingController@postHeal');
+    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/levelup', 'Buildings\BuildingController@getLevelUpBuilding');
+    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/delete', 'Buildings\BuildingController@getDeleteBuilding');
 
     // forum
-    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/worker', 'ForumController@getMakeWorker');
-    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/settler', 'ForumController@getMakeSettler');
+    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/worker', 'Buildings\ForumController@getMakeWorker');
+    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/settler', 'Buildings\ForumController@getMakeSettler');
 
     // barracks
-    Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/train', 'BarrackController@postTrainUnit');
+    Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/train', 'Buildings\BarrackController@postTrainUnit');
 
 //	Route::get('city/{city_id}/newcity', 'CityController@getNewCity');
 

@@ -45,7 +45,8 @@ class MapController extends Controller
      */
     public function getMap()
     {
-        return view('map')->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));
+        TaskController::checkTasks();
+        return view('map', ['help' => '/help/map']);
     }
 
     public function getCities()
@@ -55,6 +56,8 @@ class MapController extends Controller
 
     public function getArmies()
     {
+        TaskController::checkTasks();
+
         $hexes = Grid::where("army_id", '>', 0)->select('x', 'y', 'army_id')->get()->toArray();
         $armies = Auth::user()->armies()->get()->toArray();
 
@@ -72,6 +75,8 @@ class MapController extends Controller
 
     public function getHexData(Request $request)
     {
+        TaskController::checkTasks();
+
         $hex = Grid::
         where("x", $request->input('x'))
             ->where('y', $request->input('y'))
@@ -101,6 +106,16 @@ class MapController extends Controller
             $hex['army_nation'] = intval($user->nation);
             if ($user == Auth::user()) {
                 $hex['army'] = $army->toArray();
+                if ($army->task) {
+                    $path = $army->task->path->toArray();
+                    $hex['path'] = [];
+                    foreach ($path as $path_point) {
+                        $path_hex = Grid::where('id', $path_point['hex_id'])->first();
+                        $hex['path'][] = ['x' => $path_hex->x, 'y' => $path_hex->y];
+                    }
+                    $hex['path_time'] = $army->task->finished_at->format('Y/m/d/ H:i:s');
+
+                }
             }
         }
 
@@ -109,11 +124,15 @@ class MapController extends Controller
 
     public function getCityData(Request $request)
     {
+        TaskController::checkTasks();
+
         return City::where('id', $request->input('city'))->first()->toJson();
     }
 
     public function getArmyData(Request $request)
     {
+        TaskController::checkTasks();
+
         $army = Army::where('id', $request->input('army_id'))->first()->toArray();
 
         $hex = Grid::find($army['current_hex_id']);

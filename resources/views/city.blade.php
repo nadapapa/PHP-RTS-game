@@ -2,7 +2,7 @@
 
 @section('navbar')
     <script src="{{asset('js/jquery.countdown.min.js')}}"></script>
-    @include('layouts.navbar')
+    @include('partials.navbar')
 @stop
 @section('header')
     <div class="clearfix">

@@ -10,15 +10,24 @@ class Path extends Model
      *
      * @var string
      */
-    protected $table = 'tasks';
+    protected $table = 'paths';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['path_id', 'hex_id'];
+    protected $fillable = ['path_id', 'hex_id', 'finished_at'];
 
+    protected $dates = ['finished_at'];
+
+    public $timestamps = false;
+
+
+    public function army()
+    {
+        return $this->belongsTo('App\Army', 'path_id');
+    }
 
     public function task()
     {
@@ -27,6 +36,6 @@ class Path extends Model
 
     public function hex()
     {
-        return $this->hasOne('App\Grid', 'id');
+        return $this->hasOne('App\Grid', 'id', 'hex_id');
     }
 }

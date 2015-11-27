@@ -197,13 +197,6 @@ var path_point_zindex = 4000;
 var path_zindex = 3000;
 var highlight_zindex = 2000;
 
-//$.ajaxPrefilter(function (options, originalOptions, xhr) {
-//    var token = $('meta[name="csrf_token"]').attr('content');
-//
-//    if (token) {
-//        return xhr.setRequestHeader('X-XSRF-TOKEN', token);
-//    }
-//});
 
 $.ajaxSetup({
     headers: {'X-CSRF-Token': $('meta[name=csrf_token]').attr('content')}
@@ -296,10 +289,11 @@ function init() {
         }]
     }).setView([0, 0], mapMinZoom);
 
-    var city_markers = L.layerGroup().addTo(map);
-    var army_markers = L.layerGroup().addTo(map);
+    city_markers = L.layerGroup().addTo(map);
+    army_markers = L.layerGroup().addTo(map);
     path_markers = L.layerGroup().addTo(map);
     point_markers = L.layerGroup().addTo(map);
+    started_path_group = L.layerGroup().addTo(map);
 
     rc = new L.RasterCoords(map, img);
 
@@ -334,63 +328,11 @@ function init() {
 
     map.panBy([1, 0]);
 
-    //  ajax cities ===================================================================
     $.ajaxSetup({cache: false});
-    $.getJSON("/map/get_cities", function (data) {
-        for (var i in data) {
-            tx = (data[i].x * HEX_SIDE * 1.5) + 36;
-            ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
 
-            var city_marker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
-                icon: window["city" + map.getZoom()],
-                zIndexOffset: cities_zindex,
-                clickable: false
-            }).addTo(map);
-            city_markers.addLayer(city_marker);
-        }
-    }).complete(function () {
-        if (start_coord != 0) {
-            placeHighlightHex(start_coord[0], start_coord[1]);
-            getHexData(start_coord[0], start_coord[1]);
-            map.setView(highlightMarker.getLatLng(), 4);
-        }
-        if (firstLoad == true) {
-            map.fitBounds(map.getBounds());
-            firstLoad = false;
-        }
-    });
+    getCities();
 
-    //  ajax armies ===================================================================
-    $.getJSON("/map/get_armies", function (data) {
-        for (var i in data) {
-            tx = (data[i].x * HEX_SIDE * 1.5) + 36;
-            ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
-
-            var army_marker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
-                icon: window["army" + map.getZoom()],
-                zIndexOffset: armies_zindex,
-                contextmenu: true,
-                contextmenuInheritItems: false,
-                contextmenuItems: [{
-                    text: 'hadsereg mozgatása',
-                    disabled: true,
-                    callback: selectArmy,
-                }]
-            }).addTo(map)
-                .on('click', function (e) {
-                    var coord = calculateHexCoord(e.latlng);
-                    placeHighlightHex(coord.x, coord.y);
-                    getHexData(coord.x, coord.y);
-                });
-            if (typeof data[i].army != 'undefined') {
-                army_marker.options.contextmenuItems[0].disabled = false;
-
-                army_marker.army = data[i].army;
-            }
-
-            army_markers.addLayer(army_marker);
-        }
-    });
+    getArmies();
 
     // info box ===========================================================================
     info = L.control();
@@ -462,6 +404,10 @@ function init() {
             layer.setIcon(window["brush" + map.getZoom()]);
         });
 
+        started_path_group.eachLayer(function (layer) {
+            layer.setIcon(window["brush" + map.getZoom()]);
+        });
+
         point_markers.eachLayer(function (layer) {
             layer.setIcon(window["green" + map.getZoom()]);
         });
@@ -478,12 +424,77 @@ function init() {
     });
 }
 
+function getCities() {
+    $.getJSON("/map/get_cities", function (data) {
+        for (var i in data) {
+            tx = (data[i].x * HEX_SIDE * 1.5) + 36;
+            ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
+
+            city_marker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
+                icon: window["city" + map.getZoom()],
+                zIndexOffset: cities_zindex,
+                clickable: false
+            }).addTo(map);
+            city_markers.addLayer(city_marker);
+        }
+    }).complete(function () {
+        if (start_coord != 0) {
+            placeHighlightHex(start_coord[0], start_coord[1]);
+            getHexData(start_coord[0], start_coord[1]);
+            map.setView(highlightMarker.getLatLng(), 4);
+        }
+        if (firstLoad == true) {
+            map.fitBounds(map.getBounds());
+            firstLoad = false;
+        }
+    });
+
+}
+
+function getArmies() {
+    $.getJSON("/map/get_armies", function (data) {
+        for (var i in data) {
+            tx = (data[i].x * HEX_SIDE * 1.5) + 36;
+            ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
+
+            var army_marker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
+                icon: window["army" + map.getZoom()],
+                zIndexOffset: armies_zindex,
+                contextmenu: true,
+                contextmenuInheritItems: false,
+                contextmenuItems: [{
+                    text: 'hadsereg mozgatása',
+                    disabled: false,
+                    callback: selectArmy,
+                }]
+            }).addTo(map)
+                .on('click', onMapClick);
+
+            if (typeof data[i].army != 'undefined') {
+                //army_marker.options.contextmenuItems[0].disabled = false;
+
+                army_marker.army = data[i].army;
+
+                if (army_marker.army.task_id > 0) {
+                    army_marker.options.contextmenuItems[0].disabled = true;
+                }
+            }
+
+            army_markers.addLayer(army_marker);
+        }
+    });
+
+}
+
 
 function onMapClick(e) {
     map.contextmenu.hide();
+    map.closePopup();
     var coord = calculateHexCoord(e.latlng);
     placeHighlightHex(coord.x, coord.y);
     getHexData(coord.x, coord.y);
+    started_path_group.clearLayers();
+
 }
 
 function calculateHexCoord(latlng) {
@@ -545,7 +556,6 @@ function getHexData(x, y) {
         return false;
     }
     $.getJSON("/map/get_hex_data", {x: x, y: y}, function (data) {
-
         switch (data.city_nation) {
             case 0:
                 var city_nation = '';
@@ -633,11 +643,43 @@ function getHexData(x, y) {
             army_nation: army_nation,
             army: data.army
         });
+
+        if (typeof data.path != 'undefined') {
+            var started_path = [{x: x, y: y}];
+            started_path = started_path.concat(data.path);
+            drawPath(started_path, started_path_group);
+
+            army_markers.eachLayer(function (marker) {
+                if (marker.army.id == data.army_id) {
+
+
+                    marker.army = data;
+                    marker.unbindPopup();
+
+                    if (typeof data.path_time != 'undefined') {
+                        marker.options.contextmenuItems[0].disabled = true;
+
+                        marker.bindPopup(
+                            "hátralévő idő: <span id='countdown'></span>",
+                            {offset: new L.Point(0, -30)}).openPopup();
+
+                    } else {
+                        marker.options.contextmenuItems[0].disabled = false;
+
+                    }
+                }
+            });
+
+            $('#countdown').countdown(data.path_time, function (event) {
+                $(this).html(event.strftime('%H:%M:%S'));
+            });
+        }
+
     });
 }
 
 
-function selectArmy(a) {
+function selectArmy(e) {
     path_markers.clearLayers();
     point_markers.clearLayers();
 
@@ -645,7 +687,7 @@ function selectArmy(a) {
         map.removeLayer(highlightMarker);
         highlightMarker = undefined;
     }
-    armycoord = calculateHexCoord(a.latlng);
+    armycoord = calculateHexCoord(e.latlng);
 
     points = [];
     path = [];
@@ -671,8 +713,8 @@ function selectArmy(a) {
     }
 }
 
-function addPathPoint(b) {
-    var coord = calculateHexCoord(b.latlng);
+function addPathPoint(e) {
+    var coord = calculateHexCoord(e.latlng);
     points.push(coord);
 
     path_markers.clearLayers();
@@ -686,7 +728,8 @@ function addPathPoint(b) {
     }
     createPath();
     drawPathPoints();
-    drawPath();
+    drawPath(path, path_markers);
+    calculatePathTime(e.latlng);
 }
 
 
@@ -718,31 +761,30 @@ function drawPathPoints() {
                 disabled: false,
                 text: 'pont törlése',
                 callback: deletePathPoint
-            }, {
-                disabled: false,
-                text: 'út idejének kiszámítása',
-                callback: calculatePathTime
             }]
         })
             .addTo(map)
             .on('drag', dragPathPoint)
             .on('contextmenu', function (e) {
                 point_marker_number = e.target.options.number;
-            });
+            })
+            .on('click', onMapClick);
 
-        pointMarker.bindPopup("út hossza: " + path.length + " hex").on('dragend', function (e) {
-            e.target._popup.setContent("út hossza: " + path.length + " hex");
-            e.target._popup.update();
-            e.target.openPopup();
+        pointMarker
+            .bindPopup("út hossza: " + path.length + " hex", {offset: new L.Point(0, -30)})
+            .on('dragend', function (e) {
+                calculatePathTime(e.target._latlng);
+
         });
 
         pointMarker.openPopup();
 
         point_markers.addLayer(pointMarker);
     }
+
 }
 
-function drawPath() {
+function drawPath(path, layerGroup) {
     l = path.length;
     for (var i = 0; i < l; i++) {
         tx = (path[i].x * HEX_SIDE * 1.5) + 36;
@@ -757,7 +799,7 @@ function drawPath() {
             contextmenuInheritItems: false,
             contextmenuItems: []
         }).addTo(map);
-        path_markers.addLayer(pathMarker)
+        layerGroup.addLayer(pathMarker)
     }
 
 }
@@ -782,8 +824,9 @@ function dragPathPoint(e) {
 
     path_markers.clearLayers();
 
+
     createPath();
-    drawPath();
+    drawPath(path, path_markers);
 }
 
 function deletePathPoint() {
@@ -799,17 +842,16 @@ function deletePathPoint() {
     }
 
     createPath();
-    drawPath();
+    drawPath(path, path_markers);
     drawPathPoints();
 }
 
 
 function calculatePathTime(e) {
-    var coord = calculateHexCoord(e.latlng);
+    var coord = calculateHexCoord(e);
     path.push(coord);
-    map.contextmenu.setDisabled(0, true);
 
-    $.post("/map", {'_token': $('meta[name=csrf-token]').attr('content'), path: path}, function (data) {
+    $.post("/map/path_price", {'_token': $('meta[name=_token]').attr('content'), path: path}, function (data) {
         var sec_num = parseInt(data, 10);
         var hours = Math.floor(sec_num / 3600);
         var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
@@ -826,66 +868,49 @@ function calculatePathTime(e) {
         }
         var time = hours + ':' + minutes + ':' + seconds;
         point_markers.eachLayer(function (layer) {
-            //console.log(layer);
             layer._popup.setContent(
-                "út hossza: " + path.length + " hex<br>" +
+                "út hossza: " + (parseInt(path.length, 10) - 1) + " hex<br>" +
                 "út ideje: " + time + "<br>" +
-                ""  // TODO buttons
+                '<button type="button" class="btn btn-xs btn-success" onclick="moveToHex(path)">mehet</button> '
             );
-            layer.options.contextmenuItems[0].disabled = true;
         });
     });
 
-
+    pointMarker.openPopup();
 }
 
-function moveToHex(b) {
-    var finishcoord = calculateHexCoord(b.latlng);
+function moveToHex(path) {
+    $.post("/map/move_army", {_token: $('meta[name=_token]').attr('content'), path: path}, function (data) {
+        map.contextmenu.setDisabled(0, true);
+        path_markers.clearLayers();
+        point_markers.clearLayers();
+        points = [];
+        path = [];
+        army_markers.eachLayer(function (marker) {
+            if (marker.army.id == data) {
+                marker.unbindPopup();
+                console.log(marker);
+                marker.options.contextmenuItems[0].disabled = true;
+            }
+        });
 
-    $.getJSON("/map/get_path", {
-        x1: armycoord.x,
-        y1: armycoord.y,
-        x2: finishcoord.x,
-        y2: finishcoord.y
-    }, function (data) {
-        console.log(data);
-
-        for (var i in data) {
-            tx = (data[i].x * HEX_SIDE * 1.5) + 36;
-            ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
-
-            var pathMarker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
-                icon: window["highlight" + map.getZoom()],
-                zIndexOffset: 1500,
-                clickable: false
-            }).addTo(map);
-            path_markers.addLayer(pathMarker)
-        }
     });
-
+    map.closePopup();
 }
 
-//function endOfPath(c) {
-//    map.contextmenu.setDisabled(0, true);
+
+//window.setInterval(function(){
+//    army_markers.clearLayers();
 //
-//    var finishcoord = calculateHexCoord(c.latlng);
-//    points.push(finishcoord);
-//    path.push(finishcoord);
-//
-//    path_markers.clearLayers();
-//    point_markers.clearLayers();
-//
-//    if (typeof highlightMarker != 'undefined') {
-//        map.removeLayer(highlightMarker);
-//        highlightMarker = undefined;
-//    }
-//
-//    createPath();
-//    drawPathPoints();
-//    drawPath();
+//    getArmies();
 //
 //
-//}
+//}, 10000);
+
+
+
+
+
 
 
 

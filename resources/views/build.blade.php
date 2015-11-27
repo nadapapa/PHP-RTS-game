@@ -1,15 +1,19 @@
 @extends('layouts.master')
 
 @section('navbar')
-    @include('layouts.navbar')
+    @include('partials.navbar')
 @stop
 @section('header')
+    <div class="clearfix">
     <h1>
         <a href="/city/{{$city->id}}">
             {{$city->name}}
         </a>
         <small>Építés</small>
     </h1>
+        @include('layouts.resources')
+    </div>
+
 @stop
 @section('content')
     <div class="col-md-8 col-md-offset-2">
