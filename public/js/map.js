@@ -257,6 +257,12 @@ function cubeRound(h) {
     return {x: rx, y: ry, z: rz}
 }
 
+function offsetToPixel(x, y) {
+    nx = HEX_HEIGHT * 3 / 2 * x;
+    ny = HEX_HEIGHT * Math.sqrt(3) * (y + 0.5 * (x & 1));
+    return L.point(nx, ny);
+}
+
 
 //#############################################################################################
 //#############################################################################################
@@ -273,6 +279,10 @@ function init() {
     var mapMinZoom = 1;
     var mapMaxZoom = 4;
 
+    var view = [0, 0];
+    var zoom = mapMinZoom;
+
+
     var img = [
         2231,  // original width of image
         2988   // original height of image
@@ -281,13 +291,21 @@ function init() {
         maxZoom: mapMaxZoom,
         minZoom: mapMinZoom,
         crs: L.CRS.Simple,
+        attributionControl: false,
         contextmenu: true,
         contextmenuItems: [{
             text: 'pont hozzáadása az útvonalhoz',
             callback: addPathPoint,
             disabled: true
         }]
-    }).setView([0, 0], mapMinZoom);
+    }).setView(view, zoom);
+    rc = new L.RasterCoords(map, img);
+
+    if (start_coord != 0) {
+        placeHighlightHex(start_coord[0], start_coord[1]);
+        getHexData(start_coord[0], start_coord[1]);
+        map.setView(highlightMarker.getLatLng(), 4);
+    }
 
     city_markers = L.layerGroup().addTo(map);
     army_markers = L.layerGroup().addTo(map);
@@ -295,19 +313,22 @@ function init() {
     point_markers = L.layerGroup().addTo(map);
     started_path_group = L.layerGroup().addTo(map);
 
-    rc = new L.RasterCoords(map, img);
 
+    //var southWest = map.unproject([0, img[1]], map.getMaxZoom()-1);
+    //var northEast = map.unproject([img[0], 0], map.getMaxZoom()-1);
+    //var bounds = new L.LatLngBounds(southWest, northEast);
+    //map.fitBounds(bounds);
     var mapBounds = new L.LatLngBounds(
-        map.unproject([0, 3000], mapMaxZoom),
-        map.unproject([3000, 0], mapMaxZoom));
+        map.unproject([0, 2988], mapMaxZoom),
+        map.unproject([2231, 0], mapMaxZoom));
 
-    map.fitBounds(mapBounds);
+    map.setMaxBounds(mapBounds);
 
     L.tileLayer('http://localhost/img/map/{z}/{x}/{y}.png', {
         minZoom: mapMinZoom,
         maxZoom: mapMaxZoom,
         continuousWorld: true,
-        bounds: mapBounds,
+        //bounds: mapBounds,
         noWrap: true
         //tms: false
     }).addTo(map);
@@ -317,7 +338,7 @@ function init() {
         minZoom: 0,
         maxZoom: mapMaxZoom,
         continuousWorld: true,
-        bounds: mapBounds
+        //bounds: mapBounds
     });
 
     new L.Control.MiniMap(minimap, {
@@ -325,10 +346,12 @@ function init() {
         height: 200,
         position: 'bottomleft'
     }).addTo(map);
+    // ===================================================================================
 
     map.panBy([1, 0]);
+    //$.ajaxSetup({cache: true});
 
-    $.ajaxSetup({cache: false});
+    // ajax ================================================================================
 
     getCities();
 
@@ -379,6 +402,7 @@ function init() {
         this._div.innerHTML = '<h4>Információk</h4>' + (data ? info : 'Jelölj ki egy hexet');
     };
     info.addTo(map);
+    // ====================================================================================
 
     map.on('click', onMapClick);
 
@@ -391,6 +415,14 @@ function init() {
 
     // zoom adjusting ===================================================================
     map.on('zoomend', function () {
+        var bound = map.getBounds();
+        var ne = calculateHexCoord(bound.getNorthEast());
+        var nw = calculateHexCoord(bound.getNorthWest());
+        var se = calculateHexCoord(bound.getSouthEast());
+        var sw = calculateHexCoord(bound.getSouthWest());
+
+        console.log('ne: x: ' + ne.x + ', y: ' + ne.y + ', nw: x: ' + nw.x + ', y: ' + nw.y + ', se: x: ' + se.x + ', y: ' + se.y + ', sw: x: ' + sw.x + ', y: ' + sw.y);
+
 
         city_markers.eachLayer(function (layer) {
             layer.setIcon(window["city" + map.getZoom()]);
@@ -422,6 +454,7 @@ function init() {
 
 
     });
+
 }
 
 function getCities() {
@@ -436,16 +469,6 @@ function getCities() {
                 clickable: false
             }).addTo(map);
             city_markers.addLayer(city_marker);
-        }
-    }).complete(function () {
-        if (start_coord != 0) {
-            placeHighlightHex(start_coord[0], start_coord[1]);
-            getHexData(start_coord[0], start_coord[1]);
-            map.setView(highlightMarker.getLatLng(), 4);
-        }
-        if (firstLoad == true) {
-            map.fitBounds(map.getBounds());
-            firstLoad = false;
         }
     });
 
@@ -495,6 +518,15 @@ function onMapClick(e) {
     getHexData(coord.x, coord.y);
     started_path_group.clearLayers();
 
+
+    //var bound = map.getBounds();
+    //var ne = calculateHexCoord(bound.getNorthEast());
+    //var nw = calculateHexCoord(bound.getNorthWest());
+    //var se = calculateHexCoord(bound.getSouthEast());
+    //var sw = calculateHexCoord(bound.getSouthWest());
+    //
+    //console.log('ne: x: '+ne.x +', y: '+ne.y+', nw: x: '+nw.x+', y: '+nw.y+', se: x: '+se.x+', y: '+se.y+', sw: x: '+sw.x+', y: '+sw.y);
+    //console.log(army_markers.getLayers());
 }
 
 function calculateHexCoord(latlng) {
