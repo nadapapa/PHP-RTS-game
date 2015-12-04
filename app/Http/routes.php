@@ -56,6 +56,7 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
 
     // map routes
 //    Route::get('map/x{x}y{y}', 'MapController@getMapCoord');
+    Route::get('map/get_data', 'MapController@getData');
     Route::get('map/get_cities', 'MapController@getCities');
     Route::get('map/get_armies', 'MapController@getArmies');
     Route::get('map/get_hex_data', 'MapController@getHexData');
@@ -91,6 +92,9 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
 
     // barracks
     Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/train', 'Buildings\BarrackController@postTrainUnit');
+
+    //help
+    Route::get('help/{help?}', 'HomeController@getHelp');
 
 //	Route::get('city/{city_id}/newcity', 'CityController@getNewCity');
 

@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Army;
 use App\City;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -138,7 +139,16 @@ class TaskController extends Controller
             case 15:
             case 16:
             case 17:
-                $unit_type = 'unit' . ($task->type - 10);
+            if ($task->building->city->hex->army_id == 0) {
+                $army = Army::create([
+                    'user_id' => $task->building->city->owner,
+                    'current_hex_id' => $task->building->city->hex->id
+                ]);
+                $task->building->city->hex->army_id = $army->id;
+                $task->building->city->hex->save();
+            }
+
+            $unit_type = 'unit' . ($task->type - 10);
 
                 $task->building->city->hex->army->$unit_type += 1;
                 $task->building->city->hex->army->save();

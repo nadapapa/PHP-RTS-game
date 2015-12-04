@@ -40,6 +40,11 @@ class Army extends Model
         return $this->hasOne('App\Task', 'army_id');
     }
 
+    public function path()
+    {
+        return $this->hasMany('App\Path', 'path_id', 'path_id');
+    }
+
     public static $unit_names = [
         1 => [ // római
             1 => 'könnyűgyalogos',

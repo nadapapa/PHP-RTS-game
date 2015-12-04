@@ -25,4 +25,18 @@ class HomeController extends Controller
             'cities' => $cities,
             'help' => '/help/home']);
     }
+
+    public function getHelp($help = 0)
+    {
+        switch ($help) {
+            case 'map':
+                return view('help/map_help');
+            case 'home':
+                return view('help/home_help');
+            case 'city':
+                return view('help/city_help');
+            case 0:
+                return view('help/help');
+        }
+    }
 }

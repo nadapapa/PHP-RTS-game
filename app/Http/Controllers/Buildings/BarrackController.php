@@ -33,14 +33,6 @@ class BarrackController extends Controller
                 if ($building->type == 5) {
                     if ($city->hasEnoughResources(Army::$unit_prices[$city->nation][$type])) {
                         if ($city->resources->population > 0) {
-                            if ($city->hex->army_id == 0) {
-                                $army = Army::create([
-                                    'user_id' => $city->owner,
-                                    'current_hex_id' => $city->hex->id
-                                ]);
-                                $city->hex->army_id = $army->id;
-                                $city->hex->save();
-                            }
 
                             $city->resources->population -= 1;
                             $city->resources->save();

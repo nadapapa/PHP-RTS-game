@@ -9,14 +9,21 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Főoldal</a>
+                <a class="navbar-brand" href="/home"><i class="fa fa-home"></i>
+                    Országod</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li>
-                        <a href="/home"><i class="fa fa-user"></i> Profil</a>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false"><i class="fa fa-fort-awesome"></i>
+                            Városaid <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            @foreach (Auth::user()->cities as $city)
+                                <li><a href="/city/{{$city->id}}">{{$city->name}}</a></li>
+                            @endforeach
+                        </ul>
                     </li>
-
                     <li>
                         <?php
                         if (isset($city)) {
@@ -28,24 +35,19 @@
                         ?>
 
                     </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false"><i class="fa fa-fort-awesome"></i>
-                            Városok <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            @foreach (Auth::user()->cities as $city)
-                                <li><a href="/city/{{$city->id}}">{{$city->name}}</a></li>
-                            @endforeach
-                        </ul>
-                    </li>
                 </ul>
+
+
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         @if(Request::is('map*'))
-                            <a href="help/map"><i class="fa fa-question-circle"></i>
+                            <a href="/help/map"><i class="fa fa-question-circle"></i>
                                 Segítség</a>
                         @elseif(Request::is('home'))
-                            <a href="help/home"><i class="fa fa-question-circle"></i>
+                            <a href="/help/home"><i class="fa fa-question-circle"></i>
+                                Segítség</a>
+                        @elseif(Request::is('city/*'))
+                            <a href="/help/city"><i class="fa fa-question-circle"></i>
                                 Segítség</a>
                         @endif
 

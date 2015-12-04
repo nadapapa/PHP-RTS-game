@@ -81,18 +81,10 @@ class ArmyController extends Controller
         $task->save();
 
         $army->task_id = $task->id;
+        $army->path_id = $path_id;
         $army->save();
 
         return $army->id;
 
     }
-
-
-    public function moveArmyOnPath()
-    {
-
-    }
-
-
-
 }
