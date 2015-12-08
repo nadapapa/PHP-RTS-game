@@ -52,7 +52,6 @@ class MapController extends Controller
         return view('map', ['help' => '/help/map']);
     }
 
-
     public function getData(Request $request)
     {
         TaskController::checkTasks();
@@ -99,7 +98,6 @@ class MapController extends Controller
         return ['cities' => $cities, 'armies' => $armies];
 
     }
-
 
     public function getHexData(Request $request)
     {
@@ -149,6 +147,56 @@ class MapController extends Controller
 
         return $hex;
     }
+
+    public function postPathPrice(Request $request)
+    {
+        $path = $request->input('path');
+
+        $path_data = [];
+        foreach ($path as $hex) {
+            $path_data[] = Grid::
+            where("x", $hex['x'])
+                ->where('y', $hex['y'])
+                ->select('layer1', 'owner', 'city', 'army_id')
+                ->first();
+        }
+
+        $army = Army::where('id', $path_data[0]->army_id)->first();
+
+        $units = [
+            1 => intval($army->unit1),
+            2 => intval($army->unit2),
+            3 => intval($army->unit3),
+            4 => intval($army->unit4),
+            5 => intval($army->unit5),
+            6 => intval($army->unit6),
+            7 => intval($army->unit7)
+        ];
+
+        $speed = [];
+
+        foreach ($units as $key => $value) {
+            if ($value > 0) {
+                $speed[] = Army::$unit_speeds[$army->user->nation][$key];
+            }
+        }
+
+        $speed = max($speed);
+
+        $time = 0;
+
+        array_shift($path_data);
+
+        foreach ($path_data as $hex) {
+            $time += Grid::$price[intval($hex->layer1)] * $speed;
+        }
+
+        return $time;
+
+    }
+
+
+
 
 
     public function getCities()
@@ -220,52 +268,6 @@ class MapController extends Controller
         }
     }
 
-    public function postPathPrice(Request $request)
-    {
-        $path = $request->input('path');
-
-        $path_data = [];
-        foreach ($path as $hex) {
-            $path_data[] = Grid::
-            where("x", $hex['x'])
-                ->where('y', $hex['y'])
-                ->select('layer1', 'owner', 'city', 'army_id')
-                ->first();
-        }
-
-        $army = Army::where('id', $path_data[0]->army_id)->first();
-
-        $units = [
-            1 => intval($army->unit1),
-            2 => intval($army->unit2),
-            3 => intval($army->unit3),
-            4 => intval($army->unit4),
-            5 => intval($army->unit5),
-            6 => intval($army->unit6),
-            7 => intval($army->unit7)
-        ];
-
-        $speed = [];
-
-        foreach ($units as $key => $value) {
-            if ($value > 0) {
-                $speed[] = Army::$unit_speeds[$army->user->nation][$key];
-            }
-        }
-
-        $speed = max($speed);
-
-        $time = 0;
-
-        array_shift($path_data);
-
-        foreach ($path_data as $hex) {
-            $time += Grid::$price[intval($hex->layer1)] * $speed;
-        }
-
-        return $time;
-
-    }
 
 
 

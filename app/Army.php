@@ -45,6 +45,19 @@ class Army extends Model
         return $this->hasMany('App\Path', 'path_id', 'path_id');
     }
 
+    public function getUnits()
+    {
+        return [
+            1 => $this->unit1,
+            2 => $this->unit2,
+            3 => $this->unit3,
+            4 => $this->unit4,
+            5 => $this->unit5,
+            6 => $this->unit6,
+            7 => $this->unit7
+        ];
+    }
+
     public static $unit_names = [
         1 => [ // római
             1 => 'könnyűgyalogos',
@@ -205,6 +218,45 @@ class Army extends Model
             5 => 50,
             6 => 60,
             7 => 100
+        ],
+    ];
+
+    public static $unit_food_consumtion = [ // food/hour
+        1 => [ // római
+            1 => 1,
+            2 => 1,
+            3 => 1,
+            4 => 1,
+            5 => 1,
+            6 => 1,
+            7 => 1
+        ],
+        2 => [ // görög
+            1 => 1,
+            2 => 1,
+            3 => 1,
+            4 => 1,
+            5 => 1,
+            6 => 1,
+            7 => 1
+        ],
+        3 => [ // germán
+            1 => 1,
+            2 => 1,
+            3 => 1,
+            4 => 1,
+            5 => 1,
+            6 => 1,
+            7 => 1
+        ],
+        4 => [ // szarmata
+            1 => 1,
+            2 => 1,
+            3 => 1,
+            4 => 1,
+            5 => 1,
+            6 => 1,
+            7 => 1
         ],
     ];
 }

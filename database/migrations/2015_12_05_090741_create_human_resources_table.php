@@ -2,10 +2,10 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Schema;
 
-class CreateResourcesTable extends Migration
+class CreateHumanResourcesTable extends Migration
 {
+
     /**
      * Run the migrations.
      *
@@ -13,15 +13,14 @@ class CreateResourcesTable extends Migration
      */
     public function up()
     {
-        Schema::create('resources', function (Blueprint $table) {
+        Schema::create('human_resources', function (Blueprint $table) {
             $table->increments('id');
 
             $table->integer('city')->unsigned();
 
-            $table->integer('iron')->unsigned()->default(100);
-            $table->integer('stone')->unsigned()->default(100);
-            $table->integer('lumber')->unsigned()->default(100);
-            $table->integer('food')->unsigned()->default(100);
+            $table->integer('population')->unsigned()->default(10);
+            $table->integer('workers')->unsigned()->default(5);
+            $table->integer('settlers')->unsigned();
 
             $table->timestamps();
         });
@@ -34,6 +33,7 @@ class CreateResourcesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('resources');
+        Schema::drop('human_resources');
     }
+
 }

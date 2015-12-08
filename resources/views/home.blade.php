@@ -52,7 +52,7 @@
                     @endforeach
                     <tr>
                         <td>Népesség</td>
-                        <td>{{$city->resources->population}}</td>
+                        <td>{{$city->human_resources->population}}</td>
                         <td>0/h</td>
                     </tr>
                     <tr>

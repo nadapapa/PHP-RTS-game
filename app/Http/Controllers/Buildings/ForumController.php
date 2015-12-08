@@ -38,9 +38,10 @@ class ForumController extends Controller
             if ($building->workers > 0) {
                 if ($building->type == 7) {
                     if ($city->hasEnoughResources(City::$worker_price[$city->nation])) {
-                        if ($city->resources->population > 0) {
-                            $city->resources->population -= 1;
-                            $city->resources->save();
+                        if ($city->human_resources->population > 0) {
+                            $city->human_resources->population -= 1;
+                            $city->human_resources->save();
+
                             $city->resources->subtract(City::$worker_price[$city->nation]);
                             TaskController::createTask($building, 1, City::$worker_time[$city->nation]);
 

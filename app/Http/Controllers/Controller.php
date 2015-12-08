@@ -4,6 +4,7 @@ use App\Building;
 use App\BuildingSlot;
 use App\City;
 use App\Grid;
+use App\HumanResource;
 use App\Resource;
 use App\Task;
 use App\User;
@@ -105,6 +106,7 @@ abstract class Controller extends BaseController
         echo "created";
         BuildingSlot::create(['city' => $city->id]);
         Resource::create(['city' => $city->id]);
+        HumanResource::create(['city' => $city->id]);
 
         $hex = Grid::find($hex_id);
         $hex->update(['owner' => $user->id, 'city' => $city->id]);

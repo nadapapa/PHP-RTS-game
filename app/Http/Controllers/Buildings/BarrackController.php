@@ -32,10 +32,10 @@ class BarrackController extends Controller
             if ($building->workers > 0) {
                 if ($building->type == 5) {
                     if ($city->hasEnoughResources(Army::$unit_prices[$city->nation][$type])) {
-                        if ($city->resources->population > 0) {
+                        if ($city->human_resources->population > 0) {
+                            $city->human_resources->population -= 1;
+                            $city->human_resources->save();
 
-                            $city->resources->population -= 1;
-                            $city->resources->save();
                             $city->resources->subtract(Army::$unit_prices[$city->nation][$type]);
                             TaskController::createTask($building, $type + 10, Army::$unit_times[$city->nation][$type]);
 
@@ -52,9 +52,6 @@ class BarrackController extends Controller
             return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_worker' => 'Az épületben nem dolgozik munkás']);
         }
         return redirect("/city/$city_id");
-//        $army->$unit_type += 1;
-//        $army->save();
-
     }
 
 }

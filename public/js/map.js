@@ -557,7 +557,7 @@ function updateInfobox(type, data) {
 }
 
 function switchNation(nation) {
-    switch (nation) {
+    switch (parseInt(nation)) {
         case 0:
             return '';
             break;

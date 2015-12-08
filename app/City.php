@@ -36,9 +36,19 @@ class City extends Model
         return $this->hasOne('App\BuildingSlot', 'city');
     }
 
+    public function buildings()
+    {
+        return $this->hasMany('buildings', 'city_id');
+    }
+
     public function resources()
     {
         return $this->hasOne('App\Resource', 'city');
+    }
+
+    public function human_resources()
+    {
+        return $this->hasOne('App\HumanResource', 'city');
     }
 
     public function task()
@@ -56,6 +66,16 @@ class City extends Model
     {
         foreach ($price as $key => $value) {
             if ($this->resources->$key < $value) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function hasEnoughHumanResources(array $price)
+    {
+        foreach ($price as $key => $value) {
+            if ($this->human_resources->$key < $value) {
                 return false;
             }
         }
@@ -105,6 +125,13 @@ class City extends Model
         2 => 60,
         3 => 60,
         4 => 60,
+    ];
+
+    public static $city_storage = [
+        1 => 100,
+        2 => 100,
+        3 => 100,
+        4 => 100,
     ];
 
 }

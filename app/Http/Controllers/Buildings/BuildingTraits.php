@@ -49,6 +49,10 @@ trait BuildingTraits
     {
         $building = Building::where('id', $building_id)->first();
 
+        if (!$building) {
+            return false;
+        }
+
         if ($building->finished_at->gte(Carbon::now())) {
             return false;
         }
@@ -71,9 +75,9 @@ trait BuildingTraits
         }
         // check if the user want to add or remove workers.
         $diff = $workers - $building->workers;
-        if ($city->hasEnoughResources(['workers' => $diff])) {
+        if ($city->hasEnoughHumanResources(['workers' => $diff])) {
 
-            $city->resources->subtract(['workers' => $diff]);
+            $city->human_resources->subtract(['workers' => $diff]);
 
             $building->workers = $workers;
             $building->save();

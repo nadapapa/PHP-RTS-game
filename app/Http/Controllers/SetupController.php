@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\BuildingSlot;
 use App\City;
 use App\Grid;
-use App\Resource;
 use Illuminate\Database\Eloquent\Collection;
 use App\User;
 use Illuminate\Http\Request;

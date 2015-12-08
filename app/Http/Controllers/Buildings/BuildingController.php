@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Buildings;
 
+use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\TaskController;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -34,10 +35,13 @@ class BuildingController extends Controller
             return redirect("/city/$city_id")->withErrors(['occupied' => 'Ez az építési hely már foglalt']);
         }
 
+        $production = ResourceController::processProduction($city);
+
         return view('build', [
             'city' => $city,
             'slot_num' => $slot_num,
             'building_slot' => $building_slot,
+            'production' => $production
         ]);
     }
 
@@ -80,8 +84,13 @@ class BuildingController extends Controller
             return redirect('/home')->withErrors('Nem a te városod');
         }
 
+        $production = ResourceController::processProduction($city);
+
         if ($building = $this->buildingCompleted($building_id)) {
-            return view('building', ['city' => $city, 'building' => $building]);
+            return view('building', [
+                'city' => $city,
+                'building' => $building,
+                'production' => $production]);
         }
 
 
@@ -205,7 +214,7 @@ class BuildingController extends Controller
         }
 
         if ($building = $this->buildingCompleted($building_id)) {
-            $city->resources->add(['workers' => $building->workers]);
+            $city->human_resources->add(['workers' => $building->workers]);
             $slot = "slot$slot_num";
             $city->building_slot->$slot = 0;
             $city->building_slot->save();

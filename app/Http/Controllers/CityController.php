@@ -3,6 +3,7 @@
 
 use App\Grid;
 use App\Http\Requests;
+use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\Controller;
 use App\Building;
 use App\BuildingSlot;
@@ -24,10 +25,14 @@ class CityController extends Controller
         TaskController::checkTasks();
 
         if ($this->validateOwner($id)) {
-            $city = City::find($id);
+            $city = City::where('id', $id)->first();
+
         } else {
             return redirect('/home')->withErrors('Nem a te városod');
         }
+
+
+        $production = ResourceController::processProduction($city);
 
         $building_slot = $city->building_slot;
 
@@ -35,7 +40,13 @@ class CityController extends Controller
 
         $building_slot = array_slice($building_slot->toArray(), 3, $building_slot['active_slots']);
 
-        return view('city', ['city' => $city, 'building_slot' => $building_slot, 'buildings' => $buildings, 'help' => '/help/city']);
+        return view('city', [
+            'city' => $city,
+            'building_slot' => $building_slot,
+            'buildings' => $buildings,
+            'help' => '/help/city',
+            'production' => $production
+        ]);
     }
 
 

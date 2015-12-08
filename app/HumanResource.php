@@ -1,36 +1,25 @@
-<?php
-
-namespace App;
+<?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Resource
- * @package App
- */
-class Resource extends Model
+class HumanResource extends Model
 {
+
+
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'resources';
+    protected $table = 'human_resources';
 
 
     /**
      * @var array
      */
-    protected $fillable = ['city', 'food', 'stone', 'iron', 'lumber'];
-
-    protected $dates = array('created_at', 'updated_at');
+    protected $fillable = ['city', 'population', 'workers', 'settlers'];
 
 
-    /**
-     * Subtracts the building's or job's price.
-     *
-     * @param array $price
-     */
     public function subtract(array $price)
     {
         foreach ($price as $key => $value) {
@@ -48,4 +37,5 @@ class Resource extends Model
 
         $this->save();
     }
+
 }
