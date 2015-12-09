@@ -9,10 +9,10 @@
         <tr>
             <td><b>Népesség:</b> {{$city->human_resources->population}}</td>
             <td><b>Munkások:</b> {{$city->human_resources->workers}}</td>
-            <td><b>Élelmiszer:</b> {{$city->resources->food}}</td>
-            <td><b>Vas:</b> {{$city->resources->iron}}</td>
-            <td><b>Fa:</b> {{$city->resources->lumber}}</td>
-            <td><b>Kő:</b> {{$city->resources->stone}}</td>
+            <td><b>Élelmiszer:</b> {{number_format($city->resources->food, 2)}}</td>
+            <td><b>Vas:</b> {{number_format($city->resources->iron, 2)}}</td>
+            <td><b>Fa:</b> {{number_format($city->resources->lumber, 2)}}</td>
+            <td><b>Kő:</b> {{number_format($city->resources->stone, 2)}}</td>
         </tr>
     </table>
     <div class="panel-heading text-center">

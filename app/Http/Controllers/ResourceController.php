@@ -29,16 +29,24 @@ class ResourceController extends Controller
         }
 
         // check if the city has enough storage
-        $storage = 0;
-        $stores = $city->building_slot->building->where('type', 6);
-        if (!$stores->isEmpty()) {
-            $stores->toArray();
-// TODO megcsinálni a raktáras részt
+        $storage = self::calculateCityStorage($city);
+
+        // check if the new amount of resources are higher than the storage.
+        foreach ($time_prod as $key => $value) {
+
+            $new_resource_value = $resources->$key + $value;
+            if ($new_resource_value >= $storage) {
+                $resources->$key = $storage;
+//                $time_prod[$key] = $storage;
+            } else {
+                $resources->$key = $new_resource_value;
+//                $time_prod[$key] = $new_resource_value;
+            }
         }
 
-        $storage += City::$city_storage[$city->nation];
-        var_dump($storage);
+        $resources->save();
 
+//        var_dump($resources);
         return $production;
     }
 
@@ -94,6 +102,29 @@ class ResourceController extends Controller
         } else {
             return $food_consumtion;
         }
+    }
+
+    public static function calculateCityStorage(City $city)
+    {
+        $now = Carbon::now();
+        $storage = 0;
+        $stores = $city->building_slot->building
+            ->where('type', 6)
+            ->where('finished_at', '>=', $now)
+            ->where('workers', '>', 0);
+
+        if (!$stores->isEmpty()) {
+            $stores->toArray();
+            foreach ($stores as $store) {
+                $storage += ($store['level'] * 100) * ($store['health'] / 100);
+            }
+
+        }
+
+        $storage += City::$city_storage[$city->nation];
+
+        return $storage;
+
     }
 
 }
