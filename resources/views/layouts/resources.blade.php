@@ -7,7 +7,7 @@
 
     <table class="panel-body table">
         <tr>
-            <td><b>Népesség:</b> {{$city->human_resources->population}}</td>
+            <td><b>Népesség:</b> {{ceil($city->human_resources->population)}}</td>
             <td><b>Munkások:</b> {{$city->human_resources->workers}}</td>
             <td><b>Élelmiszer:</b> {{number_format($city->resources->food, 2)}}</td>
             <td><b>Vas:</b> {{number_format($city->resources->iron, 2)}}</td>
