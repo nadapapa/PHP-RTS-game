@@ -25,7 +25,7 @@ abstract class Controller extends BaseController
      * Finds out if the logged in user is the owner of the city.
      *
      * @param $city_id
-     * @return $this|\Illuminate\Support\Collection|null|static
+     * @return bool
      */
     public function validateOwner($city_id)
     {

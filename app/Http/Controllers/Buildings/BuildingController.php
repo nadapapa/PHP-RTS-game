@@ -16,6 +16,8 @@ class BuildingController extends Controller
 
 
     /**
+     * shows the page for build a new building
+     *
      * @param $city_id
      * @param $slot_id
      * @return \Illuminate\View\View
@@ -47,6 +49,8 @@ class BuildingController extends Controller
 
 
     /**
+     * makes a new building based on the POST request
+     *
      * @param Request $request
      * @param $city_id
      * @param $slot_num
@@ -69,6 +73,8 @@ class BuildingController extends Controller
 
 
     /**
+     * shows the selected building
+     *
      * @param $city_id
      * @param $slot_num
      * @param $building_id
@@ -99,6 +105,8 @@ class BuildingController extends Controller
 
 
     /**
+     * sets the number of workers in the selected building
+     *
      * @param Request $request
      * @param $city_id
      * @param $slot_num
@@ -128,6 +136,8 @@ class BuildingController extends Controller
 
 
     /**
+     * heals the selected building as much as the user require.
+     *
      * @param Request $request
      * @param $city_id
      * @param $slot_num
@@ -169,10 +179,10 @@ class BuildingController extends Controller
     /**
      * Creates a new building
      *
-     * @param $type @int The type of the building.
-     * @param City $city @int The id of the city in which the building is built.
-     * @param $slot_num
-     * @param BuildingSlot $slot @int The id of the slot on which the building is built.
+     * @param $type @int                The type of the building.
+     * @param City $city @int           The id of the city in which the building is built.
+     * @param $slot_num @int            The number of the slot on which the building going to be built.
+     * @param BuildingSlot $slot @int   The id of the slot on which the building is built.
      * @return $this
      */
     private function createBuilding($type, City $city, $slot_num)
@@ -202,6 +212,8 @@ class BuildingController extends Controller
 
 
     /**
+     * deletes the selected building
+     *
      * @param $city_id
      * @param $slot_num
      */

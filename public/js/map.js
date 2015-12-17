@@ -1,3 +1,6 @@
+// defining icons
+// the number next to the icon name (e.g. city2) means the zoom level in which that particular
+// icon should be shown.
 var highlight1 = L.icon({
     iconUrl: '/img/map/tiles/highlight.png',
 
@@ -1146,6 +1149,7 @@ function cubeLerp(a, b, t) {
     }
 }
 
+
 function calculateLine(a, b) {
     var N = cubeDistance(a, b);
     var results = [];
@@ -1155,6 +1159,10 @@ function calculateLine(a, b) {
     return results;
 }
 
+/**
+ * rounds a hex in cube coordinates
+ * http://www.redblobgames.com/grids/hexagons/#rounding
+ */
 function cubeRound(h) {
     var rx = Math.round(h.x);
     var ry = Math.round(h.y);
@@ -1174,59 +1182,6 @@ function cubeRound(h) {
 
     return {x: rx, y: ry, z: rz}
 }
-
-
-//function getCities() {
-//    $.getJSON("/map/get_cities", function (data) {
-//        for (var i in data) {
-//            tx = (data[i].x * HEX_SIDE * 1.5) + 36;
-//            ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
-//
-//            city_marker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
-//                icon: window["city" + map.getZoom()],
-//                zIndexOffset: cities_zindex,
-//                clickable: false
-//            }).addTo(map);
-//            city_markers.addLayer(city_marker);
-//        }
-//    });
-//
-//}
-//
-//function getArmies() {
-//    $.getJSON("/map/get_armies", function (data) {
-//        for (var i in data) {
-//            tx = (data[i].x * HEX_SIDE * 1.5) + 36;
-//            ty = (data[i].y * HEX_SCALED_HEIGHT + (data[i].x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
-//
-//            var army_marker = L.marker(rc.unproject([tx + margin_x, ty + margin_y]), {
-//                icon: window["army" + map.getZoom()],
-//                zIndexOffset: armies_zindex,
-//                contextmenu: true,
-//                contextmenuInheritItems: false,
-//                contextmenuItems: [{
-//                    text: 'hadsereg mozgatása',
-//                    disabled: false,
-//                    callback: selectArmy,
-//                }]
-//            }).addTo(map)
-//                .on('click', onMapClick);
-//
-//            if (typeof data[i].army != 'undefined') {
-//                //army_marker.options.contextmenuItems[0].disabled = false;
-//
-//                army_marker.army = data[i].army;
-//
-//                if (army_marker.army.task_id > 0) {
-//                    army_marker.options.contextmenuItems[0].disabled = true;
-//                }
-//            }
-//
-//            army_markers.addLayer(army_marker);
-//        }
-//    });
-//
-//}
 
 
 // EASY BUTTON
@@ -1540,6 +1495,7 @@ function cubeRound(h) {
 
 
     });
+
 
     L.easyButton = function (/* args will pass automatically */) {
         var args = Array.prototype.concat.apply([L.Control.EasyButton], arguments);
