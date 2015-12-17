@@ -59,19 +59,25 @@ class City extends Model
     /**
      * Finds out if the city has enough resources for the action.
      *
-     * @param City $city
      * @param array $price
+     * @return array $resources
      */
     public function hasEnoughResources(array $price)
     {
+        $resources = [];
         foreach ($price as $key => $value) {
             if ($this->resources->$key < $value) {
-                return false;
+                // calculate the difference between the price and the current amount of resource
+                $resources[$key] = $value - $this->resources->$key;
             }
         }
-        return true;
+        return $resources;
     }
 
+    /**
+     * @param array $price
+     * @return bool
+     */
     public function hasEnoughHumanResources(array $price)
     {
         foreach ($price as $key => $value) {

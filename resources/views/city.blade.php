@@ -8,7 +8,7 @@
     <div class="clearfix">
         <h1 class="pull-left">
             {{$city->name}} <br>
-            <small>szint: {{$city->level}}</small>
+
         </h1>
 
         @include('layouts.resources')
@@ -26,43 +26,54 @@
             <div class="panel-body">
                 <?php
                 use Carbon\Carbon;
-                $i = 1;
+                $i = 0;
                 $now = Carbon::now();
                 ?>
                 @foreach ($building_slot as $value)
 
-                    <div class="col-md-2">
-                        <div>
-                            @if($value > 0)
-                                <?php
-                                $building = $buildings->find($value);
-                                ?>
-                                @if($building->finished_at->gte($now))
-                                    <div>
-                                        <a href="/city/{{$city->id}}/slot/{{$i}}/building/{{$building->id}}"
-                                           class="btn btn-primary disabled">{{App\Building::$building_names[$city->nation][$building->type]}}
-                                            ({{$building->level}})
-                                            <br>
-                                            <span data-countdown="{{$building->finished_at->format('Y/m/d/ H:i:s')}}"></span></a>
+                    @if($i%5 == 0)
+                        <div class="row building-row">
+                            <div class="col-md-1">
 
-                                    </div>
-                                @else
-                                        <a href="/city/{{$city->id}}/slot/{{$i}}/building/{{$building->id}}"
-                                       class="btn btn-primary">{{App\Building::$building_names[$city->nation][$building->type]}}
-                                        ({{$building->level}})</a>
-                                @endif
-
-                            @else
-                                <a href="/city/{{$city->id}}/slot/{{$i}}" class="btn btn-primary">Építési
-                                    hely {{$i}}</a>
+                            </div>
                             @endif
 
+                            <?php
+                            $i++;
+                            ?>
+                            <div class="col-md-2 col-sm-2">
+                                <div>
+                                    @if($value > 0)
+                                        <?php
+                                        $building = $buildings->find($value);
+                                        ?>
+                                        @if($building->finished_at->gte($now))
+                                            <div>
+                                                <a href="/city/{{$city->id}}/slot/{{$i}}/building/{{$building->id}}"
+                                                   class="btn btn-primary disabled">{{App\Building::$building_names[$city->nation][$building->type]}}
+                                                    ({{$building->level}})
+                                                    <br>
+                                                    <span data-countdown="{{$building->finished_at->format('Y/m/d/ H:i:s')}}"></span></a>
+
+                                            </div>
+                                        @else
+                                            <a href="/city/{{$city->id}}/slot/{{$i}}/building/{{$building->id}}"
+                                               class="btn btn-primary">{{App\Building::$building_names[$city->nation][$building->type]}}
+                                                ({{$building->level}})</a>
+                                        @endif
+
+                                    @else
+                                        <a href="/city/{{$city->id}}/slot/{{$i}}" class="btn btn-primary">Építési
+                                            hely {{$i}}</a>
+                                    @endif
+
+                                </div>
+                            </div>
+                            @if($i%5 == 0)
                         </div>
-                    </div>
-                    <?php
-                    $i++;
-                    ?>
+                    @endif
                 @endforeach
+
             </div>
         </div>
 

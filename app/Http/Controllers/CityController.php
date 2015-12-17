@@ -38,7 +38,7 @@ class CityController extends Controller
 
         $buildings = $building_slot->building;
 
-        $building_slot = array_slice($building_slot->toArray(), 3, $building_slot['active_slots']);
+        $building_slot = array_slice($building_slot->toArray(), 3, 25);
 
         return view('city', [
             'city' => $city,

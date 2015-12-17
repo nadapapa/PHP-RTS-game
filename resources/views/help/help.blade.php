@@ -12,5 +12,9 @@
 @stop
 
 @section('content')
-    hamarosan
+    <div class="col-md-8 col-md-offset-1">
+
+        hamarosan
+
+    </div>
 @stop

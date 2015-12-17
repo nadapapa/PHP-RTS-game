@@ -100,6 +100,7 @@ class TaskController extends Controller
 
             case 20: // move army
                 self::pathProgress($task);
+
                 break;
 
         }
@@ -149,7 +150,7 @@ class TaskController extends Controller
     {
         $finished = null;
         $task->path->filter(function ($item) use (&$finished) {
-            if ($item->finished_at <= Carbon::now()) {
+            if ($item->finished_at <= Carbon::now()) { // if the path is finished
                 $finished = $item;
                 $item->delete();
             }
@@ -163,7 +164,7 @@ class TaskController extends Controller
         }
 
         if ($task->path->isEmpty()) {
-            $task->army->update(['task_id' => 0]);
+            $task->army->update(['task_id' => 0, 'path_id' => 0]);
             $task->delete();
             return;
         }

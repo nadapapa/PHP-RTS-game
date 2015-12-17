@@ -371,18 +371,7 @@ function throttle(callback, limit) {
 }
 
 function loadItems() {
-    //console.log(same_view);
-    //console.log('   _@_/"   ');
-    //if(map.getZoom() == 1){
-    //    return;
-    //}
 
-//    if (first_drag < 3) {
-////console.log(first_drag);
-//        first_drag += 1;
-//        console.log('   _@_/"   ');
-//
-//    } else {
     var bound = map.getBounds();
 
     var nw = calculateHexCoord(bound.getNorthWest());
@@ -411,7 +400,6 @@ function loadItems() {
 
     $.getJSON("/map/get_data", {x1: x1, y1: y1, x2: x2, y2: y2}, function (data) {
         if (data.cities.length > 0) {
-            console.log(data);
             placeCities(data.cities);
         }
 
@@ -502,6 +490,8 @@ function clickOnArmy(e) {
     placeHighlightHex(coord.x, coord.y);
     var data = e.target.army_data;
     started_path_group.clearLayers();
+
+    map.closePopup(popup);
 
     if (typeof data.army.path != 'undefined' && data.army.path.length > 0) {
         //console.log(data.army.path);
@@ -645,10 +635,10 @@ function updateInfoboxCity(data) {
 }
 
 function updateInfoboxHex(data) {
-    return (data.city ? '' : '<br><b>Típus: </b>' + switchType(data.layer1) +
+    return (data.city ? '' : '<br><b>Típus: </b>' + switchType(parseInt(data.layer1)) +
     (data.hex_owner ? '<br>' +
     '<b>Tulajdonos: </b>' + data.user_name : ''));
-    ;
+
 }
 
 function calculateHexCoord(latlng) {
@@ -1064,32 +1054,21 @@ function calculatePathTime(coord) {
         });
     });
 
-    console.log(path);
+    //console.log(path);
     pointMarker.openPopup();
 }
 
 function moveToHex(path) {
     $.post("/map/move_army", {_token: $('meta[name=_token]').attr('content'), path: path}, function (data) {
         //map.contextmenu.setDisabled(0, true);
-        path_markers.clearLayers();
-        point_markers.clearLayers();
-        points = [];
-        path = [];
-        var e = army_markers.getLayer(armies_hash[data]);
-
-        e.unbindPopup();
-        map.unbindPopup();
-
-        //army_markers.eachLayer(function (marker) {
-        //    if (marker.army.id == data) {
-        //        marker.unbindPopup();
-        //        //console.log(marker);
-        //        //marker.options.contextmenuItems[0].disabled = true;
-        //    }
-        //});
-
+        cancelPath(data);
+        refreshMap();
     });
+    //popup.setContent('');
+    //popup.setLatLng([0,0]);
+    //popup.update();
     map.closePopup();
+
 }
 
 function cancelPath(army_id) {

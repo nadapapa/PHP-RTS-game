@@ -39,4 +39,9 @@ class HomeController extends Controller
                 return view('help/help');
         }
     }
+
+    public function getSettings()
+    {
+        return view('settings');
+    }
 }

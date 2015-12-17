@@ -32,11 +32,16 @@ class ResourceController extends Controller
         $time_prod = []; // the overall production
 
         foreach ($production as $key => $prod) {
+            if ($prod == 0) { // if the prod is 0, there is no change so continue
+                continue;
+            }
             $time_prod[$key] = number_format(($prod * ($time / 3600)), 2);
         }
 
         // check if the city has enough storage
         $storage = self::calculateCityStorage($city);
+
+        $production['population'] = 0;
 
         foreach ($time_prod as $key => $value) {
             $new_resource_value = $resources->$key + $value;
@@ -47,11 +52,12 @@ class ResourceController extends Controller
                 $resources->$key = $storage;
 //                $time_prod[$key] = $storage;
             } else {
-                if ($key == 'food' && ($resources->food <= 0 || $new_resource_value <= 0)) { // if there's a negative food production or a food shortage
-                    self::calculatePopulationLoss($city, $production, $time);
+                if ($key == 'food' && ($resources->food <= 0 || $new_resource_value <= 0)) {
+                    // if there's a negative food production or a food shortage
+                    $production['population'] = self::calculatePopulationLoss($city, $production, $time);
                 } elseif ($key == 'food' && ($resources->food > 0 || $new_resource_value > 0)) {
                     // if there's a positive food production or a food abundance
-                    self::calculatePopulationGain($city, $production, $time);
+                    $production['population'] = self::calculatePopulationGain($city, $production, $time);
                 }
                 // if lower than the current production value is saved.
                 $resources->$key = $new_resource_value;
@@ -83,25 +89,23 @@ class ResourceController extends Controller
         // if $t is positive it means that the zero moment was after the updated_at.
         // $t is in seconds
 
-        echo ($t) . ' t1<br>';
+//        echo ($t) . ' t1<br>';
 
         if ($t > 0) {
             if (($t) < $time) { // if the zero moment has happened between updated_at and now.
                 $time_diff = $time - $t; // $time_diff is the time difference between the now and the moment the food crosses the 0.
-                echo $time . ' time1 <br>';
-                echo number_format(($time_diff / 3600), 3) . ' timediff1<br>';
+//                echo $time . ' time1 <br>';
+//                echo number_format(($time_diff / 3600), 3) . ' timediff1<br>';
                 $city->human_resources->population -= number_format(($time_diff / 3600), 3);
             } else { // if the zero moment will happen in the future
                 // then the population loss is based on the time between updated_at and now
-
                 $city->human_resources->population -= number_format(($time / 3600), 3);
-// TODO population growth
 
             }
-        } else { // means that the zero moment has happend before the updated_at.
+        } else { // means that the zero moment has happened before the updated_at.
             // then the population loss is based on the time between updated_at and now
 
-            echo (number_format(($time / 3600), 3) * $production['food']) . ' ptime1 <br>';
+//            echo (number_format(($time / 3600), 3) * $production['food']) . ' ptime1 <br>';
 
             $city->human_resources->population -= number_format(($time / 3600), 3);
 
@@ -109,9 +113,19 @@ class ResourceController extends Controller
 
         $city->human_resources->save();
 
+        return -1;
+
     }
 
 
+    /**
+     * calculates the population gain based on time elapsed and quantity of food in the storage.
+     * it saves the results directly to human_resources table
+     *
+     * @param City $city
+     * @param array $production
+     * @param $time
+     */
     public static function calculatePopulationGain(City $city, array $production, $time)
     {
         $t = ((0 - $city->resources->food) / $production['food']) * 3600;
@@ -121,28 +135,32 @@ class ResourceController extends Controller
         // if $t is positive it means that the zero moment was after the updated_at.
         // $t is in seconds
 
-        echo ($t) . ' t2<br>';
+//        echo ($t) . ' t2<br>';
 
         if ($t > 0) {
             if ($t < $time) { // if the zero moment has happened between updated_at and now.
                 $time_diff = $time - $t; // $time_diff is the time difference between the now and the moment the food crosses the 0.
-                echo $time . ' time2<br>';
-                echo number_format(($time_diff / 3600), 3) . ' timediff2<br>';
+//                echo $time . ' time2<br>';
+//                echo number_format(($time_diff / 3600), 3) . ' timediff2<br>';
+
                 $city->human_resources->population += number_format(($time_diff / 3600), 3);
             } else { // if the zero moment will happen in the future
-
-// TODO population growth
+                // then the population gain is based on the time between updated_at and now.
+                $city->human_resources->population += number_format(($time / 3600), 3);
 
             }
-        } else { // means that the zero moment has happend before the updated_at.
+        } else { // means that the zero moment has happened before the updated_at.
+            // this means that it has been already calculated
+            // in this case the population growth is based on the time between updated_at and now.
 
-            echo (number_format(($time / 3600), 3) * $production['food']) . ' ptime2 <br>';
+//            echo (number_format(($time / 3600), 3) * $production['food']) . ' ptime2 <br>';
 
             $city->human_resources->population += number_format(($time / 3600), 3);
 
         }
 
         $city->human_resources->save();
+        return 1;
     }
 
 

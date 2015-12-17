@@ -40,6 +40,10 @@
 
                 <ul class="nav navbar-nav navbar-right">
                     <li>
+                        <a href="/settings"><i class="fa fa-cog"></i>
+                            Beállítások</a>
+                    </li>
+                    <li>
                         @if(Request::is('map*'))
                             <a href="/help/map"><i class="fa fa-question-circle"></i>
                                 Segítség</a>

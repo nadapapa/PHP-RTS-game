@@ -17,7 +17,7 @@ class Army extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'current_hex_id', 'task_id'];
+    protected $fillable = ['user_id', 'current_hex_id', 'task_id', 'path_id'];
 
 
     public function currentHex()

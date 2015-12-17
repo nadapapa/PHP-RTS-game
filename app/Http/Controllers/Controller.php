@@ -52,14 +52,26 @@ abstract class Controller extends BaseController
      */
     public function levelUp($city, $thing, array $price, $time)
     {
-        if ($city->hasEnoughResources($price)) {
+        $lack_resource = $city->hasEnoughResources($price);
+        if (empty($lack_resource)) {
             $thing->level += 1;
             $thing->finished_at = Carbon::now()->addSeconds($time);
             $city->resources->subtract($price);
             $thing->save();
-            return true;
         }
-        return redirect()->back()->withErrors(['not_enough_resources' => 'Nincs elég nyersanyag']);
+
+        $messages = [];
+        $resources = [
+            'stone' => 'kő',
+            'lumber' => 'fa',
+            'food' => 'élelmiszer',
+            'iron' => 'vas'
+        ];
+        foreach ($lack_resource as $key => $value) {
+            $messages["not_enough_$key"] = "Még $value $resources[$key] hiányzik";
+        }
+
+        return redirect()->back()->withErrors($messages);
     }
 
 
@@ -95,7 +107,6 @@ abstract class Controller extends BaseController
      */
     public function createCity(User $user, $capital, $hex_id, $name)
     {
-//        $fillable = ['name', 'nation', 'capital', 'owner', 'hex_id'];
         $city = City::create([
             'name' => $name,
             'nation' => $user->nation,

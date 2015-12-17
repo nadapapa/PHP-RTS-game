@@ -84,6 +84,7 @@ class MapController extends Controller
 
             if ($army['user_id'] == $user->id) {
                 $hex['army'] = $army->toArray();
+
                 $hex['army']['path'] = Path::join('grid', 'paths.hex_id', '=', 'grid.id')
                     ->where('path_id', $army['path_id'])
                     ->select('paths.finished_at', 'grid.x', 'grid.y')

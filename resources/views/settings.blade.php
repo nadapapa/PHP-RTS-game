@@ -6,8 +6,8 @@
 @section('header')
     <div class="clearfix">
         <h1 class="pull-left">
-            Segítség <br>
-            <small>Profil</small>
+            Beállítások <br>
+
         </h1>
     </div>
 @stop

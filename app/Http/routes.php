@@ -96,6 +96,9 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
     //help
     Route::get('help/{help?}', 'HomeController@getHelp');
 
+    // settings
+    Route::get('settings', 'HomeController@getSettings');
+
 //	Route::get('city/{city_id}/newcity', 'CityController@getNewCity');
 
 

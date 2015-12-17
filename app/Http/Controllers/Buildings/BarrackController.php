@@ -40,7 +40,8 @@ class BarrackController extends Controller
             TaskController::checkTasks(); // check if there any pending tasks and complete the finished ones
             if ($building->workers > 0) { // check if there's at least one worker in the building
                 if ($building->type == 5) { // check if the type of the building is 'barrack'
-                    if ($city->hasEnoughResources(Army::$unit_prices[$city->nation][$type])) { // check if the city has enough resources to train the unit
+                    $lack_resource = $city->hasEnoughResources(Army::$unit_prices[$city->nation][$type]);
+                    if (empty($lack_resource)) { // check if the city has enough resources to train the unit
                         if ($city->human_resources->population > 0) { // check if the city has enough population (i.e. at least 1)
                             $city->human_resources->population -= 1;
                             $city->human_resources->save(); // if everything is set, remove one from the population of the city and save the new population
@@ -53,7 +54,18 @@ class BarrackController extends Controller
                         }
                         return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_population' => 'Nincs elég népesség']);
                     }
-                    return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_resources' => 'Nincs elég nyersanyag']);
+                    $messages = [];
+                    $resources = [
+                        'stone' => 'kő',
+                        'lumber' => 'fa',
+                        'food' => 'élelmiszer',
+                        'iron' => 'vas'
+                    ];
+                    foreach ($lack_resource as $key => $value) {
+                        $messages["not_enough_$key"] = "Még $value $resources[$key] hiányzik";
+                    }
+
+                    return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors($messages);
                 }
                 return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_a_forum' => 'Az épület nem tud munkást képezni']);
             }
