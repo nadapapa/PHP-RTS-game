@@ -86,6 +86,10 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
     Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/levelup', 'Buildings\BuildingController@getLevelUpBuilding');
     Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/delete', 'Buildings\BuildingController@getDeleteBuilding');
 
+    // wall
+    Route::get('city/{city_id}/wall', 'cityController@getWall');
+    Route::post('city/{city_id}/wall/heal', 'cityController@healWall');
+
     // forum
     Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/worker', 'Buildings\ForumController@getMakeWorker');
     Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/settler', 'Buildings\ForumController@getMakeSettler');

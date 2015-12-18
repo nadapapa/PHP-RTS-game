@@ -26,7 +26,7 @@ class CreateArmiesTable extends Migration
 
             $table->integer('user_id');
             $table->integer('current_hex_id');
-            $table->integer('destination_hex_id');
+            $table->integer('path_id');
             $table->integer('task_id');
 
             $table->timestamps();

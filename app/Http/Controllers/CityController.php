@@ -38,6 +38,9 @@ class CityController extends Controller
 
         $buildings = $building_slot->building;
 
+        $wall = $building_slot->wall;
+        $wall = Building::find($wall);
+
         $building_slot = array_slice($building_slot->toArray(), 3, 25);
 
         return view('city', [
@@ -45,16 +48,10 @@ class CityController extends Controller
             'building_slot' => $building_slot,
             'buildings' => $buildings,
             'help' => '/help/city',
-            'production' => $production
+            'production' => $production,
+            'wall' => $wall,
         ]);
     }
-
-
-    public function  postCity()
-    {
-
-    }
-
 
     public function getNewCity()
     {
@@ -65,6 +62,58 @@ class CityController extends Controller
 //        $name = "róma2";
 //        $this->createCity(Auth::user(), 0, $hex_id, $name);
         return "ok";
+
+    }
+
+    public function getWall($id)
+    {
+        TaskController::checkTasks();
+
+        if ($this->validateOwner($id)) {
+            $city = City::where('id', $id)->first();
+
+        } else {
+            return redirect('/home')->withErrors('Nem a te városod');
+        }
+
+        $wall = $city->building_slot->wall;
+
+        $wall = Building::find($wall);
+
+        $production = ResourceController::processProduction($city);
+
+        return view('wall', ['city' => $city, 'wall' => $wall, 'production' => $production]);
+    }
+
+    public function healWall(Request $request, $city_id)
+    {
+        if ($this->validateOwner($city_id)) {
+            $city = City::find($city_id);
+        } else {
+            return redirect('/home')->withErrors('Nem a te városod');
+        }
+
+        $wall = $city->building_slot->wall;
+
+        $wall = Building::find($wall);
+
+        $this->validate($request, [
+            'health' => 'required|integer|max:100',
+        ]);
+        $health = $request->input('health');
+
+        $price = [
+            'iron' => $health,
+            'food' => $health,
+            'stone' => $health,
+            'lumber' => $health,
+        ];
+
+        $time = $health;
+
+        $this->heal($city, $wall, $price, $time, $health);
+
+        return redirect("/city/$city_id/wall");
 
     }
 }

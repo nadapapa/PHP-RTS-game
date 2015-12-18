@@ -18,7 +18,7 @@ class CreateBuildingSlotsTable extends Migration
 
             $table->integer('city')->unsigned();
 
-            $table->integer('active_slots')->default(5);
+            $table->integer('wall')->unsigned();
 
             $table->integer('slot1')->unsigned();
             $table->integer('slot2')->unsigned();

@@ -114,10 +114,24 @@ abstract class Controller extends BaseController
             'owner' => $user->id,
             'hex_id' => $hex_id,
         ]);
-        echo "created";
-        BuildingSlot::create(['city' => $city->id]);
+
+        $slot = BuildingSlot::create(['city' => $city->id]);
         Resource::create(['city' => $city->id]);
         HumanResource::create(['city' => $city->id]);
+
+        $city->building_slot = $slot->id;
+        $city->save();
+
+        $wall = Building::create([
+            'city_id' => $city->id,
+            'slot' => $slot->id,
+            'nation' => $user->nation,
+            'type' => 9,
+            'finished_at' => Carbon::now(),
+        ]);
+
+        $slot->wall = $wall->id;
+        $slot->save();
 
         $hex = Grid::find($hex_id);
         $hex->update(['owner' => $user->id, 'city' => $city->id]);

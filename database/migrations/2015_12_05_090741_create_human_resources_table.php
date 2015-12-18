@@ -18,7 +18,7 @@ class CreateHumanResourcesTable extends Migration
 
             $table->integer('city')->unsigned();
 
-            $table->integer('population')->unsigned()->default(10);
+            $table->float('population')->unsigned()->default(10);
             $table->integer('workers')->unsigned()->default(5);
             $table->integer('settlers')->unsigned();
 

@@ -18,10 +18,10 @@ class CreateResourcesTable extends Migration
 
             $table->integer('city')->unsigned();
 
-            $table->integer('iron')->unsigned()->default(100);
-            $table->integer('stone')->unsigned()->default(100);
-            $table->integer('lumber')->unsigned()->default(100);
-            $table->integer('food')->unsigned()->default(100);
+            $table->float('iron')->unsigned()->default(100);
+            $table->float('stone')->unsigned()->default(100);
+            $table->float('lumber')->unsigned()->default(100);
+            $table->float('food')->unsigned()->default(100);
 
             $table->timestamps();
         });

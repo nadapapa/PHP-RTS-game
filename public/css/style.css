@@ -1,4 +1,23 @@
 .building-row {
     margin-top: 30px;
-    margin-bottom: 30px
+    margin-bottom: 30px;
 }
+
+.btn-building {
+    height: 120px;
+    width: 120px;
+    text-align: center;
+    padding: 50px 10px;
+
+}
+
+.btn-wall {
+    height: 50px;
+    width: 100%;
+    padding: 15px 10px;
+}
+
+/*.building-panel {*/
+/*border: 20px solid;*/
+/*border-color: #0000C2;*/
+/*}*/

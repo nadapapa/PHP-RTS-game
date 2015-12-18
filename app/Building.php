@@ -27,7 +27,10 @@ class Building extends Model
             '4' => 'Favágó',
             '5' => 'Barakk',
             '6' => 'Raktár',
-            '7' => 'Fórum'
+            '7' => 'Fórum',
+            '8' => 'Kovács',
+            '9' => 'Fal',
+
         ],
         2 => [ // görög
             '1' => 'Farm',
@@ -36,7 +39,9 @@ class Building extends Model
             '4' => 'Favágó',
             '5' => 'Barakk',
             '6' => 'Raktár',
-            '7' => 'Fórum'
+            '7' => 'Fórum',
+            '8' => 'Kovács',
+            '9' => 'Fal',
         ],
         3 => [ // germán
             '1' => 'Farm',
@@ -45,7 +50,9 @@ class Building extends Model
             '4' => 'Favágó',
             '5' => 'Barakk',
             '6' => 'Raktár',
-            '7' => 'Fórum'
+            '7' => 'Fórum',
+            '8' => 'Kovács',
+            '9' => 'Fal',
         ],
         4 => [ // szarmata
             '1' => 'Farm',
@@ -54,7 +61,9 @@ class Building extends Model
             '4' => 'Favágó',
             '5' => 'Barakk',
             '6' => 'Raktár',
-            '7' => 'Fórum'
+            '7' => 'Fórum',
+            '8' => 'Kovács',
+            '9' => 'Fal',
         ],
     ];
 
@@ -67,7 +76,10 @@ class Building extends Model
             '4' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
             '5' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
             '6' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10]
+            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
+            '8' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
+            '9' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
+
         ],
         2 => [ // görög
             '1' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
@@ -76,7 +88,9 @@ class Building extends Model
             '4' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
             '5' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
             '6' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10]
+            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
+            '8' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
+            '9' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
         ],
         3 => [ // germán
             '1' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
@@ -85,7 +99,9 @@ class Building extends Model
             '4' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
             '5' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
             '6' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10]
+            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
+            '8' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
+            '9' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
         ],
         4 => [ // szarmata
             '1' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
@@ -94,7 +110,9 @@ class Building extends Model
             '4' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
             '5' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
             '6' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
-            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10]
+            '7' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
+            '8' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
+            '9' => ['iron' => 10, 'food' => 10, 'lumber' => 10, 'stone' => 10],
         ],
     ];
 
@@ -107,7 +125,9 @@ class Building extends Model
             '4' => 60,
             '5' => 60,
             '6' => 60,
-            '7' => 60
+            '7' => 60,
+            '8' => 60,
+            '9' => 60
         ],
         2 => [ // görög
             '1' => 60,
@@ -116,7 +136,9 @@ class Building extends Model
             '4' => 60,
             '5' => 60,
             '6' => 60,
-            '7' => 60
+            '7' => 60,
+            '8' => 60,
+            '9' => 60
         ],
         3 => [ // germán
             '1' => 60,
@@ -125,7 +147,9 @@ class Building extends Model
             '4' => 60,
             '5' => 60,
             '6' => 60,
-            '7' => 60
+            '7' => 60,
+            '8' => 60,
+            '9' => 60
         ],
         4 => [ // szarmata
             '1' => 60,
@@ -134,7 +158,9 @@ class Building extends Model
             '4' => 60,
             '5' => 60,
             '6' => 60,
-            '7' => 60
+            '7' => 60,
+            '8' => 60,
+            '9' => 60
         ],
 
     ];
@@ -147,7 +173,9 @@ class Building extends Model
             '4' => 'Fát termel',
             '5' => 'Katonákat termel',
             '6' => 'Raktároz',
-            '7' => 'Munkást és telepest termel'
+            '7' => 'Munkást és telepest termel',
+            '8' => 'A fegyverzetet és a páncélzatot fejleszti',
+            '9' => 'A várost védi'
         ],
         2 => [ // görög
             '1' => 'Élelmiszert termel',
@@ -156,7 +184,9 @@ class Building extends Model
             '4' => 'Fát termel',
             '5' => 'Katonákat termel',
             '6' => 'Raktároz',
-            '7' => 'Munkást és telepest termel'
+            '7' => 'Munkást és telepest termel',
+            '8' => 'A fegyverzetet és a páncélzatot fejleszti',
+            '9' => 'A várost védi'
         ],
         3 => [ // germán
             '1' => 'Élelmiszert termel',
@@ -165,7 +195,9 @@ class Building extends Model
             '4' => 'Fát termel',
             '5' => 'Katonákat termel',
             '6' => 'Raktároz',
-            '7' => 'Munkást és telepest termel'
+            '7' => 'Munkást és telepest termel',
+            '8' => 'A fegyverzetet és a páncélzatot fejleszti',
+            '9' => 'A várost védi'
         ],
         4 => [ // szarmata
             '1' => 'Élelmiszert termel',
@@ -174,7 +206,9 @@ class Building extends Model
             '4' => 'Fát termel',
             '5' => 'Katonákat termel',
             '6' => 'Raktároz',
-            '7' => 'Munkást és telepest termel'
+            '7' => 'Munkást és telepest termel',
+            '8' => 'A fegyverzetet és a páncélzatot fejleszti',
+            '9' => 'A várost védi'
         ],
     ];
 

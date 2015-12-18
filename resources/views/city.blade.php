@@ -23,8 +23,14 @@
                     Épületek
                 </b>
             </div>
-            <div class="panel-body">
-                <?php
+            <div class="panel-body building-panel">
+                <div class="row building-row">
+                    <div class="col-md-10 col-md-offset-1">
+                        <a href="/city/{{$city->id}}/wall" class="btn btn-primary btn-wall">Fal {{$wall->level}}</a>
+                    </div>
+                </div>
+
+            <?php
                 use Carbon\Carbon;
                 $i = 0;
                 $now = Carbon::now();
@@ -50,7 +56,7 @@
                                         @if($building->finished_at->gte($now))
                                             <div>
                                                 <a href="/city/{{$city->id}}/slot/{{$i}}/building/{{$building->id}}"
-                                                   class="btn btn-primary disabled">{{App\Building::$building_names[$city->nation][$building->type]}}
+                                                   class="btn btn-primary btn-building disabled">{{App\Building::$building_names[$city->nation][$building->type]}}
                                                     ({{$building->level}})
                                                     <br>
                                                     <span data-countdown="{{$building->finished_at->format('Y/m/d/ H:i:s')}}"></span></a>
@@ -58,12 +64,12 @@
                                             </div>
                                         @else
                                             <a href="/city/{{$city->id}}/slot/{{$i}}/building/{{$building->id}}"
-                                               class="btn btn-primary">{{App\Building::$building_names[$city->nation][$building->type]}}
+                                               class="btn btn-building  btn-primary">{{App\Building::$building_names[$city->nation][$building->type]}}
                                                 ({{$building->level}})</a>
                                         @endif
 
                                     @else
-                                        <a href="/city/{{$city->id}}/slot/{{$i}}" class="btn btn-primary">Építési
+                                        <a href="/city/{{$city->id}}/slot/{{$i}}" class="btn btn-primary btn-building">Építési
                                             hely {{$i}}</a>
                                     @endif
 

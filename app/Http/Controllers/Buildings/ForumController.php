@@ -37,7 +37,8 @@ class ForumController extends Controller
 
             if ($building->workers > 0) {
                 if ($building->type == 7) {
-                    if ($city->hasEnoughResources(City::$worker_price[$city->nation])) {
+                    $lack_resource = $city->hasEnoughResources(City::$worker_price[$city->nation]);
+                    if (empty($lack_resource)) {
                         if ($city->human_resources->population > 0) {
                             $city->human_resources->population -= 1;
                             $city->human_resources->save();
@@ -48,8 +49,19 @@ class ForumController extends Controller
                             return redirect("/city/$city_id/slot/$slot_num/building/$building_id");
                         }
                         return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_population' => 'Nincs elég népesség']);
+                    } else {
+                        $messages = [];
+                        $resources = [
+                            'stone' => 'kő',
+                            'lumber' => 'fa',
+                            'food' => 'élelmiszer',
+                            'iron' => 'vas'
+                        ];
+                        foreach ($lack_resource as $key => $value) {
+                            $messages["not_enough_$key"] = "Még $value $resources[$key] hiányzik";
+                        }
+                        return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors($messages);
                     }
-                    return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_resources' => 'Nincs elég nyersanyag']);
                 }
                 return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_a_forum' => 'Az épület nem tud munkást képezni']);
             }
@@ -80,7 +92,8 @@ class ForumController extends Controller
 
             if ($building->workers > 0) {
                 if ($building->type == 7) {
-                    if ($city->hasEnoughResources(City::$settler_price[$city->nation])) {
+                    $lack_resource = $city->hasEnoughResources(City::$settler_price[$city->nation]);
+                    if (empty($lack_resource)) {
                         if ($city->resources->workers >= 5) {
                             if ($city->resources->population >= 10) {
                                 $city->resources->workers -= 5;
@@ -94,8 +107,21 @@ class ForumController extends Controller
                             return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_population' => 'Nincs elég népesség']);
                         }
                         return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_worker' => 'Nincs elég munkás']);
+                    } else {
+                        $messages = [];
+                        $resources = [
+                            'stone' => 'kő',
+                            'lumber' => 'fa',
+                            'food' => 'élelmiszer',
+                            'iron' => 'vas'
+                        ];
+                        foreach ($lack_resource as $key => $value) {
+                            $messages["not_enough_$key"] = "Még $value $resources[$key] hiányzik";
+                        }
+
+                        return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors($messages);
                     }
-                    return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_enough_resources' => 'Nincs elég nyersanyag']);
+
                 }
                 return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['not_a_forum' => 'Az épület nem tud munkást képezni']);
             }

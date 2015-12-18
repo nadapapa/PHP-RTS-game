@@ -12,7 +12,6 @@ use Carbon\Carbon;
 
 class BuildingController extends Controller
 {
-    use BuildingTraits;
 
 
     /**
