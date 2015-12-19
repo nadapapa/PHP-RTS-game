@@ -31,51 +31,104 @@
             </div>
             <div class="panel-body">
                 <table class="table table-hover">
-                    @foreach($city->building_slot->building as $building)
-                        <?php
-                        $profit = ($building->level * $building->workers) * ($building->health / 100);
-                        switch ($building->type) {
-                            case 1:
-                                $food += $profit;
-                                break;
-                            case 2:
-                                $stone += $profit;
-                                break;
-                            case 3:
-                                $iron += $profit;
-                                break;
-                            case 4:
-                                $lumber += $profit;
-                                break;
-                        }
-                        ?>
-                    @endforeach
+
                     <tr>
                         <td>Népesség</td>
-                        <td>{{$city->human_resources->population}}</td>
-                        <td>0/h</td>
+
+                        @if($city->human_resources->population <= 0)
+                            <td class="bg-danger">
+                        @else
+                            <td>
+                                @endif
+                                {{$city->human_resources->population}}</td>
+
+                            @if($productions[$city->id]['population'] <= 0)
+                                <td class="bg-danger">
+                            @else
+                                <td>
+                                    @endif
+                                    {{$productions[$city->id]['population']}}/h
+                                </td>
                     </tr>
+
+
                     <tr>
                         <td>Élelmiszer</td>
-                        <td>{{$city->resources->food}}</td>
-                        <td>{{$food}}/h</td>
+
+                        @if($city->resources->food <= 0)
+                            <td class="bg-danger">
+                        @else
+                            <td>
+                                @endif
+                                {{$city->resources->food}}</td>
+
+                            @if($productions[$city->id]['food'] <= 0)
+                                <td class="bg-danger">
+                            @else
+                                <td>
+                                    @endif
+                                    {{$productions[$city->id]['food']}}/h
+                                </td>
                     </tr>
+
+
                     <tr>
                         <td>Vas</td>
-                        <td>{{$city->resources->iron}}</td>
-                        <td>{{$iron}}/h</td>
+                        @if($city->resources->iron <= 0)
+                            <td class="bg-danger">
+                        @else
+                            <td>
+                                @endif
+                                {{$city->resources->iron}}</td>
+
+                            @if($productions[$city->id]['iron'] <= 0)
+                                <td class="bg-danger">
+                            @else
+                                <td>
+                                    @endif
+                                    {{$productions[$city->id]['iron']}}/h
+                                </td>
 
                     </tr>
+
+
                     <tr>
                         <td>Fa</td>
-                        <td>{{$city->resources->lumber}}</td>
-                        <td>{{$lumber}}/h</td>
+                        @if($city->resources->lumber <= 0)
+                            <td class="bg-danger">
+                        @else
+                            <td>
+                                @endif
+                                {{$city->resources->lumber}}</td>
+
+                            @if($productions[$city->id]['lumber'] <= 0)
+                                <td class="bg-danger">
+                            @else
+                                <td>
+                                    @endif
+                                    {{$productions[$city->id]['lumber']}}/h
+                                </td>
 
                     </tr>
+
+
                     <tr>
                         <td>Kő</td>
-                        <td>{{$city->resources->stone}}</td>
-                        <td>{{$stone}}/h</td>
+                        @if($city->resources->stone <= 0)
+                            <td class="bg-danger">
+                        @else
+                            <td>
+                                @endif
+                                {{$city->resources->stone}}
+                            </td>
+
+                            @if($productions[$city->id]['stone'] <= 0)
+                                <td class="bg-danger">
+                            @else
+                                <td>
+                                    @endif
+                                    {{$productions[$city->id]['stone']}}/h
+                                </td>
 
                     </tr>
                 </table>

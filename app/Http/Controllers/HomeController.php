@@ -20,10 +20,19 @@ class HomeController extends Controller
 
         TaskController::checkTasks();
 
+        $productions = [];
+
+        foreach ($cities as $city) {
+            $productions[$city->id] = ResourceController::processProduction($city);
+        }
+
+
         return view('home', [
             'username' => $username,
             'cities' => $cities,
-            'help' => '/help/home']);
+            'help' => '/help/home',
+            'productions' => $productions,
+        ]);
     }
 
     public function getHelp($help = 0)

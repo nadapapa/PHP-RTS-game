@@ -5,12 +5,12 @@
 @stop
 @section('header')
     <div class="clearfix">
-    <h1>
-        <a href="/city/{{$city->id}}">
-            {{$city->name}}
-        </a>
-        <small>Építés</small>
-    </h1>
+        <h1>
+            <a href="/city/{{$city->id}}">
+                {{$city->name}}
+            </a>
+            <small>Építés</small>
+        </h1>
         @include('layouts.resources')
     </div>
 
@@ -39,12 +39,40 @@
 
                     <table class="panel-footer table">
                         <tr>
-                            <td><b>vas:</b>
-                                {{App\Building::$building_prices[$city->nation][$num]['iron']}}</td>
-                            <td><b>élelmiszer:</b> {{App\Building::$building_prices[$city->nation][$num]['food']}}</td>
-                            <td><b>fa:</b> {{App\Building::$building_prices[$city->nation][$num]['lumber']}}</td>
-                            <td><b>kő:</b> {{App\Building::$building_prices[$city->nation][$num]['stone']}}</td>
-                            <td><b>idő:</b> {{App\Building::$building_times[$city->nation][$num]}}</td>
+                            @if($city->resources->food >= App\Building::$building_prices[$city->nation][$num]['food'])
+                                <td class="bg-success">
+                            @else
+                                <td class="bg-danger">
+                                    @endif
+                                    <b>élelmiszer:</b> {{App\Building::$building_prices[$city->nation][$num]['food']}}
+                                </td>
+
+                                @if($city->resources->iron >= App\Building::$building_prices[$city->nation][$num]['iron'])
+                                    <td class="bg-success">
+                                @else
+                                    <td class="bg-danger">
+                                        @endif
+                                        <b>vas:</b>
+                                        {{App\Building::$building_prices[$city->nation][$num]['iron']}}
+                                    </td>
+
+                                    @if($city->resources->lumber >= App\Building::$building_prices[$city->nation][$num]['lumber'])
+                                        <td class="bg-success">
+                                    @else
+                                        <td class="bg-danger">
+                                            @endif
+                                            <b>fa:</b> {{App\Building::$building_prices[$city->nation][$num]['lumber']}}
+                                        </td>
+
+                                        @if($city->resources->lumber >= App\Building::$building_prices[$city->nation][$num]['food'])
+                                            <td class="bg-success">
+                                        @else
+                                            <td class="bg-danger">
+                                                @endif
+                                                <b>kő:</b> {{App\Building::$building_prices[$city->nation][$num]['stone']}}
+                                            </td>
+
+                                            <td><b>idő:</b> {{App\Building::$building_times[$city->nation][$num]}}</td>
                         </tr>
                     </table>
                 </div>

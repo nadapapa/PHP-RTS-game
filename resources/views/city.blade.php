@@ -26,7 +26,7 @@
             <div class="panel-body building-panel">
                 <div class="row building-row">
                     <div class="col-md-10 col-md-offset-1">
-                        <a href="/city/{{$city->id}}/wall" class="btn btn-primary btn-wall">Fal {{$wall->level}}</a>
+                        <a href="/city/{{$city->id}}/wall" class="btn btn-primary btn-wall">Fal ({{$wall->level}})</a>
                     </div>
                 </div>
 
@@ -102,9 +102,9 @@
                         @endforeach
 
                     @else
-                        @foreach(App\Army::$unit_names[$city->nation] as $key => $name)
-                            <td><b>{{$name}}:</b> 0</td>
-                        @endforeach
+                        <br>
+                        <p class="text-center"><b>Jelenleg nem tartózkodik hadsereg a városban</b></p>
+                        <br>
                     @endif
                 </tr>
             </table>
