@@ -25,11 +25,6 @@ class Army extends Model
         return $this->hasOne('App\Grid', 'army_id');
     }
 
-    public function destinationHex()
-    {
-        return $this->hasOne('App\Grid', 'army_id', 'destination_hex');
-    }
-
     public function user()
     {
         return $this->belongsTo('App\user');

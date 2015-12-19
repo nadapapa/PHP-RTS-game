@@ -10,9 +10,13 @@
 @stop
 
 @section('content')
-    <div class="col-md-8 col-md-offset-1">
-        <h2>Városok</h2>
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="row">
+                <h2>Városok</h2>
+            </div>
 
+            <div class="row">
         @foreach ($cities as $city)
             <?php
             $food = 0;
@@ -20,8 +24,8 @@
             $lumber = 0;
             $stone = 0;
             ?>
-            <div class="col-md-6">
-        <div class="panel panel-default">
+                <div class="col-md-3">
+                    <div class="panel panel-default">
             <div class="panel-heading text-center">
                 <b>
                     <a href="/city/{{$city->id}}">
@@ -29,11 +33,11 @@
                     </a>
                 </b>
             </div>
-            <div class="panel-body">
+
                 <table class="table table-hover">
 
                     <tr>
-                        <td>Népesség</td>
+                        <td><b>Népesség</b></td>
 
                         @if($city->human_resources->population <= 0)
                             <td class="bg-danger">
@@ -53,7 +57,7 @@
 
 
                     <tr>
-                        <td>Élelmiszer</td>
+                        <td><b>Élelmiszer</b></td>
 
                         @if($city->resources->food <= 0)
                             <td class="bg-danger">
@@ -73,7 +77,7 @@
 
 
                     <tr>
-                        <td>Vas</td>
+                        <td><b>Vas</b></td>
                         @if($city->resources->iron <= 0)
                             <td class="bg-danger">
                         @else
@@ -93,7 +97,7 @@
 
 
                     <tr>
-                        <td>Fa</td>
+                        <td><b>Fa</b></td>
                         @if($city->resources->lumber <= 0)
                             <td class="bg-danger">
                         @else
@@ -113,7 +117,7 @@
 
 
                     <tr>
-                        <td>Kő</td>
+                        <td><b>Kő</b></td>
                         @if($city->resources->stone <= 0)
                             <td class="bg-danger">
                         @else
@@ -132,11 +136,52 @@
 
                     </tr>
                 </table>
-            </div>
-        </div>
+
+                    </div>
             </div>
         @endforeach
 
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <hr>
+        <div class="col-md-10 col-md-offset-1">
+
+            <div class="row">
+                <h2>Hadseregek</h2>
+            </div>
+
+            <div class="row">
+                @foreach($armies as $army)
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading text-center">
+                                <b>
+                                    <a href="/map/x{{$coords[$army->id]['x']}}y{{$coords[$army->id]['y']}}">
+                                        koordináta: x: {{$coords[$army->id]['x']}}, y: {{$coords[$army->id]['y']}}
+                                    </a>
+                                </b>
+                            </div>
+                            <table class="panel-body table table-hover">
+
+                                @foreach(App\Army::$unit_names[$city->nation] as $key => $name)
+                                    <?php
+                                    $unit = "unit" . $key;
+                                    ?>
+                                    <tr>
+                                        <td><b>{{$name}}:</b></td>
+                                        <td>{{$army->$unit}}</td>
+                                    </tr>
+                                @endforeach
+
+                            </table>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
 
     </div>
 

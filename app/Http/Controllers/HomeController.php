@@ -15,7 +15,8 @@ class HomeController extends Controller
      */
     public function getHome()
     {
-        $username = Auth::user()->name;
+        $user = Auth::user();
+        $username = $user->name;
         $cities = Auth::user()->cities;
 
         TaskController::checkTasks();
@@ -27,11 +28,22 @@ class HomeController extends Controller
         }
 
 
+        $armies = $user->armies;
+
+        $coords = [];
+
+        foreach ($armies as $army) {
+            $coords[$army->id] = ['x' => $army->currentHex->x, 'y' => $army->currentHex->y];
+        }
+
+
         return view('home', [
             'username' => $username,
             'cities' => $cities,
             'help' => '/help/home',
             'productions' => $productions,
+            'armies' => $armies,
+            'coords' => $coords,
         ]);
     }
 

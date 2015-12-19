@@ -42,7 +42,7 @@
                 </button>
             </div>
         @endif
-</div>
+        </div>
         @yield('content')
     </div>
     <hr>
