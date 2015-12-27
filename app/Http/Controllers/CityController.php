@@ -2,6 +2,7 @@
 
 
 use App\Grid;
+use App\Http\Controllers\Buildings\BuildingController;
 use App\Http\Requests;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\Controller;
@@ -37,6 +38,12 @@ class CityController extends Controller
         $building_slot = $city->building_slot;
 
         $buildings = $building_slot->building;
+
+        foreach ($buildings as $building) {
+            BuildingController::buildingWearing($building);
+
+        }
+
 
         $wall = $building_slot->wall;
         $wall = Building::find($wall);

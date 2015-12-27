@@ -17,16 +17,16 @@ class Path extends Model
      *
      * @var array
      */
-    protected $fillable = ['path_id', 'hex_id', 'finished_at'];
+    protected $fillable = ['path_id', 'hex_id', 'started_at', 'finished_at'];
 
-    protected $dates = ['finished_at'];
+    protected $dates = ['started_at', 'finished_at'];
 
     public $timestamps = false;
 
 
     public function army()
     {
-        return $this->belongsTo('App\Army', 'path_id');
+        return $this->belongsTo('App\Army', 'path_id', 'path_id');
     }
 
     public function task()

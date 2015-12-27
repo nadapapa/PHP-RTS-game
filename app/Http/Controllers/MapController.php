@@ -49,6 +49,12 @@ class MapController extends Controller
     public function getMap()
     {
         TaskController::checkTasks();
+
+        $cities = Auth::user()->cities;
+        foreach ($cities as $city) {
+            ResourceController::processProduction($city);
+        }
+
         return view('map', ['help' => '/help/map']);
     }
 

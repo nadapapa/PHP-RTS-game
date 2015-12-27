@@ -5,6 +5,7 @@ use App\City;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\Path;
 use App\Task;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -99,7 +100,7 @@ class TaskController extends Controller
                 break;
 
             case 20: // move army
-                self::pathProgress($task);
+                ArmyController::pathProgress($task);
 
                 break;
 
@@ -145,31 +146,6 @@ class TaskController extends Controller
         }
     }
 
-
-    public static function pathProgress(Task $task)
-    {
-        $finished = null;
-        $task->path->filter(function ($item) use (&$finished) {
-            if ($item->finished_at <= Carbon::now()) { // if the path is finished
-                $finished = $item;
-                $item->delete();
-            }
-        });
-
-        if ($finished != null) {
-            $army = $task->army;
-            $army->currentHex->update(['army_id' => 0]);
-            $army->update(['current_hex_id' => $finished->hex_id]);
-            $finished->hex->update(['army_id' => $army->id]);
-        }
-
-        if ($task->path->isEmpty()) {
-            $task->army->update(['task_id' => 0, 'path_id' => 0]);
-            $task->delete();
-            return;
-        }
-
-    }
 
 
 

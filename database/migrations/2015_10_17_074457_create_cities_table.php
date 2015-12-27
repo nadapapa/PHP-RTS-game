@@ -21,7 +21,7 @@ class CreateCitiesTable extends Migration
             $table->integer('owner')->unsigned();
 
             $table->integer('level')->default(1);
-            $table->integer('nation');
+            $table->integer('nation')->unsigned();
 
             $table->integer('building_slots')->unsigned();
 

@@ -18,15 +18,12 @@ class CreateGridsTable extends Migration
             $table->integer('x');
             $table->integer('y');
             $table->integer('layer1');
-            $table->integer('layer2');
-            $table->integer('layer3');
-            $table->integer('layer4');
-            $table->integer('layer5');
 
             $table->integer('owner')->unsigned();
 
             $table->integer('city')->unsigned();
             $table->integer('army_id');
+            $table->integer('battle_id');
 
             $table->index(['x', 'y']);
         });

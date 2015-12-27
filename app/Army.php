@@ -53,6 +53,20 @@ class Army extends Model
         ];
     }
 
+    public function getUnitsSum()
+    {
+        $units = $this->getUnits();
+
+        $sum = 0;
+        foreach ($units as $key => $unit) {
+            $sum += $unit;
+        }
+
+        return $sum;
+    }
+
+
+
     public static $unit_names = [
         1 => [ // római
             1 => 'könnyűgyalogos',
@@ -250,6 +264,84 @@ class Army extends Model
             3 => 1,
             4 => 1,
             5 => 1,
+            6 => 1,
+            7 => 1
+        ],
+    ];
+
+    public static $unit_defense = [
+        1 => [ // római
+            1 => 1,
+            2 => 2,
+            3 => 1,
+            4 => 1,
+            5 => 2,
+            6 => 1,
+            7 => 1
+        ],
+        2 => [ // görög
+            1 => 1,
+            2 => 2,
+            3 => 1,
+            4 => 1,
+            5 => 2,
+            6 => 1,
+            7 => 1
+        ],
+        3 => [ // germán
+            1 => 1,
+            2 => 2,
+            3 => 1,
+            4 => 1,
+            5 => 2,
+            6 => 1,
+            7 => 1
+        ],
+        4 => [ // szarmata
+            1 => 1,
+            2 => 2,
+            3 => 1,
+            4 => 1,
+            5 => 2,
+            6 => 1,
+            7 => 1
+        ],
+    ];
+
+    public static $unit_attack = [
+        1 => [ // római
+            1 => 1,
+            2 => 2,
+            3 => 1,
+            4 => 1,
+            5 => 2,
+            6 => 1,
+            7 => 1
+        ],
+        2 => [ // görög
+            1 => 1,
+            2 => 2,
+            3 => 1,
+            4 => 1,
+            5 => 2,
+            6 => 1,
+            7 => 1
+        ],
+        3 => [ // germán
+            1 => 1,
+            2 => 2,
+            3 => 1,
+            4 => 1,
+            5 => 2,
+            6 => 1,
+            7 => 1
+        ],
+        4 => [ // szarmata
+            1 => 1,
+            2 => 2,
+            3 => 1,
+            4 => 1,
+            5 => 2,
             6 => 1,
             7 => 1
         ],

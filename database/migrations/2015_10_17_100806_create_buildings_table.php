@@ -19,11 +19,11 @@ class CreateBuildingsTable extends Migration
             $table->integer('city_id')->unsigned();
             $table->integer('slot')->unsigned();
 
-            $table->integer('nation');
-            $table->integer('type');
+            $table->integer('nation')->unsigned();
+            $table->integer('type')->unsigned();
             $table->integer('level')->default(1);
-            $table->integer('workers');
-            $table->integer('health')->default('100');
+            $table->integer('workers')->unsigned();
+            $table->float('health')->default('100');
 
             $table->timestamps();
             $table->timestamp('finished_at');

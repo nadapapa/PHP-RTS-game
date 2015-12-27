@@ -82,7 +82,7 @@ $now = Carbon::now();
                     @endif
                 </p>
 
-                <p>Épség: {{$building->health}}%
+                <p>Épség: {{number_format($building->health, 1)}}%
                 @if ($building->health < 100 && $building->workers > 0)
                     <form method="POST" action="{{Request::url()}}/heal">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">

@@ -329,4 +329,24 @@ class BuildingController extends Controller
         return redirect()->back()->withErrors(['not_enough_worker' => "Nincs elég munkás"]);
     }
 
+
+    public static function buildingWearing(Building $building)
+    {
+        $now = Carbon::now();
+
+        $workers = $building->workers;
+
+        if ($workers == 0) {
+            $workers = 0.5;
+        }
+
+        $time = $building->updated_at->diffInSeconds($now);
+
+        $wearing = ($time / 3600) * ($workers * 0.1);
+
+        $building->health -= $wearing;
+
+        $building->save();
+
+    }
 }
