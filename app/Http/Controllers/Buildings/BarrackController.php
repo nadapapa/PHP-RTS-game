@@ -28,9 +28,8 @@ class BarrackController extends Controller
      */
     public function postTrainUnit(Request $request, $city_id, $slot_num, $building_id)
     {
-        if ($this->validateOwner($city_id)) {
-            $city = City::find($city_id);
-        } else {
+        $city = City::find($city_id);
+        if (!$this->validateOwner($city)) {
             return redirect('/home')->withErrors('Nem a te városod');
         }
 

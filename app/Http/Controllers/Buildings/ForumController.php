@@ -22,11 +22,11 @@ class ForumController extends Controller
      */
     public function getMakeWorker($city_id, $slot_num, $building_id)
     {
-        if ($this->validateOwner($city_id)) {
-            $city = City::find($city_id);
-        } else {
+        $city = City::find($city_id);
+        if (!$this->validateOwner($city)) {
             return redirect('/home')->withErrors('Nem a te városod');
         }
+
 
         if ($building = $this->buildingCompleted($building_id)) {
             TaskController::checkTasks();
@@ -77,11 +77,11 @@ class ForumController extends Controller
      */
     public function getMakeSettler($city_id, $slot_num, $building_id)
     {
-        if ($this->validateOwner($city_id)) {
-            $city = City::find($city_id);
-        } else {
+        $city = City::find($city_id);
+        if (!$this->validateOwner($city)) {
             return redirect('/home')->withErrors('Nem a te városod');
         }
+
 
         if ($building = $this->buildingCompleted($building_id)) {
             TaskController::checkTasks();

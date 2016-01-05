@@ -27,13 +27,13 @@ abstract class Controller extends BaseController
      * @param $city_id
      * @return bool
      */
-    public function validateOwner($city_id)
+    public function validateOwner($city)
     {
-        $city = City::find($city_id);
+//        $city = City::find($city_id);
         $userid = Auth::user()->id;
 
         try {
-            if ($city->owner != $userid) {
+            if ($city->owner !== $userid) {
                 return false;
             }
         } catch (ErrorException $e) {

@@ -25,39 +25,39 @@ class CityController extends Controller
 
         TaskController::checkTasks();
 
-        if ($this->validateOwner($id)) {
-            $city = City::where('id', $id)->first();
+        $city = City::where('id', $id)->first();
+
+        if ($this->validateOwner($city)) {
+
+            $production = ResourceController::processProduction($city);
+
+            $building_slot = $city->building_slot;
+
+            $buildings = $building_slot->building;
+
+            foreach ($buildings as $building) {
+                BuildingController::buildingWearing($building);
+
+            }
+
+
+            $wall = $building_slot->wall;
+            $wall = Building::find($wall);
+
+            $building_slot = array_slice($building_slot->toArray(), 3, 25);
+
+            return view('city', [
+                'city' => $city,
+                'building_slot' => $building_slot,
+                'buildings' => $buildings,
+                'help' => '/help/city',
+                'production' => $production,
+                'wall' => $wall,
+            ]);
 
         } else {
             return redirect('/home')->withErrors('Nem a te városod');
         }
-
-
-        $production = ResourceController::processProduction($city);
-
-        $building_slot = $city->building_slot;
-
-        $buildings = $building_slot->building;
-
-        foreach ($buildings as $building) {
-            BuildingController::buildingWearing($building);
-
-        }
-
-
-        $wall = $building_slot->wall;
-        $wall = Building::find($wall);
-
-        $building_slot = array_slice($building_slot->toArray(), 3, 25);
-
-        return view('city', [
-            'city' => $city,
-            'building_slot' => $building_slot,
-            'buildings' => $buildings,
-            'help' => '/help/city',
-            'production' => $production,
-            'wall' => $wall,
-        ]);
     }
 
     public function getNewCity()
@@ -76,10 +76,9 @@ class CityController extends Controller
     {
         TaskController::checkTasks();
 
-        if ($this->validateOwner($id)) {
-            $city = City::where('id', $id)->first();
+        $city = City::where('id', $id)->first();
 
-        } else {
+        if (!$this->validateOwner($city)) {
             return redirect('/home')->withErrors('Nem a te városod');
         }
 
@@ -94,9 +93,9 @@ class CityController extends Controller
 
     public function healWall(Request $request, $city_id)
     {
-        if ($this->validateOwner($city_id)) {
-            $city = City::find($city_id);
-        } else {
+        $city = City::find($city_id);
+
+        if (!$this->validateOwner($city)) {
             return redirect('/home')->withErrors('Nem a te városod');
         }
 
