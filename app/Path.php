@@ -38,4 +38,16 @@ class Path extends Model
     {
         return $this->hasOne('App\Grid', 'id', 'hex_id');
     }
+
+    public function path()
+    {
+        return $this->hasMany('App\Path', 'path_id', 'path_id');
+    }
+
+    public function deletePath()
+    {
+        $this->path->each(function($path){
+            $path->delete();
+        });
+    }
 }
