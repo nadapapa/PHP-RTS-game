@@ -110,10 +110,10 @@ class ArmyController extends Controller
             return;
         }
 
-        $crossing = self::findCrossingPath($task->path);
-        if($crossing !== null){
-            self::processPathCrossing($crossing);
-        }
+        self::findCrossingPath($task->path);
+//        if($crossing !== null){
+//            self::processPathCrossing($crossing);
+//        }
 
         $finished = null;
 
@@ -140,6 +140,7 @@ class ArmyController extends Controller
 
     /**
      * Finds the step in the path which crossed, and also finds the crossing path's step.
+     * finds out if there is an obstacle in the way (standing army, city, etc)
      * so it checks if there were two armies in the same location,
      * but it does not check the time factor, that's the job of self::processPathCrossing()
      *
@@ -160,14 +161,29 @@ class ArmyController extends Controller
 
         foreach ($path as $step) {
             $query = Path::where('hex_id', '=', $step->hex_id)->where('path_id', '<>', $step['path_id'])->first();
-            if ($query !== null) {
+            if ($query !== null) { // if there is a crossing path
                 $crossing = [$query, $step];
-                break;
+                self::processPathCrossing($crossing);
+            }
+
+            $query = $step->hex->army_id;
+            if ($query > 0) { // check if there is a standing army in the way
+               self::processArmyCrossing($step->hex->army, $step);
+
             }
 
         }
 
-        return $crossing;
+//        return $crossing;
+    }
+
+    public static function processArmyCrossing(Army $army, Path $step)
+    {
+        if ($army->user_id === $step->army->user_id){ // if the two armies belong to the same user
+            self::processFriendlyArmiesMeeting($step->army, $army);
+        } else { // if the two armies are enemies
+            self::processBattle($step->army, $army);
+        }
     }
 
 
@@ -305,10 +321,17 @@ class ArmyController extends Controller
     // delete army and its path, task(s) and deletes its id from hex
     public static function destroyArmy(Army $army)
     {
-        $army->task->delete();
-        $army->path->each(function($path){
-            $path->delete();
-        });
+
+        if (count($army->task)){
+            $army->task->delete();
+        }
+
+        if (count($army->path)){
+            $army->path->each(function($path){
+                $path->delete();
+            });
+        }
+
         $army->currentHex->army_id = 0;
         $army->currentHex->save();
         $army->delete();
