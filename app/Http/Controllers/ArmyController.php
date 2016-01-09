@@ -102,6 +102,12 @@ class ArmyController extends Controller
     }
 
 
+    /**
+     * checks each step of the path if it was completed (based on its timestamp).
+     * also calls the findCrossingPath method to (surprise!) find the paths crossing the current path
+     *
+     * @param Task $task
+     */
     public static function pathProgress(Task $task)
     {
         if ($task->path->isEmpty()) {
@@ -110,7 +116,7 @@ class ArmyController extends Controller
             return;
         }
 
-        self::findCrossingPath($task->path);
+
 //        if($crossing !== null){
 //            self::processPathCrossing($crossing);
 //        }
@@ -119,11 +125,14 @@ class ArmyController extends Controller
 
         $task->path->filter(function ($item) use (&$finished) {
             if ($item->finished_at <= Carbon::now()) { // if the path is finished
+                self::findCrossingPath($item);
                 $finished = $item;
                 $item->delete();
             }
         });
 
+        // now $finished is the last element of the path.
+        // $finished has the hex where the army is
         if ($finished != null) {
             $army = $task->army;
             $army->currentHex->update(['army_id' => 0]);
@@ -148,35 +157,29 @@ class ArmyController extends Controller
      * @return array|null   the array has 2 elements: the step of the crossing path
      *                      and the step of the crossed path
      */
-    public static function findCrossingPath(Collection $path)
+    public static function findCrossingPath(Path $path)
     {
-        // TODO find the stationary obstacles too (armies, cities, etc.)
         $crossing = null;
 
-        // filter those steps which have already done
-        // only the past matters here
-        $path = $path->filter(function ($item) {
-            return $item->finished_at <= Carbon::now();
-        });
+        $query = Path::where('hex_id', '=', $path->hex_id)->where('path_id', '<>', $path->path_id)->first();
 
-        foreach ($path as $step) {
-            $query = Path::where('hex_id', '=', $step->hex_id)->where('path_id', '<>', $step['path_id'])->first();
-            if ($query !== null) { // if there is a crossing path
-                $crossing = [$query, $step];
-                self::processPathCrossing($crossing);
-            }
-
-            $query = $step->hex->army_id;
-            if ($query > 0) { // check if there is a standing army in the way
-               self::processArmyCrossing($step->hex->army, $step);
-
-            }
-
+        if ($query !== null) { // if there is a crossing path
+            self::processPathCrossing($query, $path);
         }
 
+        $query = $path->hex->army_id;
+        if ($query > 0) { // check if there is a standing army in the way
+           self::processArmyCrossing($path->hex->army, $path);
+        }
 //        return $crossing;
     }
 
+    /**
+     * determines if the meeting armies are friend or foe.
+     *
+     * @param Army $army
+     * @param Path $step
+     */
     public static function processArmyCrossing(Army $army, Path $step)
     {
         if ($army->user_id === $step->army->user_id){ // if the two armies belong to the same user
@@ -188,24 +191,25 @@ class ArmyController extends Controller
 
 
     /**
-     * checks if the crossing of the two armies was at the same time and determines which one was there first.
+     * checks if the crossing of the two armies was at the same
+     * time and determines which one was there first.
      * the first is the attacked army the second is the attacking.
      * also checks if the owner of the two armies was the same one.
      *
      * @param array $crossing
      */
-    public static function processPathCrossing(array $crossing)
+    public static function processPathCrossing(Path $crossing0, Path $crossing1)
     {
         $attacked = null;
         $attacking = null;
 
         // check if the two armies were on the same location at the same time
-        if ($crossing[1]->started_at->between($crossing[0]->started_at, $crossing[0]->finished_at)) { // if the main path was on the hex first
-            $attacking = $crossing[1];
-            $attacked = $crossing[0];
-        } elseif ($crossing[0]->started_at->between($crossing[1]->started_at, $crossing[1]->finished_at)) { // if the secondary path was on the hex first
-            $attacking = $crossing[0];
-            $attacked = $crossing[1];
+        if ($crossing1->started_at->between($crossing0->started_at, $crossing0->finished_at)) { // if the main path was on the hex first
+            $attacking = $crossing1;
+            $attacked = $crossing0;
+        } elseif ($crossing0->started_at->between($crossing1->started_at, $crossing1->finished_at)) { // if the secondary path was on the hex first
+            $attacking = $crossing0;
+            $attacked = $crossing1;
         }
 
         if($attacking !== null && $attacked !== null) {
@@ -311,6 +315,11 @@ class ArmyController extends Controller
 
     }
 
+    /**
+     * TODO calculate casualties
+     * @param Army $army
+     * @param      $points
+     */
     public static function calculateCasualties(Army $army, $points)
     {
 
@@ -318,7 +327,12 @@ class ArmyController extends Controller
 
     }
 
-    // delete army and its path, task(s) and deletes its id from hex
+
+    /**
+     * delete army and its path, task(s) and deletes its id from hex
+     *
+     * @param Army $army
+     */
     public static function destroyArmy(Army $army)
     {
 
@@ -332,26 +346,23 @@ class ArmyController extends Controller
             });
         }
 
-        $army->currentHex->army_id = 0;
-        $army->currentHex->save();
+        $army->currentHex->update(['army_id' => 0]);
         $army->delete();
     }
 
+    /**
+     * @param Path $second
+     * @param Army $attacking
+     */
     public static function processFriendlyArmiesMeeting(Path $second, Army $attacking)
     {
         $path = $second->path;
-
-        $previous_id = $second->id;
         $previous = $second;
-
-
 
         if($second->id !== $path->min('id')){
             $previous_id = $second->id - 1;
             $previous = Path::where('id', '=', $previous_id)->first();
         }
-
-
 
         $previous->hex->army_id = $attacking->id;
         $previous->deletePath();
@@ -360,9 +371,7 @@ class ArmyController extends Controller
         $attacking->current_hex_id = $previous->hex->id;
         $attacking->task_id = 0;
         $attacking->path_id = 0;
-        $attacking->currentHex->army_id = 0;
-
+        $attacking->currentHex->update(['army_id' => 0]);
         $attacking->save();
-
     }
 }
