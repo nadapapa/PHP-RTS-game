@@ -65,7 +65,68 @@ class Army extends Model
         return $sum;
     }
 
+    /**
+     * Calculates the sum of the attack points of the Army's units.
+     *
+     * @return int
+     */
+    public function calculateAttackingPoints()
+    {
+        // TODO include modifiers (armour and weapon upgrades) in the calculation
 
+        $units = $this->getUnits();
+        $points = 0;
+
+        foreach ($units as $key => $unit) {
+            if ($unit > 0) {
+                $points += (Army::$unit_attack[$this->user->nation][$key] * $unit);
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * Calculates the sum of the defense points of the Army's units.
+     *
+     * @return int
+     */
+    public function calculateDefensePoints()
+    {
+        // TODO include modifiers (armour and weapon upgrades) in the calculation
+
+        $units = $this->getUnits();
+        $points = 0;
+
+        foreach ($units as $key => $unit) {
+            if ($unit > 0) {
+                $points += (Army::$unit_defense[$this->user->nation][$key] * $unit);
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * delete army and its path, task(s) and deletes its id from hex
+     *
+     * @param Army $army
+     */
+    public function destroyArmy()
+    {
+        if (count($this->task)){
+            $this->task->delete();
+        }
+
+        if (count($this->path)){
+            $this->path->each(function($path){
+                $path->delete();
+            });
+        }
+
+        $this->currentHex->update(['army_id' => 0]);
+        $this->delete();
+    }
 
     public static $unit_names = [
         1 => [ // római

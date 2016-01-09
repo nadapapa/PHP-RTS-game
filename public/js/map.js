@@ -44,7 +44,7 @@ var city1 = L.icon({
     iconSize: [9, 9], // size of the icon
 
     iconAnchor: [4.5, 4.5], // point of the icon which will correspond to marker's location
-    popupAnchor: [0, -4] // point from which the popup should open relative to the iconAnchor
+    popupAnchor: [0, -4.5] // point from which the popup should open relative to the iconAnchor
 });
 
 var city2 = L.icon({
@@ -225,9 +225,13 @@ var first_drag = 1;
 
 var army_selected = 0;
 var army_attacked = 0;
+var city_attacked = 0;
 
 var enemy_army_in_the_way = 0;
 var friendly_army_in_the_way = 0;
+
+var friendly_city_in_the_way = 0;
+var enemy_city_in_the_way = 0;
 
 var ajax_throttle = 500; //ms
 var map_width = 40; //hex
@@ -243,10 +247,6 @@ var armies_zindex = 5000;
 var armies_hash = [];
 var armies_coordinates = [];
 var cities_hash = [];
-
-$.ajaxSetup({
-    headers: {'X-CSRF-Token': $('meta[name=csrf_token]').attr('content')}
-});
 
 
 function init() {
@@ -403,6 +403,16 @@ function clickOnCity(e) {
     updateInfobox(1, data);
     started_path_group.clearLayers();
 
+    map.closePopup(popup);
+    e.target.closePopup();
+
+    // if it is not the user's city
+    if(army_selected != 0 && army_attacked == 0 && city_attacked == 0){
+        e.target.openPopup();
+    }
+    if (enemy_army_in_the_way !== 0) {
+        e.target.closePopup();
+    }
 }
 
 function clickOnArmy(e) {
@@ -426,18 +436,6 @@ function clickOnArmy(e) {
         $('#countdown').countdown(time, function (event) {
             $(this).html(event.strftime('%H:%M:%S'));
         });
-
-    }
-
-
-    if (data.city > 0) {
-        var city_leaflet_id = cities_hash[data.city];
-        var city = city_markers.getLayer(city_leaflet_id);
-        data.city_name = city.city_data.city_name;
-        data.user_name = city.city_data.user_name;
-        data.nation = city.city_data.nation;
-        updateInfobox(3, data);
-        return;
     }
 
     // if it's the user's army
@@ -461,7 +459,17 @@ function clickOnArmy(e) {
         }
     }
 
+    if (data.city > 0) { // if the army is in a city
+        var city_leaflet_id = cities_hash[data.city];
+        var city = city_markers.getLayer(city_leaflet_id);
+        data.city_name = city.city_data.city_name;
+        data.user_name = city.city_data.user_name;
+        data.nation = city.city_data.nation;
+        updateInfobox(3, data);
+    }
+
     updateInfobox(2, data);
+
 }
 
 function clickOnPathPoint(e) {
@@ -493,8 +501,6 @@ function selectArmy(army_id) {
     path = [];
 
     points.push(armycoord);
-
-    //map.contextmenu.setDisabled(0, false);
 
     tx = (armycoord.x * HEX_SIDE * 1.5) + 36;
     ty = (armycoord.y * HEX_SCALED_HEIGHT + (armycoord.x % 2) * HEX_SCALED_HEIGHT / 2) + 36;
@@ -585,6 +591,15 @@ function drawPathPoints() {
             }
         });
 
+        city_markers.eachLayer(function (city_layer) {
+            if (city_layer._latlng.lat === pointMarker._latlng.lat
+                && city_layer._latlng.lng === pointMarker._latlng.lng) {
+                if (city_layer.city_data.owned == false) {
+                    pointMarker.setIcon(window["red" + map.getZoom()]);
+                }
+            }
+        });
+
         pointMarker.on('dragend', function (e) {
 
             path.push(calculateHexCoord(e.target._latlng));
@@ -604,6 +619,23 @@ function drawPathPoints() {
 
                     if (typeof army_layer.army_data.army.unit1 === 'undefined') {
                         enemy_army_in_the_way = army_layer.army_data.army_id;
+                        e.target.setIcon(window["red" + map.getZoom()]);
+                    }
+                }
+            });
+
+            city_markers.eachLayer(function (city_layer) {
+                if (city_layer._latlng.lat === e.target._latlng.lat
+                    && city_layer._latlng.lng === e.target._latlng.lng) {
+
+                    if (city_layer.city_data.owned == true) {
+                        friendly_city_in_the_way = city_layer.city_data.id;
+                    }
+
+                    if (city_layer.city_data.owned == false) {
+                        console.log("vmi");
+
+                        enemy_city_in_the_way = city_layer.city_data.id;
                         e.target.setIcon(window["red" + map.getZoom()]);
                     }
                 }
@@ -654,6 +686,21 @@ function drawPath(path, layerGroup) {
 
                 }
             });
+
+            city_markers.eachLayer(function (city_layer) {
+                if (city_layer._latlng.lat === coord.lat
+                    && city_layer._latlng.lng === coord.lng) {
+                    if (city_layer.city_data.owned == true) {
+                        friendly_city_in_the_way = city_layer.city_data.id;
+                    }
+
+                    if (city_layer.city_data.owned == false) {
+                        pathMarker.setIcon(window["red" + map.getZoom()]);
+                        enemy_city_in_the_way = city_layer.city_data.id;
+                    }
+
+                }
+            });
         }
         layerGroup.addLayer(pathMarker);
 
@@ -686,6 +733,9 @@ function dragPathPoint(e) {
 function deletePathPoint(n) {
     if (army_attacked != 0 && n == points.length - 1) {
         army_attacked = 0;
+    }
+    if (city_attacked != 0 && n == points.length - 1) {
+        city_attacked = 0;
     }
 
     points.splice(n, 1);
@@ -721,6 +771,9 @@ function moveToHex(path) {
 function cancelPath(army_id) {
     army_selected = 0;
     army_attacked = 0;
+    city_attacked = 0;
+    friendly_army_in_the_way = 0;
+    enemy_army_in_the_way = 0;
 
     map.off('click', addPathPointPopup);
     var e = army_markers.getLayer(armies_hash[army_id]);
@@ -750,11 +803,6 @@ function cancelPath(army_id) {
         map.removeLayer(attackMarker);
         attackMarker = undefined;
     }
-
-
-    //createPath();
-    //drawPath(path, path_markers);
-    //drawPathPoints();
 }
 
 function attackArmy(id) {
@@ -769,10 +817,20 @@ function attackArmy(id) {
     addPathPoint(attacked_army.army_data.x, attacked_army.army_data.y);
 
     //placeAttackMarker(attacked_army.army_data.x, attacked_army.army_data.y);
-
-
 }
 
+function attackCity(id){
+    city_attacked = id;
+
+    var attacked_city = city_markers.getLayer(cities_hash[id]);
+    map.closePopup();
+
+    //attacked_army.setPopupContent('támadás');
+
+    addPathPoint(attacked_city.city_data.x, attacked_city.city_data.y);
+
+    //placeAttackMarker(attacked_army.army_data.x, attacked_army.army_data.y);
+}
 
 function calculatePathTime() {
     $.post("/map/path_price", {'_token': $('meta[name=_token]').attr('content'), path: path}, function (data) {
@@ -794,14 +852,15 @@ function calculatePathTime() {
 
         var warning = "";
 
-        if (friendly_army_in_the_way !== 0 || enemy_army_in_the_way !== 0) {
+        if (friendly_army_in_the_way !== 0 || enemy_army_in_the_way !== 0
+            || friendly_city_in_the_way !== 0 || enemy_city_in_the_way !== 0
+        ) {
             warning =
-                "<b>Egy hadsereg blokkolja az utat! </b> <br>" +
-                "Ha ez egy ellenséges sereg, akkor <br>" +
-                "a találkozáskor csata lesz. <br>" +
-                "Ha ez a sereg a tiéd vagy egy <br>" +
-                "szövetségesedé, akkor a mozgó <br>" +
-                "sereg csak megáll<br>"
+                "<b>Egy hadsereg/város blokkolja az utat! </b> <br>" +
+                "Ha ez egy ellenséges sereg/város, akkor <br>" +
+                "a találkozáskor csata/ostrom lesz. <br>" +
+                "Ha ez a sereg/város a tiéd, akkor  <br>" +
+                "a mozgó sereg csak megáll<br>"
         }
 
         point_markers.eachLayer(function (layer) {
@@ -811,7 +870,7 @@ function calculatePathTime() {
                 "út ideje: " + time + "<br>" + warning +
                 '<button type="button" class="btn btn-xs btn-success" onclick="moveToHex(path)">' +
                 'mehet</button> ' +
-                '<br><button type="button" class="btn btn-xs btn-danger" ' +
+                '<button type="button" class="btn btn-xs btn-danger" ' +
                 'onclick="deletePathPoint(' + layer.options.number + ')">pont törlése</button>'
             );
         });
@@ -937,6 +996,13 @@ function placeCities(cities) {
             zIndexOffset: cities_zindex,
         }).addTo(map);
 
+        if(cities[i].owned == false){
+            city_marker.bindPopup(
+                '<button type="button" class="btn btn-xs btn-danger"' +
+                ' onclick="attackCity(' + cities[i].id + ')">' +
+                'ostrom</button>');
+        }
+
         cities_hash[cities[i].id] = city_marker._leaflet_id;
         city_marker.city_data = cities[i];
 
@@ -966,6 +1032,11 @@ function placeArmies(armies) {
                 '<button type="button" class="btn btn-xs btn-success army-select"' +
                 ' onclick="selectArmy(' + armies[i].army.id + ')">' +
                 'sereg áthelyezése</button>');
+        } else if (armies[i].city > 0) {
+            army_marker.bindPopup(
+                '<button type="button" class="btn btn-xs btn-danger"' +
+                ' onclick="attackCity(' + armies[i].city + ')">' +
+                'ostrom</button>');
         } else {
             army_marker.bindPopup(
                 '<button type="button" class="btn btn-xs btn-danger"' +

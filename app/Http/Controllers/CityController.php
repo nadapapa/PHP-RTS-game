@@ -22,7 +22,6 @@ class CityController extends Controller
      */
     public function getCity($id)
     {
-
         TaskController::checkTasks();
 
         $city = City::where('id', $id)->first();

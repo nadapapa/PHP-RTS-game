@@ -38,7 +38,7 @@ class City extends Model
 
     public function buildings()
     {
-        return $this->hasMany('buildings', 'city_id');
+        return $this->hasMany('App\Building', 'city_id');
     }
 
     public function resources()
@@ -54,6 +54,14 @@ class City extends Model
     public function task()
     {
         return $this->hasOne('App\Task', 'city_id');
+    }
+
+    /**
+     * @return null|Army
+     */
+    public function army()
+    {
+        return $this->hex->army;
     }
 
     /**
@@ -87,6 +95,32 @@ class City extends Model
         }
         return true;
     }
+
+
+    /**
+     * Calculates the sum of the defense points of the City.
+     *
+     * @return int
+     */
+    public function calculateDefensePoints()
+    {
+        // TODO include modifiers (city and wall upgrades) in the calculation
+
+        $points = 0;
+
+        // calculate the wall
+        $wall = $this->buildings->where('type', 9);
+
+        // wall defense point is (the level of the wall * 10) multiplied by the wall health percentage
+        $points += ($wall->level * 10) * ($wall->health / 100);
+
+        if ($this->army() !== null){ // the city has a garrisoned army
+            $points += $this->army()->calculateDefensePoints();
+        }
+
+        return $points;
+    }
+
 
     public static $worker_price = [
         1 => [ // római

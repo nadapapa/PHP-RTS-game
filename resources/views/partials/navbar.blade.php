@@ -33,12 +33,19 @@
                             echo '<a href="/map"><i class="fa fa-map"></i> Térkép</a>';
                         }
                         ?>
-
+                    </li>
+                    <li>
+                        <a href="/notifications"><i class="fa fa-bell"></i>
+                            Értesítések</a>
                     </li>
                 </ul>
 
 
                 <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/messages"><i class="fa fa-envelope"></i>
+                            Üzenetek</a>
+                    </li>
                     <li>
                         <a href="/settings"><i class="fa fa-cog"></i>
                             Beállítások</a>

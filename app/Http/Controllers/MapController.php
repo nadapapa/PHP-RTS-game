@@ -75,7 +75,15 @@ class MapController extends Controller
             join('cities', 'grid.city', '=', 'cities.id')->
             whereBetween('x', [$x1, $x2])->whereBetween('y', [$y1, $y2])->
             where('city', '>', 0)->
-            select('grid.x', 'grid.y', 'users.name as user_name', 'users.nation', 'cities.name as city_name', 'cities.capital', 'cities.id')->get();
+            select('grid.x', 'grid.y', 'users.id as user_id', 'users.name as user_name', 'users.nation', 'cities.name as city_name', 'cities.capital', 'cities.id')->get();
+
+        foreach ($cities as $city) {
+            if ($city->user_id == $user->id){
+                $city->owned = true;
+            } else {
+                $city->owned = false;
+            }
+        }
 
 
         $armies =

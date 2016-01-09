@@ -171,6 +171,11 @@ class ArmyController extends Controller
         if ($query > 0) { // check if there is a standing army in the way
            self::processArmyCrossing($path->hex->army, $path);
         }
+
+        $query = $path->hex->city;
+        if ($query > 0) { // check if there is a city in the way
+            // TODO if there is a city in the way
+        }
 //        return $crossing;
     }
 
@@ -238,54 +243,16 @@ class ArmyController extends Controller
         return $time;
     }
 
-
-    /**
-     * @param Army $attacking_army
-     * @param Army $attacked_army
-     * @return array
-     */
-    public static function calculateArmiesPoints(Army $attacking_army, Army $attacked_army)
-    {
-
-        // TODO include modifiers (armour and weapon upgrades) in the calculation
-
-        $attack_points = [0, 0];
-        $defense_points = [0, 0];
-
-        $attacking_units = $attacking_army->getUnits();
-
-        $attacked_units = $attacked_army->getUnits();
-
-        foreach ($attacking_units as $key => $unit) {
-            if ($unit > 0) {
-                $attack_points[0] += (Army::$unit_attack[$attacking_army->user->nation][$key] * $unit);
-                $defense_points[0] += (Army::$unit_defense[$attacking_army->user->nation][$key] * $unit);
-            }
-        }
-
-        foreach ($attacked_units as $key => $unit) {
-            if ($unit > 0) {
-                $attack_points[1] += (Army::$unit_attack[$attacked_army->user->nation][$key] * $unit);
-                $defense_points[1] += (Army::$unit_defense[$attacked_army->user->nation][$key] * $unit);
-            }
-        }
-
-        return ['attack_points' => $attack_points, 'defense_points' => $defense_points];
-    }
-
-
     /**
      * @param Path $attacking_path
      * @param Path $attacked_path
      */
     public static function processBattle(Army $attacking_army, Army $attacked_army)
     {
-        $points = self::calculateArmiesPoints($attacking_army, $attacked_army);
-
-        $attacking_attack = $points['attack_points'][0]; // attacking army's attack points
+        $attacking_attack = $attacking_army->calculateAttackingPoints(); // attacking army's attack points
 //        $attacked_attack = $points['attack_points'][1]; // attacked army's attack points
 //        $attacking_defense = $points['defense_points'][0]; // attacking army's defense points
-        $attacked_defense = $points['defense_points'][1]; // attacked army's defense points
+        $attacked_defense = $attacked_army->calculateDefensePoints(); // attacked army's defense points
 
 //        $attacked_defense -= $attacking_attack;
 //        $attacking_defense -= $attacked_attack;
@@ -303,8 +270,8 @@ class ArmyController extends Controller
             $loser = $attacking_army;
         }
 
-        self::calculateCasualties($winner, $points);
-        self::destroyArmy($loser);
+//        TODO self::calculateCasualties();
+        $loser->destroyArmy();
 
 
 //        $battle_time = self::calculateBattleTime($attacking_army, $attacked_army);
@@ -320,35 +287,13 @@ class ArmyController extends Controller
      * @param Army $army
      * @param      $points
      */
-    public static function calculateCasualties(Army $army, $points)
+    public static function calculateCasualties()
     {
 
 
 
     }
 
-
-    /**
-     * delete army and its path, task(s) and deletes its id from hex
-     *
-     * @param Army $army
-     */
-    public static function destroyArmy(Army $army)
-    {
-
-        if (count($army->task)){
-            $army->task->delete();
-        }
-
-        if (count($army->path)){
-            $army->path->each(function($path){
-                $path->delete();
-            });
-        }
-
-        $army->currentHex->update(['army_id' => 0]);
-        $army->delete();
-    }
 
     /**
      * @param Path $second
