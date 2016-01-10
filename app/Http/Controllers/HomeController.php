@@ -23,9 +23,12 @@ class HomeController extends Controller
 
         $productions = [];
 
-        foreach ($cities as $city) {
-            $productions[$city->id] = ResourceController::processProduction($city);
+        if(!count($cities)) {
+           // TODO if the user has not got any city.
         }
+            foreach ($cities as $city) {
+                $productions[$city->id] = ResourceController::processProduction($city);
+            }
 
 
         $armies = $user->armies;
