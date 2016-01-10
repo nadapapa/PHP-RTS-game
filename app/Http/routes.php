@@ -103,6 +103,17 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
     // settings
     Route::get('settings', 'HomeController@getSettings');
 
+    // messages
+    Route::get('messages', function(){
+        return view('messages');
+    });
+
+    // notifications
+    Route::get('notifications', function(){
+        return view('notifications');
+    });
+
+
 //	Route::get('city/{city_id}/newcity', 'CityController@getNewCity');
 
 

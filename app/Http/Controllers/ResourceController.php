@@ -237,7 +237,7 @@ class ResourceController extends Controller
         $storage = 0;
         $stores = $city->building_slot->building
             ->where('type', 6)
-            ->where('finished_at', '>=', $now)
+            ->where('finished_at', '<=', $now)
             ->where('workers', '>', 0);
 
         if (!$stores->isEmpty()) {
