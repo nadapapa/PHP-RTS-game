@@ -172,9 +172,11 @@ class ArmyController extends Controller
            self::processArmyCrossing($path->hex->army, $path);
         }
 
-        $query = $path->hex->city;
-        if ($query > 0) { // check if there is a city in the way
-            // TODO if there is a city in the way
+
+        if ($path->hex->city_id > 0) { // check if there is a city in the way
+            if($path->hex->owner != $path->army->user_id){
+                SiegeController::processSiege($path->army, $path->hex->city);
+            }
         }
 //        return $crossing;
     }

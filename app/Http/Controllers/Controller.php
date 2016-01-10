@@ -115,9 +115,9 @@ abstract class Controller extends BaseController
             'hex_id' => $hex_id,
         ]);
 
-        $slot = BuildingSlot::create(['city' => $city->id]);
-        Resource::create(['city' => $city->id]);
-        HumanResource::create(['city' => $city->id]);
+        $slot = BuildingSlot::create(['city_id' => $city->id]);
+        Resource::create(['city_id' => $city->id]);
+        HumanResource::create(['city_id' => $city->id]);
 
         $city->building_slot = $slot->id;
         $city->save();
@@ -134,7 +134,7 @@ abstract class Controller extends BaseController
         $slot->save();
 
         $hex = Grid::find($hex_id);
-        $hex->update(['owner' => $user->id, 'city' => $city->id]);
+        $hex->update(['owner_id' => $user->id, 'city_id' => $city->id]);
 
         foreach ($this->hexNeighbors($hex) as $neighbor) {
 //            $nhex = Grid::find($neighbor[0]['id']);

@@ -16,7 +16,7 @@ class CreateHumanResourcesTable extends Migration
         Schema::create('human_resources', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('city')->unsigned();
+            $table->integer('city_id')->unsigned();
 
             $table->float('population')->unsigned()->default(10);
             $table->integer('workers')->unsigned()->default(5);

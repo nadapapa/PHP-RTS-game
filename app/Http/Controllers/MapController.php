@@ -72,9 +72,9 @@ class MapController extends Controller
 
         $cities =
             Grid::join('users', 'grid.owner', '=', 'users.id')->
-            join('cities', 'grid.city', '=', 'cities.id')->
+            join('cities', 'grid.city_id', '=', 'cities.id')->
             whereBetween('x', [$x1, $x2])->whereBetween('y', [$y1, $y2])->
-            where('city', '>', 0)->
+            where('city_id', '>', 0)->
             select('grid.x', 'grid.y', 'users.id as user_id', 'users.name as user_name', 'users.nation', 'cities.name as city_name', 'cities.capital', 'cities.id')->get();
 
         foreach ($cities as $city) {
@@ -132,8 +132,8 @@ class MapController extends Controller
 //            $hex['owner'] = User::find($hex['owner'])->name;
 //        }
 //
-//        if ($hex['city'] > 0) {
-//            $city = City::find($hex['city']);
+//        if ($hex['city_id'] > 0) {
+//            $city = City::find($hex['city_id']);
 //            $hex['city_nation'] = intval($city->nation);
 //            $hex['city_name'] = $city->name;
 //            $hex['city_owner'] = User::find($city->owner)->name;
@@ -172,7 +172,7 @@ class MapController extends Controller
             $path_data[] = Grid::
             where("x", $hex['x'])
                 ->where('y', $hex['y'])
-                ->select('layer1', 'owner', 'city', 'army_id')
+                ->select('layer1', 'owner', 'city_id', 'army_id')
                 ->first();
         }
 
@@ -216,7 +216,7 @@ class MapController extends Controller
 
     public function getCities()
     {
-        return Grid::where("city", '>', 0)->get()->toJson();
+        return Grid::where('city_id', '>', 0)->get()->toJson();
     }
 
     public function getArmies()
@@ -588,12 +588,12 @@ class MapController extends Controller
 //            }
 //
 //
-//            if ($row['city'] > 0) {
+//            if ($row['city_id'] > 0) {
 //                $user = User::find($row['owner']);
 //                $username = $user->name;
 //
 //                $row['owner_name'] = $username;
-//                $row['city'] = City::find($row['city'])->name;
+//                $row['city_id'] = City::find($row['city_id'])->name;
 //
 //                switch ($user->nation) {
 //                    case 0:

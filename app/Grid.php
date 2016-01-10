@@ -18,7 +18,7 @@ class Grid extends Model
      *
      * @var array
      */
-    protected $fillable = ['id', 'x', 'y', 'layer1', 'layer2', 'layer3', 'layer4', 'layer5', 'owner', 'city', 'army_id'];
+    protected $fillable = ['id', 'x', 'y', 'layer1', 'layer2', 'layer3', 'layer4', 'layer5', 'owner', 'city_id', 'army_id'];
 
     /**
      * The hex types which are inhabitable i.e. city can not be founded on.
@@ -36,12 +36,17 @@ class Grid extends Model
 
     public function city()
     {
-        return $this->belongsTo('App\City', 'hex_id');
+        return $this->belongsTo('App\City');
     }
 
     public function army()
     {
         return $this->belongsTo('App\Army');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
     }
 
 

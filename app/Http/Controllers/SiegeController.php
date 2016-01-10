@@ -13,6 +13,7 @@ class SiegeController extends Controller {
 	public static function processSiege(Army $army, City $city)
 	{
         // TODO check if the army has catapult
+        // TODO message users about the result
         $attack_point = $army->calculateAttackingPoints();
         $defense_point = $city->calculateDefensePoints();
 
@@ -23,10 +24,12 @@ class SiegeController extends Controller {
                 'capital' => 0,
                 'nation' => $army->user->nation
             ]);
+            $city->hex->update(['owner' => $army->user->id]);
+
 
         }
         elseif ($attack_point < $defense_point){ // defender wins
-
+            $army->destroyArmy();
         }
 
 	}

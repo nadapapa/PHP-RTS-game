@@ -16,7 +16,7 @@ class CreateResourcesTable extends Migration
         Schema::create('resources', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('city')->unsigned();
+            $table->integer('city_id')->unsigned();
 
             $table->float('iron')->unsigned()->default(100);
             $table->float('stone')->unsigned()->default(100);

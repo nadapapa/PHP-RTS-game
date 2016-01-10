@@ -19,8 +19,8 @@
                            aria-expanded="false"><i class="fa fa-fort-awesome"></i>
                             Városaid <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            @foreach (Auth::user()->cities as $city)
-                                <li><a href="/city/{{$city->id}}">{{$city->name}}</a></li>
+                            @foreach (Auth::user()->cities as $c)
+                                <li><a href="/city/{{$c->id}}">{{$c->name}}</a></li>
                             @endforeach
                         </ul>
                     </li>

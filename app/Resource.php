@@ -21,7 +21,7 @@ class Resource extends Model
     /**
      * @var array
      */
-    protected $fillable = ['city', 'food', 'stone', 'iron', 'lumber'];
+    protected $fillable = ['city_id', 'food', 'stone', 'iron', 'lumber'];
 
     protected $dates = array('created_at', 'updated_at');
 

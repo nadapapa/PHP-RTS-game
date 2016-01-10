@@ -16,7 +16,7 @@ class CreateBuildingSlotsTable extends Migration
         Schema::create('building_slots', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('city')->unsigned();
+            $table->integer('city_id')->unsigned();
 
             $table->integer('wall')->unsigned();
 

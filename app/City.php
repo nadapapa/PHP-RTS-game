@@ -23,17 +23,17 @@ class City extends Model
 
     public function hex()
     {
-        return $this->hasOne('App\Grid', 'city');
+        return $this->hasOne('App\Grid', 'city_id');
     }
 
-    public function owner()
+    public function user()
     {
         return $this->belongsTo('App\User');
     }
 
     public function building_slot()
     {
-        return $this->hasOne('App\BuildingSlot', 'city');
+        return $this->hasOne('App\BuildingSlot', 'city_id');
     }
 
     public function buildings()
@@ -43,12 +43,12 @@ class City extends Model
 
     public function resources()
     {
-        return $this->hasOne('App\Resource', 'city');
+        return $this->hasOne('App\Resource', 'city_id');
     }
 
     public function human_resources()
     {
-        return $this->hasOne('App\HumanResource', 'city');
+        return $this->hasOne('App\HumanResource', 'city_id');
     }
 
     public function task()
@@ -109,7 +109,7 @@ class City extends Model
         $points = 0;
 
         // calculate the wall
-        $wall = $this->buildings->where('type', 9);
+        $wall = $this->buildings->where('type', 9)->first();
 
         // wall defense point is (the level of the wall * 10) multiplied by the wall health percentage
         $points += ($wall->level * 10) * ($wall->health / 100);

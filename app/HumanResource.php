@@ -17,7 +17,7 @@ class HumanResource extends Model
     /**
      * @var array
      */
-    protected $fillable = ['city', 'population', 'workers', 'settlers'];
+    protected $fillable = ['city_id', 'population', 'workers', 'settlers'];
 
 
     public function subtract(array $price)
