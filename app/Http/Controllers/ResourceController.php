@@ -224,6 +224,7 @@ class ResourceController extends Controller
         }
     }
 
+    // TODO this should go to model
     /**
      * calculates the storage of the city based on the number and level of the stores.
      * only those matter with workers in it.
@@ -235,23 +236,22 @@ class ResourceController extends Controller
     {
         $now = Carbon::now();
         $storage = 0;
-        $stores = $city->building_slot->building
-            ->where('type', 6)
-            ->where('finished_at', '<=', $now)
-            ->where('workers', '>', 0);
+
+        $stores = $city->buildings->where('type', 6)->filter(function($building) use ($now){
+            return (($building->finished_at <= $now) && ($building->workers > 0));
+        });
+
 
         if (!$stores->isEmpty()) {
             $stores->toArray();
             foreach ($stores as $store) {
                 $storage += ($store['level'] * 100) * ($store['health'] / 100);
             }
-
         }
 
         $storage += City::$city_storage[$city->nation];
 
         return $storage;
-
     }
 
 }
