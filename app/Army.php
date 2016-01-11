@@ -17,7 +17,7 @@ class Army extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'current_hex_id', 'task_id', 'path_id'];
+    protected $fillable = ['user_id', 'current_hex_id', 'task_id', 'path_id', 'general'];
 
 
     public function currentHex()
@@ -410,6 +410,45 @@ class Army extends Model
             5 => 2,
             6 => 1,
             7 => 1
+        ],
+    ];
+
+    public static $unit_description = [
+        1 => [ // római
+            1 => "Leírás",
+            2 => "Leírás",
+            3 => "Leírás",
+            4 => "Leírás",
+            5 => "Leírás",
+            6 => "Leírás",
+            7 => "Leírás"
+        ],
+        2 => [ // görög
+            1 => "Leírás",
+            2 => "Leírás",
+            3 => "Leírás",
+            4 => "Leírás",
+            5 => "Leírás",
+            6 => "Leírás",
+            7 => "Leírás"
+        ],
+        3 => [ // germán
+            1 => "Leírás",
+            2 => "Leírás",
+            3 => "Leírás",
+            4 => "Leírás",
+            5 => "Leírás",
+            6 => "Leírás",
+            7 => "Leírás"
+        ],
+        4 => [ // szarmata
+            1 => "Leírás",
+            2 => "Leírás",
+            3 => "Leírás",
+            4 => "Leírás",
+            5 => "Leírás",
+            6 => "Leírás",
+            7 => "Leírás"
         ],
     ];
 }

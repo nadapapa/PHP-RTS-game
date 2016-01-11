@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 
 class General extends Model {
+    // currently not used!
 
     /**
      * The database table used by the model.

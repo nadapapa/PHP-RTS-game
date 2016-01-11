@@ -77,7 +77,21 @@ class TaskController extends Controller
                 break;
 
             case 3: // create a general
-                // TODO create a general
+                if ($task->building->city->hex->army_id == 0) {
+                    $army = Army::create([
+                        'user_id' => $task->building->city->owner,
+                        'current_hex_id' => $task->building->city->hex->id
+                    ]);
+                    $task->building->city->hex->army_id = $army->id;
+                    $task->building->city->hex->save();
+                }
+
+                if($task->building->city->hex->army->general){
+                    break;
+                }
+
+                $task->building->city->hex->army->update(['general' => true]);
+                $task->delete();
                 break;
 
             case 11: // create unit

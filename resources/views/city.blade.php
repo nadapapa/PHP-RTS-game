@@ -86,14 +86,15 @@
         <div class="panel panel-default">
             <div class="panel-heading text-center">
                 <b>
-                    Hadsereg
+                    A városban tartózkodó hadsereg
                 </b>
             </div>
 
             <table class="panel-body table">
+                @if($city->hex->army_id > 0)
                 <tr>
 
-                    @if($city->hex->army_id > 0)
+
                         @foreach(App\Army::$unit_names[$city->nation] as $key => $name)
                             <?php
                             $unit = "unit" . $key;
@@ -101,12 +102,29 @@
                             <td><b>{{$name}}:</b> {{$city->hex->army->$unit}}</td>
                         @endforeach
 
-                    @else
-                        <br>
-                        <p class="text-center"><b>Jelenleg nem tartózkodik hadsereg a városban</b></p>
-                        <br>
-                    @endif
                 </tr>
+                <tr>
+                    <td>
+                        <b>Tábornok: </b>
+                    @if($city->hex->army->general)
+                        Van
+                    @else
+                        Nincs
+                    @endif
+                    </td>
+                    <td>
+                        <b>Élelmiszer: </b>{{$city->hex->army->food}}
+                    </td>
+                </tr>
+                @else
+                    <tr>
+                        <td>
+                            <br>
+                                <p class="text-center"><b>Jelenleg nem tartózkodik hadsereg a városban</b></p>
+                            <br>
+                        </td>
+                    </tr>
+                @endif
             </table>
 
 

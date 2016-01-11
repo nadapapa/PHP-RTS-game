@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Battle extends Model
 {
+    // currently not used!
 
     /**
      * The database table used by the model.
