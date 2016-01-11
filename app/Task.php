@@ -51,7 +51,7 @@ class Task extends Model
     private $types = [
         1 => 'create a worker',
         2 => 'create a settler',
-        3 => 'move a settler',
+        3 => 'create a general',
 
         11 => 'train a light infantry',
         12 => 'train a heavy infantry, etc...',

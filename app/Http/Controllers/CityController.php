@@ -36,9 +36,7 @@ class CityController extends Controller
 
             foreach ($buildings as $building) {
                 BuildingController::buildingWearing($building);
-
             }
-
 
             $wall = $building_slot->wall;
             $wall = Building::find($wall);

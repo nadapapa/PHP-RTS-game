@@ -4,7 +4,7 @@ use App\Army;
 use App\City;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use App\HumanResource;
 use App\Path;
 use App\Task;
 use Carbon\Carbon;
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-
+    // TODO these methods should go to the model
 
     /**
      * @param $owner
@@ -68,14 +68,18 @@ class TaskController extends Controller
                 $task->building->city->human_resources->workers += 1;
                 $task->building->city->human_resources->save();
                 $task->delete();
-
                 break;
+
             case 2: // create settler
                 $task->building->city->human_resources->settlers += 1;
                 $task->building->city->human_resources->save();
                 $task->delete();
-
                 break;
+
+            case 3: // create a general
+                // TODO create a general
+                break;
+
             case 11: // create unit
             case 12:
             case 13:
@@ -117,14 +121,14 @@ class TaskController extends Controller
     {
         switch ($task->type) {
             case 1: // create worker
-                $task->building->city->resources->add(City::$worker_price[$task->building->city->nation]);
+                $task->building->city->resources->add(HumanResource::$worker_price[$task->building->city->nation]);
                 $task->building->city->human_resources->population += 1;
                 $task->building->city->resources->save();
                 $task->building->city->human_resources->save();
 
                 break;
             case 2: // create settler
-                $task->building->city->resources->add(City::$settler_price[$task->building->city->nation]);
+                $task->building->city->resources->add(HumanResource::$settler_price[$task->building->city->nation]);
                 $task->building->city->human_resources->workers += 5;
                 $task->building->city->resources->save();
                 $task->building->city->human_resources->save();
@@ -137,7 +141,7 @@ class TaskController extends Controller
             case 15:
             case 16:
             case 17:
-                $task->building->city->resources->add(City::$worker_price[$task->building->city->nation]);
+                $task->building->city->resources->add(HumanResource::$worker_price[$task->building->city->nation]);
             $task->building->city->human_resources->population += 1;
                 $task->building->city->resources->save();
             $task->building->city->human_resources->save();

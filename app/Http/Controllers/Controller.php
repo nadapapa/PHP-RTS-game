@@ -96,7 +96,7 @@ abstract class Controller extends BaseController
     }
 
 
-
+// TODO these methods should go to the model
     /**
      * creates a new city
      *
@@ -177,6 +177,7 @@ abstract class Controller extends BaseController
 
         return $hex->id;
     }
+
 
     /**
      * @param Grid $hex

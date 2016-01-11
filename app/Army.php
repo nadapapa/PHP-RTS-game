@@ -35,6 +35,11 @@ class Army extends Model
         return $this->hasOne('App\Task', 'army_id');
     }
 
+    public function general()
+    {
+        return $this->belongsTo('App\General', 'army_id');
+    }
+
     public function path()
     {
         return $this->hasMany('App\Path', 'path_id', 'path_id');

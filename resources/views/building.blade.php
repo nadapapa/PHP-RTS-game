@@ -87,7 +87,11 @@ $now = Carbon::now();
                     <form method="POST" action="{{Request::url()}}/heal">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <input type="number" name="health" min="0" max="{{100- $building->health}}">
-                        <button class="btn btn-info btn-xs" type="submit">Javítás</button>
+                        @if ($building->task->contains('building_id', $building->id))
+                            <button class="btn btn-info btn-xs disabled" type="submit">Javítás</button>
+                        @else
+                            <button class="btn btn-info btn-xs" type="submit">Javítás</button>
+                        @endif
                         Ár: minden nyersanyag: százalékonként 1, Idő: százalékonként 1 másodperc
                     </form>
                 @endif

@@ -1364,6 +1364,16 @@ function getHexData(x, y) {
     });
 }
 
+// TODO garrison army in city
+// TODO moving units between armies and cities
+function checkNeighbourArmy(army_id){
+
+}
+
+
+
+
+
 
 function offsetToCube(hex) {
     var x = hex.x;
