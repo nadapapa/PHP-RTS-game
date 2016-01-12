@@ -138,9 +138,14 @@ class ForumController extends Controller
      */
     public function getMakeGeneral($city_id, $slot_num, $building_id)
     {
-        TaskController::checkTasks();
+//        TaskController::checkTasks();
+//
+        $city = City::where('id', $city_id)->first();
 
-        $city = City::find($city_id);
+        if ($city->army() && $city->army()->general) {
+                return redirect("/city/$city_id/slot/$slot_num/building/$building_id")->withErrors(['already_has_general' => 'Már van egy tábornok a városban. Egyszerre csak egy lehet egy városban']);
+        }
+
         if (!$this->validateOwner($city)) {
             return redirect('/home')->withErrors('Nem a te városod');
         }

@@ -95,6 +95,11 @@
 @else
     <a href="{{Request::url()}}/worker" class="btn btn-info btn-xs">Munkás képzése</a>
     <a href="{{Request::url()}}/settler" class="btn btn-info btn-xs">Telepes képzése</a>
-    <a href="{{Request::url()}}/general" class="btn btn-info btn-xs">Tábornok képzése</a>
+
+    @if ($city->army() && $city->army()->general)
+        <a href="{{Request::url()}}/general" class="btn btn-info btn-xs disabled">Tábornok képzése</a>
+    @else
+        <a href="{{Request::url()}}/general" class="btn btn-info btn-xs">Tábornok képzése</a>
+    @endif
 
 @endif
