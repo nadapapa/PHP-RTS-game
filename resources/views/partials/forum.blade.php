@@ -48,7 +48,10 @@
         Tábornok
     </div>
     <div class="panel-body">
-        Hadsereget vezet
+        Hadsereget vezet.
+        @if ($city->army() && $city->army()->general)
+            <br>Már van egy a városban. Egyszerre csak egyetlen tábornok tartózkodhat egy városban
+        @endif
     </div>
 
     <table class="panel-footer table">
@@ -96,9 +99,7 @@
     <a href="{{Request::url()}}/worker" class="btn btn-info btn-xs">Munkás képzése</a>
     <a href="{{Request::url()}}/settler" class="btn btn-info btn-xs">Telepes képzése</a>
 
-    @if ($city->army() && $city->army()->general)
-        <a href="{{Request::url()}}/general" class="btn btn-info btn-xs disabled">Tábornok képzése</a>
-    @else
+    @if (!($city->army() && $city->army()->general))
         <a href="{{Request::url()}}/general" class="btn btn-info btn-xs">Tábornok képzése</a>
     @endif
 
