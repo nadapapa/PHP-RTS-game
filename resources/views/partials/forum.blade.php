@@ -150,9 +150,6 @@
     </table>
 </div>
 
-
-
-
 @if ($building->task->contains('building_id', $building->id))
     <?php
     $task = $building->task->first();
@@ -169,15 +166,13 @@
     @endif
     </a>
 
-
+    @if (!($city->army() && $city->army()->general))
     <a href="{{Request::url()}}/general" class="btn btn-info btn-xs disabled">Tábornok képzése
         @if (intval($task->type) == 3)
             <br><span data-countdown="{{$task->finished_at->format('Y/m/d/ H:i:s')}}"></span>
         @endif
     </a>
-
-
-
+    @endif
 
 @else
     <a href="{{Request::url()}}/worker" class="btn btn-info btn-xs">Munkás képzése</a>
