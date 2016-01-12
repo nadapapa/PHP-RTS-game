@@ -26,14 +26,12 @@ class BarrackController extends Controller
      * @param $building_id
      * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function postTrainUnit(Request $request, $city_id, $slot_num, $building_id)
+    public function getTrainUnit($city_id, $slot_num, $building_id, $type)
     {
         $city = City::find($city_id);
         if (!$this->validateOwner($city)) {
             return redirect('/home')->withErrors('Nem a te városod');
         }
-
-        $type = $request->input('type');
 
         if ($building = $this->buildingCompleted($building_id)) { // check if the building is completed
             TaskController::checkTasks(); // check if there any pending tasks and complete the finished ones

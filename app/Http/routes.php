@@ -96,7 +96,7 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
     Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/general', 'Buildings\ForumController@getMakeGeneral');
 
     // barracks
-    Route::post('city/{city_id}/slot/{slot_num}/building/{building_id}/train', 'Buildings\BarrackController@postTrainUnit');
+    Route::get('city/{city_id}/slot/{slot_num}/building/{building_id}/train/{type}', 'Buildings\BarrackController@getTrainUnit');
 
     //help
     Route::get('help/{help?}', 'HomeController@getHelp');

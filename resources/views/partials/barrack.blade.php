@@ -1,22 +1,28 @@
 <hr>
-<form method="POST" action="{{Request::url()}}/train">
-    <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
     @foreach(App\Army::$unit_names[$city->nation] as $num => $name)
         <div class="panel panel-default">
             <div class="panel-heading table">
-                <div class="radio-sm">
-                    <label>
-                        <input type="radio" name="type" id="{{$num}}" value="{{$num}}">
-                        <b>
-                            {{$name}}
-                        </b>
-                    </label>
-                </div>
-
+                <b>
+                    {{$name}}
+                </b>
             </div>
             <div class="panel-body">
-                {{App\Army::$unit_description[$city->nation][$num]}}
+                <p>
+                    {{App\Army::$unit_description[$city->nation][$num]}}
+                </p>
+                @if(count($building->task))
+                    <a href="{{Request::url()}}/train/{{$num}}" class='btn btn-info disabled'>
+                        @if($building->task->first()->type == ($num + 10))
+                            <span data-countdown="{{$building->task->first()->finished_at->format('Y/m/d/ H:i:s')}}"></span>
+                        @else
+                            Képez
+                        @endif
+                    </a>
+                @else
+                    <a href="{{Request::url()}}/train/{{$num}}" class='btn btn-info'>Képez</a>
+                @endif
+
             </div>
 
             <table class="panel-footer table">
@@ -60,11 +66,6 @@
         </div>
     @endforeach
 
-    @if(!empty($task = $building->task->where('building_id', $building->id)->first()))
+    @if(count($building->task))
         <script src="{{asset('js/jquery.countdown.min.js')}}"></script>
-        <button class="btn btn-info disabled" type="submit">Képez <span
-                    data-countdown="{{$task->finished_at->format('Y/m/d/ H:i:s')}}"></span></button>
-    @else
-        <button class="btn btn-info" type="submit">Képez</button>
     @endif
-</form>
