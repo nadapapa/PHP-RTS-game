@@ -13,12 +13,40 @@
 
     <table class="panel-footer table">
         <tr>
-            <td><b>vas:</b>
-                {{App\HumanResource::$worker_price[$city->nation]['iron']}}</td>
-            <td><b>élelmiszer:</b> {{App\HumanResource::$worker_price[$city->nation]['food']}}</td>
-            <td><b>fa:</b> {{App\HumanResource::$worker_price[$city->nation]['lumber']}}</td>
-            <td><b>kő:</b> {{App\HumanResource::$worker_price[$city->nation]['stone']}}</td>
-            <td><b>idő:</b> {{App\HumanResource::$worker_time[$city->nation]}}</td>
+            @if($city->resources->food >= App\HumanResource::$worker_price[$city->nation]['food'])
+                <td class="bg-success">
+            @else
+                <td class="bg-danger">
+                    @endif
+                    <b>élelmiszer:</b> {{App\HumanResource::$worker_price[$city->nation]['food']}}
+                </td>
+
+                @if($city->resources->iron >= App\HumanResource::$worker_price[$city->nation]['iron'])
+                    <td class="bg-success">
+                @else
+                    <td class="bg-danger">
+                        @endif
+                        <b>vas:</b>
+                        {{App\HumanResource::$worker_price[$city->nation]['iron']}}
+                    </td>
+
+                    @if($city->resources->lumber >= App\HumanResource::$worker_price[$city->nation]['lumber'])
+                        <td class="bg-success">
+                    @else
+                        <td class="bg-danger">
+                            @endif
+                            <b>fa:</b> {{App\HumanResource::$worker_price[$city->nation]['lumber']}}
+                        </td>
+
+                        @if($city->resources->lumber >= App\HumanResource::$worker_price[$city->nation]['food'])
+                            <td class="bg-success">
+                        @else
+                            <td class="bg-danger">
+                                @endif
+                                <b>kő:</b> {{App\HumanResource::$worker_price[$city->nation]['stone']}}
+                            </td>
+
+                            <td><b>idő:</b> {{App\HumanResource::$worker_time[$city->nation]}}</td>
         </tr>
     </table>
 </div>
@@ -33,12 +61,40 @@
 
     <table class="panel-footer table">
         <tr>
-            <td><b>vas:</b>
-                {{App\HumanResource::$settler_price[$city->nation]['iron']}}</td>
-            <td><b>élelmiszer:</b> {{App\HumanResource::$settler_price[$city->nation]['food']}}</td>
-            <td><b>fa:</b> {{App\HumanResource::$settler_price[$city->nation]['lumber']}}</td>
-            <td><b>kő:</b> {{App\HumanResource::$settler_price[$city->nation]['stone']}}</td>
-            <td><b>idő:</b> {{App\HumanResource::$settler_time[$city->nation]}}</td>
+            @if($city->resources->food >= App\HumanResource::$settler_price[$city->nation]['food'])
+                <td class="bg-success">
+            @else
+                <td class="bg-danger">
+                    @endif
+                    <b>élelmiszer:</b> {{App\HumanResource::$settler_price[$city->nation]['food']}}
+                </td>
+
+                @if($city->resources->iron >= App\HumanResource::$settler_price[$city->nation]['iron'])
+                    <td class="bg-success">
+                @else
+                    <td class="bg-danger">
+                        @endif
+                        <b>vas:</b>
+                        {{App\HumanResource::$settler_price[$city->nation]['iron']}}
+                    </td>
+
+                    @if($city->resources->lumber >= App\HumanResource::$settler_price[$city->nation]['lumber'])
+                        <td class="bg-success">
+                    @else
+                        <td class="bg-danger">
+                            @endif
+                            <b>fa:</b> {{App\HumanResource::$settler_price[$city->nation]['lumber']}}
+                        </td>
+
+                        @if($city->resources->lumber >= App\HumanResource::$settler_price[$city->nation]['food'])
+                            <td class="bg-success">
+                        @else
+                            <td class="bg-danger">
+                                @endif
+                                <b>kő:</b> {{App\HumanResource::$settler_price[$city->nation]['stone']}}
+                            </td>
+
+                            <td><b>idő:</b> {{App\HumanResource::$settler_time[$city->nation]}}</td>
         </tr>
     </table>
 </div>
@@ -56,12 +112,40 @@
 
     <table class="panel-footer table">
         <tr>
-            <td><b>vas:</b>
-                {{App\HumanResource::$worker_price[$city->nation]['iron']}}</td>
-            <td><b>élelmiszer:</b> {{App\HumanResource::$worker_price[$city->nation]['food']}}</td>
-            <td><b>fa:</b> {{App\HumanResource::$worker_price[$city->nation]['lumber']}}</td>
-            <td><b>kő:</b> {{App\HumanResource::$worker_price[$city->nation]['stone']}}</td>
-            <td><b>idő:</b> {{App\HumanResource::$worker_time[$city->nation]}}</td>
+            @if($city->resources->food >= App\HumanResource::$general_price[$city->nation]['food'])
+                <td class="bg-success">
+            @else
+                <td class="bg-danger">
+                    @endif
+                    <b>élelmiszer:</b> {{App\HumanResource::$general_price[$city->nation]['food']}}
+                </td>
+
+                @if($city->resources->iron >= App\HumanResource::$general_price[$city->nation]['iron'])
+                    <td class="bg-success">
+                @else
+                    <td class="bg-danger">
+                        @endif
+                        <b>vas:</b>
+                        {{App\HumanResource::$general_price[$city->nation]['iron']}}
+                    </td>
+
+                    @if($city->resources->lumber >= App\HumanResource::$general_price[$city->nation]['lumber'])
+                        <td class="bg-success">
+                    @else
+                        <td class="bg-danger">
+                            @endif
+                            <b>fa:</b> {{App\HumanResource::$general_price[$city->nation]['lumber']}}
+                        </td>
+
+                        @if($city->resources->lumber >= App\HumanResource::$general_price[$city->nation]['food'])
+                            <td class="bg-success">
+                        @else
+                            <td class="bg-danger">
+                                @endif
+                                <b>kő:</b> {{App\HumanResource::$general_price[$city->nation]['stone']}}
+                            </td>
+
+                            <td><b>idő:</b> {{App\HumanResource::$general_time[$city->nation]}}</td>
         </tr>
     </table>
 </div>
