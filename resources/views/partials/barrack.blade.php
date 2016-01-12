@@ -16,17 +16,45 @@
 
             </div>
             <div class="panel-body">
-
+                {{App\Army::$unit_description[$city->nation][$num]}}
             </div>
 
             <table class="panel-footer table">
                 <tr>
-                    <td><b>vas:</b>
-                        {{App\Army::$unit_prices[$city->nation][$num]['iron']}}</td>
-                    <td><b>élelmiszer:</b> {{App\Army::$unit_prices[$city->nation][$num]['food']}}</td>
-                    <td><b>fa:</b> {{App\Army::$unit_prices[$city->nation][$num]['lumber']}}</td>
-                    <td><b>kő:</b> {{App\Army::$unit_prices[$city->nation][$num]['stone']}}</td>
-                    <td><b>idő:</b> {{App\Army::$unit_times[$city->nation][$num]}}</td>
+                    @if($city->resources->food >= App\Army::$unit_prices[$city->nation][$num]['food'])
+                        <td class="bg-success">
+                    @else
+                        <td class="bg-danger">
+                            @endif
+                            <b>élelmiszer:</b> {{App\Army::$unit_prices[$city->nation][$num]['food']}}
+                        </td>
+
+                        @if($city->resources->iron >= App\Army::$unit_prices[$city->nation][$num]['iron'])
+                            <td class="bg-success">
+                        @else
+                            <td class="bg-danger">
+                                @endif
+                                <b>vas:</b>
+                                {{App\Army::$unit_prices[$city->nation][$num]['iron']}}
+                            </td>
+
+                            @if($city->resources->lumber >= App\Army::$unit_prices[$city->nation][$num]['lumber'])
+                                <td class="bg-success">
+                            @else
+                                <td class="bg-danger">
+                                    @endif
+                                    <b>fa:</b> {{App\Army::$unit_prices[$city->nation][$num]['lumber']}}
+                                </td>
+
+                                @if($city->resources->lumber >= App\Army::$unit_prices[$city->nation][$num]['food'])
+                                    <td class="bg-success">
+                                @else
+                                    <td class="bg-danger">
+                                        @endif
+                                        <b>kő:</b> {{App\Army::$unit_prices[$city->nation][$num]['stone']}}
+                                    </td>
+
+                                    <td><b>idő:</b> {{App\Army::$unit_times[$city->nation][$num]}}</td>
                 </tr>
             </table>
         </div>
