@@ -1151,7 +1151,9 @@ function updateInfoboxArmy(data) {
         '<br><b>Nép:</b> ' + switchNation(data.army.nation);
 
     if (typeof data.army.unit1 != 'undefined') {
-        info += '<br><b>Egységek</b><br>' +
+        info += '<br><b>Tábornok:</b> ' + (data.army.general ? 'van' : 'nincs') +
+            '<br><b>Élelmiszer:</b> ' + data.army.food +
+            '<br><b>Egységek</b><br>' +
             'könnyűgyalogos: ' + data.army.unit1 + '<br>' +
             'nehézgyalogos: ' + data.army.unit2 + '<br>' +
             'pikás: ' + data.army.unit3 + '<br>' +
@@ -1235,99 +1237,11 @@ function getHexData(x, y) {
         return false;
     }
     $.getJSON("/map/get_hex_data", {x: x, y: y}, function (data) {
-        //switch (data.city_nation) {
-        //    case 0:
-        //        var city_nation = '';
-        //        break;
-        //    case 1:
-        //        var city_nation = 'római';
-        //        break;
-        //    case 2:
-        //        var city_nation = 'görög';
-        //        break;
-        //    case 3:
-        //        var city_nation = 'germán';
-        //        break;
-        //    case 4:
-        //        var city_nation = 'szarmata';
-        //        break;
-        //}
-        //
-        //switch (data.army_nation) {
-        //    case 0:
-        //        var army_nation = '';
-        //        break;
-        //    case 1:
-        //        var army_nation = 'római';
-        //        break;
-        //    case 2:
-        //        var army_nation = 'görög';
-        //        break;
-        //    case 3:
-        //        var army_nation = 'germán';
-        //        break;
-        //    case 4:
-        //        var army_nation = 'szarmata';
-        //        break;
-        //}
-        //
-        //switch (data.layer1) {
-        //    case 1:
-        //        var type = 'mély víz';
-        //        break;
-        //    case 2:
-        //        var type = 'homokos part';
-        //        break;
-        //    case 3:
-        //        var type = 'füves rét';
-        //        break;
-        //    case 4:
-        //        var type = 'fenyőerdő';
-        //        break;
-        //    case 5:
-        //        var type = 'hómező';
-        //        break;
-        //    case 6:
-        //        var type = 'dombvidék';
-        //        break;
-        //    case 7:
-        //        var type = 'havas dombok';
-        //        break;
-        //    case 8:
-        //        var type = 'hegy';
-        //        break;
-        //    case 9:
-        //        var type = 'sekély víz';
-        //        break;
-        //    case 10:
-        //        var type = 'jég';
-        //        break;
-        //    case 11:
-        //        var type = 'mocsár';
-        //        break;
-        //}
 
         data['x'] = x;
         data['y'] = y;
 
         updateInfobox(0, data
-
-            //    {
-            //    x: x,
-            //    y: y,
-            //    type: type,
-            //    hex_owner: data.owner,
-            //
-            //    city_owner: data.city_owner,
-            //    city_name: data.city_name,
-            //    city_nation: city_nation,
-            //
-            //    army_id: data.army_id,
-            //    army_owner: data.army_owner,
-            //    army_nation: army_nation,
-            //    army: data.army
-            //}
-
         );
 
         //if (typeof data.path != 'undefined') {

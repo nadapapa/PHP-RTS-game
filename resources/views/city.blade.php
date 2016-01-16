@@ -90,18 +90,17 @@
                 </b>
             </div>
 
+            @if($city->hex->army_id > 0)
             <table class="panel-body table">
-                @if($city->hex->army_id > 0)
                 <tr>
-
-
-                        @foreach(App\Army::$unit_names[$city->nation] as $key => $name)
-                            <?php
+                    @foreach(App\Army::$unit_names[$city->nation] as $key => $name)
+                        <?php
                             $unit = "unit" . $key;
-                            ?>
-                            <td><b>{{$name}}:</b> {{$city->hex->army->$unit}}</td>
-                        @endforeach
-
+                        ?>
+                        <td>
+                            <b>{{$name}}:</b> {{$city->hex->army->$unit}}
+                        </td>
+                    @endforeach
                 </tr>
                 <tr>
                     <td>
@@ -116,16 +115,24 @@
                         <b>Élelmiszer: </b>{{$city->hex->army->food}}
                     </td>
                 </tr>
-                @else
-                    <tr>
-                        <td>
-                            <br>
-                                <p class="text-center"><b>Jelenleg nem tartózkodik hadsereg a városban</b></p>
-                            <br>
-                        </td>
-                    </tr>
-                @endif
             </table>
+
+            <div class="panel-body">
+                <form method="POST" action="{{Request::url()}}/army_food">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="number" id="army_food" name="army_food" min="0" max="{{$city->resources->food}}">
+
+                    <button type="submit" class="btn btn-success btn-sm">Élelmiszer a seregnek</button>
+
+                </form>
+                </div>
+            @else
+                <br>
+                <p class="text-center"><b>Jelenleg nem tartózkodik hadsereg a városban</b></p>
+                <br>
+            @endif
+
+
 
 
         </div>

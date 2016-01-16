@@ -90,7 +90,7 @@ class CityController extends Controller
 
     public function healWall(Request $request, $city_id)
     {
-        $city = City::find($city_id);
+        $city = City::where('id', $city_id)->first();
 
         if (!$this->validateOwner($city)) {
             return redirect('/home')->withErrors('Nem a te városod');
@@ -118,5 +118,29 @@ class CityController extends Controller
 
         return redirect("/city/$city_id/wall");
 
+    }
+
+    public function addFoodToArmy(Request $request, $city_id)
+    {
+        $city = City::where('id', $city_id)->first();
+
+        if (!$this->validateOwner($city)) {
+            return redirect('/home')->withErrors('Nem a te városod');
+        }
+        $food = $request->input("army_food");
+
+        if(!$city->resources->food >= $food){
+            return redirect("/city/$city_id")->withErrors('Nincs elég élelmiszer');
+        }
+
+        $army = $city->army();
+
+        $army->food += $food;
+        $army->save();
+
+        $city->resources->food -= $food;
+        $city->resources->save();
+
+        return redirect("/city/$city_id");
     }
 }

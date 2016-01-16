@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class City extends Model
@@ -54,6 +55,17 @@ class City extends Model
     public function task()
     {
         return $this->hasOne('App\Task', 'city_id');
+    }
+
+    public function workingBuildings(){
+        $now = Carbon::now();
+        return $this->buildings->filter(function($building) use ($now){
+           if($building->finished_at <= $now
+               && $building->workers > 0
+               && $building->health > 0) {
+               return true;
+           }
+        });
     }
 
     /**

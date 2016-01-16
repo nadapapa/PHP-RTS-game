@@ -47,13 +47,8 @@ $now = Carbon::now();
                     @if($building->type < 5)
                         <p>Hozam: {{($building->level * $building->workers) * ($building->health / 100)}}/óra</p>
                     @endif
-
-                    <p @if($building->workers == 0)
-                       class="bg-warning"
-                            @endif> Munkások: {{$building->workers}} <input placeholder="{{$building->workers}}"
-                                                                            type="number" name="workers" min="0"
-                                                                            max="{{$building->level * 10}}"> fő
-                        <button class="btn btn-info btn-xs" type="submit">Beállít</button>
+                    <p @if($building->workers == 0) class="bg-warning" @endif>
+                        Munkások: {{$building->workers}} <input placeholder="{{$building->workers}}" type="number" name="workers" min="0" max="{{$building->level * 10}}"> fő <button class="btn btn-info btn-xs" type="submit">Beállít</button>
                     </p>
                 </form>
 
@@ -77,8 +72,7 @@ $now = Carbon::now();
                         másodperc
 
                     @else
-                        <a href="{{Request::url()}}/levelup" class="btn btn-info btn-xs disabled">Fejlesztés
-                            a {{$building->level + 1}}. szintre</a>
+                        <a href="{{Request::url()}}/levelup" class="btn btn-info btn-xs disabled">Fejlesztés a {{$building->level + 1}}. szintre</a>
                     @endif
                 </p>
 
@@ -99,13 +93,11 @@ $now = Carbon::now();
                 {{--barakk--}}
                 @if($building->type == 5)
                     @include('partials.barrack')
-
                 @endif
 
                 {{--fórum--}}
                 @if($building->type == 7)
                     @include('partials.forum')
-
                 @endif
 
                 <hr>
@@ -119,8 +111,7 @@ $now = Carbon::now();
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                            aria-hidden="true">&times;</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 <h4 class="modal-title" id="myModalLabel">Épület megsemmisítése</h4>
                             </div>
                             <div class="modal-body">
@@ -145,14 +136,12 @@ $now = Carbon::now();
                 var $this = $(this), finalDate = $(this).data('countdown');
                 $this.countdown(finalDate, function (event) {
                     $this.html(event.strftime('%H:%M:%S'));
+                }).on('finish.countdown', function (event) {
+                    $(this).parent().removeClass('disabled');
+                    $(this).remove();
+                    location.reload(true);
                 })
-                        .on('finish.countdown', function (event) {
-                            $(this).parent().removeClass('disabled');
-                            $(this).remove();
-                            location.reload(true);
-                        })
             });
         </script>
     @endif
-
 @stop

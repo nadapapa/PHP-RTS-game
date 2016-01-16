@@ -74,6 +74,8 @@ Route::group(['middleware' => ['auth', 'setup']], function () {
 
     // city routes
 	Route::get('city/{id}', 'CityController@getCity');
+    Route::post('city/{id}/army_food', 'CityController@addFoodToArmy');
+
 
     // build routes
     Route::get('city/{city_id}/slot/{slot_num}', 'Buildings\BuildingController@getBuild');

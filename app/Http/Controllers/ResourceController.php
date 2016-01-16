@@ -180,7 +180,7 @@ class ResourceController extends Controller
             'stone' => 0
         ];
 
-        foreach ($city->building_slot->building as $building) {
+        foreach ($city->workingBuildings() as $building) {
             $profit = number_format(($building->level * $building->workers) * ($building->health / 100), 2);
 
             switch ($building->type) {
