@@ -29,14 +29,13 @@ class ArmyController extends Controller
         TaskController::checkTasks();
 
         $path = $request->input('path');
+        $army_id = $request->input('army');
 
-        $army_hex = Grid::
-        where("x", $path[0]['x'])
-            ->where('y', $path[0]['y'])
-            ->select('army_id')
-            ->first();
+        $army = Army::where('id', $army_id)->first();
 
-        $army = Army::where('id', $army_hex->army_id)->first();
+        if(!$army->general){
+            return false;
+        }
 
         if (Auth::user()->id != $army->user_id) {
             return redirect('/home')->withErrors('Nem a te sereged');

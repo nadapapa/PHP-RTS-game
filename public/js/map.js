@@ -757,8 +757,7 @@ function deletePathPoint(n) {
 }
 
 function moveToHex(path) {
-
-    $.post("/map/move_army", {_token: $('meta[name=_token]').attr('content'), path: path}, function (data) {
+    $.post("/map/move_army", {_token: $('meta[name=_token]').attr('content'), path: path, army:army_selected}, function (data) {
         //map.contextmenu.setDisabled(0, true);
         cancelPath(data);
         refreshMap();
@@ -1027,11 +1026,14 @@ function placeArmies(armies) {
             zIndexOffset: armies_zindex,
         }).addTo(map);
 
-        if (typeof armies[i].army.unit1 != 'undefined') {
+        if (typeof armies[i].army.unit1 != 'undefined' && armies[i].army.general == 1) {
             army_marker.bindPopup(
                 '<button type="button" class="btn btn-xs btn-success army-select"' +
                 ' onclick="selectArmy(' + armies[i].army.id + ')">' +
                 'sereg áthelyezése</button>');
+        } else if (typeof armies[i].army.unit1 != 'undefined' && armies[i].army.general == 0){
+            army_marker.bindPopup(
+                'A sereg nem mozgatható, <br>mert nincs tábornoka');
         } else if (armies[i].city > 0) {
             army_marker.bindPopup(
                 '<button type="button" class="btn btn-xs btn-danger"' +
