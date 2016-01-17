@@ -533,8 +533,7 @@ function addPathPoint(x, y) {
     var coord = {x: x, y: y};
     points.push(coord);
 
-    map.closePopup(popup);
-
+    map.closePopup();
     path_markers.clearLayers();
     point_markers.clearLayers();
 
@@ -1000,6 +999,11 @@ function placeCities(cities) {
                 '<button type="button" class="btn btn-xs btn-danger"' +
                 ' onclick="attackCity(' + cities[i].id + ')">' +
                 'ostrom</button>');
+        } else {
+            city_marker.bindPopup(
+                '<button type="button" class="btn btn-xs btn-success"' +
+                ' onclick="addPathPoint(' + cities[i].x + ',' + cities[i].y + ')">' +
+                'A városba</button>');
         }
 
         cities_hash[cities[i].id] = city_marker._leaflet_id;
