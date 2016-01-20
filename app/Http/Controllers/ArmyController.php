@@ -70,9 +70,9 @@ class ArmyController extends Controller
             $hex = Grid::
             where("x", $path[$i]['x'])
                 ->where('y', $path[$i]['y'])
-                ->select('id', 'layer1')
+                ->select('id', 'type')
                 ->first();
-            $time += Grid::$price[intval($hex->layer1)] * $speed;
+            $time += Grid::$price[intval($hex->type)] * $speed;
 
             $path_hex = Path::create([
                 'path_id' => $path_id,
@@ -115,15 +115,13 @@ class ArmyController extends Controller
             return;
         }
 
-
-//        if($crossing !== null){
-//            self::processPathCrossing($crossing);
-//        }
+        $path = $task->path;
+        self::processFoodConsumption($path);
 
         $finished = null;
 
-        $task->path->filter(function ($item) use (&$finished) {
-            if ($item->finished_at <= Carbon::now()) { // if the path is finished
+        $path->filter(function ($item) use (&$finished) {
+            if ($item->finished_at <= Carbon::now()) { // if the step is finished
                 self::findCrossingPath($item);
                 $finished = $item;
                 $item->delete();
@@ -139,10 +137,19 @@ class ArmyController extends Controller
             $finished->hex->update(['army_id' => $army->id]);
         }
 
-        if ($task->path->isEmpty()) {
+        if ($path->isEmpty()) {
             $task->army->update(['task_id' => 0, 'path_id' => 0]);
             $task->delete();
         }
+    }
+
+    public static function processFoodConsumption($path)
+    {
+        $first = $path->first();
+        $time = $first->started_at->diffInSeconds(Carbon::now());
+        $army = $first->army;
+        $army->food -= ($army->calculateFoodConsumption()/3600) * $time;
+        $army->save();
     }
 
 
@@ -295,7 +302,6 @@ class ArmyController extends Controller
 
     }
 
-
     /**
      * @param Path $second
      * @param Army $attacking
@@ -320,4 +326,5 @@ class ArmyController extends Controller
         $attacking->currentHex->update(['army_id' => 0]);
         $attacking->save();
     }
+
 }

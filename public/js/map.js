@@ -459,8 +459,8 @@ function clickOnArmy(e) {
         }
     }
 
-    if (data.city > 0) { // if the army is in a city
-        var city_leaflet_id = cities_hash[data.city];
+    if (data.city_id > 0) { // if the army is in a city
+        var city_leaflet_id = cities_hash[data.city_id];
         var city = city_markers.getLayer(city_leaflet_id);
         data.city_name = city.city_data.city_name;
         data.user_name = city.city_data.user_name;
@@ -468,7 +468,7 @@ function clickOnArmy(e) {
         updateInfobox(3, data);
     }
 
-    updateInfobox(2, data);
+    //updateInfobox(2, data);
 
 }
 
@@ -1180,7 +1180,7 @@ function updateInfoboxCity(data) {
 }
 
 function updateInfoboxHex(data) {
-    return (data.city ? '' : '<br><b>Típus: </b>' + switchType(parseInt(data.layer1)) +
+    return (data.city_id ? '' : '<br><b>Típus: </b>' + switchType(parseInt(data.type)) +
     (data.hex_owner ? '<br>' +
     '<b>Tulajdonos: </b>' + data.user_name : ''));
 

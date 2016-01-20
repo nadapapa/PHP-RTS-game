@@ -121,7 +121,7 @@ class MapController extends Controller
         $hex = Grid::
         where("x", $request->input('x'))
             ->where('y', $request->input('y'))
-            ->select('layer1', 'owner')
+            ->select('type', 'owner')
             ->first()->toArray();
 
 //        foreach ($hex as $key => &$value) {
@@ -172,7 +172,7 @@ class MapController extends Controller
             $path_data[] = Grid::
             where("x", $hex['x'])
                 ->where('y', $hex['y'])
-                ->select('layer1', 'owner', 'city_id', 'army_id')
+                ->select('type', 'owner', 'city_id', 'army_id')
                 ->first();
         }
 
@@ -203,7 +203,7 @@ class MapController extends Controller
         array_shift($path_data);
 
         foreach ($path_data as $hex) {
-            $time += Grid::$price[intval($hex->layer1)] * $speed;
+            $time += Grid::$price[intval($hex->type)] * $speed;
         }
 
         return $time;
@@ -259,7 +259,7 @@ class MapController extends Controller
             $army['city_name'] = $city->name;
         }
 
-        $army['hex_layer1'] = $hex->layer1;
+        $army['hex_type'] = $hex->type;
         $army['hex_owner'] = User::find($hex->owner)->name;
 
         if (Auth::user()->id === $army['user_id']) {
@@ -318,11 +318,11 @@ class MapController extends Controller
 //
 //        $startx = $request->input('x1');
 //        $starty = $request->input('y1');
-//        $start = Grid::where('x', $startx)->where('y', $starty)->select('id', 'x', 'y', 'layer1')->first();
+//        $start = Grid::where('x', $startx)->where('y', $starty)->select('id', 'x', 'y', 'type')->first();
 //
 //        $goalx = $request->input('x2');
 //        $goaly = $request->input('y2');
-//        $goal = Grid::where('x', $goalx)->where('y', $goaly)->select('id', 'x', 'y', 'layer1')->first();
+//        $goal = Grid::where('x', $goalx)->where('y', $goaly)->select('id', 'x', 'y', 'type')->first();
 //
 //        $start_cube = $this->offsetToCube($start->x, $start->y);
 //        $goal_cube = $this->offsetToCube($goal->x, $goal->y);
@@ -334,7 +334,7 @@ class MapController extends Controller
 //        $open_set->setExtractFlags(PriQueue::EXTR_BOTH);
 //
 //        $g_score = [];
-//        $g_score[$start->id] = 0 + $price[intval($start->layer1)];
+//        $g_score[$start->id] = 0 + $price[intval($start->type)];
 //
 //        $f_score = [];
 //        $f_score[$start->id] = -($g_score[$start->id] + $this->cubeDistance($goal_cube, $start_cube));
@@ -413,7 +413,7 @@ class MapController extends Controller
 //                    continue;
 //                }
 //
-//                $tentative_g_score = $g_score[$current['data']->id] + $price[intval($neighbor->layer1)];
+//                $tentative_g_score = $g_score[$current['data']->id] + $price[intval($neighbor->type)];
 //
 //                $g_score[$neighbor->id] = $tentative_g_score;
 //                $next_cube = $this->offsetToCube($neighbor->x, $neighbor->y);
@@ -487,7 +487,7 @@ class MapController extends Controller
 //            $nx = $x + $dir['x'];
 //            $ny = $y + $dir['y'];
 //
-//            $nhex = Grid::where('x', $nx)->where('y', $ny)->select('id', 'x', 'y', 'layer1')->first();
+//            $nhex = Grid::where('x', $nx)->where('y', $ny)->select('id', 'x', 'y', 'type')->first();
 //
 //            array_push($neighbors, $nhex);
 //        }

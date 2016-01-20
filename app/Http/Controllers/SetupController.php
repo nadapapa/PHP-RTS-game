@@ -43,29 +43,21 @@ class SetupController extends Controller
 
         $user = Auth::user();
 
-
         $nation = $request->input('nation');
-        $this->setNation($user, $nation);
+        $user->setNation($nation);
 
-
-        $hex_id = $this->randomHex();
+        $hex_id = Grid::randomHex()->id;
 
         $name = $request->input('name');
-        $this->createCity($user, 1, $hex_id, $name);
+        City::create([
+            'name' => $name,
+            'nation' => $user->nation,
+            'capital' => true,
+            'owner' => $user->id,
+            'hex_id' => $hex_id,
+        ]);
 
         return redirect('home');
-    }
-
-
-    /**
-     * Assigns the selected nation to the user
-     */
-    public function setNation(User $user, $nation)
-    {
-//        $nation = $request->input('nation');
-
-        $user->nation = $nation;
-        $user->save();
     }
 
     protected function validator(array $data) {

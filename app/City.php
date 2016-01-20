@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class City extends Model
 {
@@ -21,6 +22,50 @@ class City extends Model
      */
     protected $fillable = ['name', 'nation', 'capital', 'owner', 'hex_id', 'building_slots'];
 
+    /**
+     * creates a city and the belonging models (BuildingSlot, Resource, HumanResource)
+     * saves the city in the map
+     *
+     * @param User   $user     The user to whom the city belongs
+     * @param bool   $capital  Is the city a capital
+     * @param int    $hex_id   the id of the hex on which the city is located
+     * @param string $name     the name of the city
+     */
+    public static function create(array $attributes)
+    {
+        /** @var City $city */
+        $city = parent::create($attributes);
+
+        /** @var BuildingSlot $slot */
+        $slot = BuildingSlot::create(['city_id' => $city->id]);
+
+        Resource::create(['city_id' => $city->id]);
+
+        HumanResource::create(['city_id' => $city->id]);
+
+        $city->building_slot = $slot->id;
+        $city->save();
+
+        /** @var Building $wall */
+        $wall = Building::create([
+            'city_id' => $city->id,
+            'slot' => $slot->id,
+            'nation' => $attributes['nation'],
+            'type' => 9,
+            'finished_at' => Carbon::now(),
+        ]);
+
+        $slot->wall = $wall->id;
+        $slot->save();
+
+        /** @var Grid $hex */
+        $hex = Grid::find($hex_id);
+        $hex->update(['owner_id' => $attributes['owner'], 'city_id' => $city->id]);
+        $hex->setNeighborsOwner($attributes['owner']);
+
+
+
+    }
 
     public function hex()
     {
@@ -57,6 +102,9 @@ class City extends Model
         return $this->hasOne('App\Task', 'city_id');
     }
 
+    /**
+     * @return Collection
+     */
     public function workingBuildings(){
         $now = Carbon::now();
         return $this->buildings->filter(function($building) use ($now){
@@ -121,6 +169,7 @@ class City extends Model
         $points = 0;
 
         // calculate the wall
+        /** @var Building $wall */
         $wall = $this->buildings->where('type', 9)->first();
 
         // wall defense point is (the level of the wall * 10) multiplied by the wall health percentage

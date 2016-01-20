@@ -17,7 +17,7 @@ class CreateGridsTable extends Migration
             $table->increments('id');
             $table->integer('x');
             $table->integer('y');
-            $table->integer('layer1');
+            $table->integer('type');
 
             $table->integer('owner')->unsigned();
 

@@ -113,6 +113,25 @@ class Army extends Model
     }
 
     /**
+     * Calculates the hourly food consumption of the army.
+     * Currently every
+     *
+     * @return int
+     */
+    public function calculateFoodConsumption()
+    {
+        // TODO include modifiers (e.g. upgrades)
+        $units = $this->getUnits();
+        $food = 0;
+
+        foreach ( $units as $key => $unit ) {
+            $food += (Army::$unit_food_consumtion[$this->user->nation][$key] * $unit);
+        }
+
+        return $food;
+    }
+
+    /**
      * delete army and its path, task(s) and deletes its id from hex
      *
      * @param Army $army

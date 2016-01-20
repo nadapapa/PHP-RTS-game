@@ -57,4 +57,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->hasMany('App\Army', 'user_id');
     }
+
+    // SETTERS
+
+    /**
+     * Assigns the selected nation to the user
+     * 
+     * @param $nation
+     */
+    public function setNation($nation)
+	{
+		$this->nation = $nation;
+		$this->save();
+	}
+
 }
