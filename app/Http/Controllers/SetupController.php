@@ -16,14 +16,10 @@ use Validator;
 
 class SetupController extends Controller
 {
-
-
-
     public function getSetup()
     {
         return view('user.validated');
     }
-
 
     /**
      * Sets up the user and the city for the game

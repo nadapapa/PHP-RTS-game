@@ -10,6 +10,7 @@ use App\Task;
 use App\User;
 use Carbon\Carbon;
 use ErrorException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\DispatchesCommands;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -18,9 +19,6 @@ use Illuminate\Support\Facades\Auth;
 abstract class Controller extends BaseController
 {
 	use DispatchesCommands, ValidatesRequests;
-
-
-// TODO these methods should go to the model
 
     /**
      * Finds out if the logged in user is the owner of the city.
@@ -43,6 +41,8 @@ abstract class Controller extends BaseController
         return true;
     }
 
+// TODO these methods should go to a model or trait
+// TODO there should be a CanLevelUp and a HasHealth interface and the appropriate models should implement those
 
     /**
      * @param City $city
@@ -51,7 +51,7 @@ abstract class Controller extends BaseController
      * @param $time
      * @return $this|bool
      */
-    public function levelUp($city, $thing, array $price, $time)
+    public function levelUp($city, Model $thing, array $price, $time)
     {
         $lack_resource = $city->hasEnoughResources($price);
         if (empty($lack_resource)) {
@@ -77,19 +77,23 @@ abstract class Controller extends BaseController
 
 
     /**
-     * @param $city
-     * @param $thing
-     * @param $price
-     * @param $time
-     * @param $health
+     * @param City  $city
+     * @param Model $thing
+     * @param array $price
+     * @param int   $time   seconds
+     * @param int   $health
+     *
      * @return $this|bool
      */
-    public function heal($city, $thing, $price, $time, $health)
+    public function heal(City $city, Model $thing, array $price, $time, $health)
     {
+        /** @var int $health */
         if ($thing->health + $health > 100) {
             return redirect("city/$city->id")->withErrors(['too_much_health' => '100%-nál nem lehet nagyobb']);
         }
+
         $thing->health += $health;
+        /** @var int $time seconds*/
         $thing->finished_at = Carbon::now()->addSeconds($time);
         $city->resources->subtract($price);
         $thing->save();

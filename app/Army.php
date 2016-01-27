@@ -5,153 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 class Army extends Model
 {
 
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'armies';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = ['user_id', 'current_hex_id', 'task_id', 'path_id', 'general'];
-
-
-    public function currentHex()
-    {
-        return $this->hasOne('App\Grid', 'army_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo('App\user');
-    }
-
-    public function task()
-    {
-        return $this->hasOne('App\Task', 'army_id');
-    }
-
-    public function general()
-    {
-        return $this->belongsTo('App\General', 'army_id');
-    }
-
-    public function path()
-    {
-        return $this->hasMany('App\Path', 'path_id', 'path_id');
-    }
-
-    public function getUnits()
-    {
-        return [
-            1 => $this->unit1,
-            2 => $this->unit2,
-            3 => $this->unit3,
-            4 => $this->unit4,
-            5 => $this->unit5,
-            6 => $this->unit6,
-            7 => $this->unit7
-        ];
-    }
-
-    public function getUnitsSum()
-    {
-        $units = $this->getUnits();
-
-        $sum = 0;
-        foreach ($units as $key => $unit) {
-            $sum += $unit;
-        }
-
-        return $sum;
-    }
-
-    /**
-     * Calculates the sum of the attack points of the Army's units.
-     *
-     * @return int
-     */
-    public function calculateAttackingPoints()
-    {
-        // TODO include modifiers (armour and weapon upgrades) in the calculation
-
-        $units = $this->getUnits();
-        $points = 0;
-
-        foreach ($units as $key => $unit) {
-            if ($unit > 0) {
-                $points += (Army::$unit_attack[$this->user->nation][$key] * $unit);
-            }
-        }
-
-        return $points;
-    }
-
-    /**
-     * Calculates the sum of the defense points of the Army's units.
-     *
-     * @return int
-     */
-    public function calculateDefensePoints()
-    {
-        // TODO include modifiers (armour and weapon upgrades) in the calculation
-
-        $units = $this->getUnits();
-        $points = 0;
-
-        foreach ($units as $key => $unit) {
-            if ($unit > 0) {
-                $points += (Army::$unit_defense[$this->user->nation][$key] * $unit);
-            }
-        }
-
-        return $points;
-    }
-
-    /**
-     * Calculates the hourly food consumption of the army.
-     * Currently every
-     *
-     * @return int
-     */
-    public function calculateFoodConsumption()
-    {
-        // TODO include modifiers (e.g. upgrades)
-        $units = $this->getUnits();
-        $food = 0;
-
-        foreach ( $units as $key => $unit ) {
-            $food += (Army::$unit_food_consumtion[$this->user->nation][$key] * $unit);
-        }
-
-        return $food;
-    }
-
-    /**
-     * delete army and its path, task(s) and deletes its id from hex
-     *
-     * @param Army $army
-     */
-    public function destroyArmy()
-    {
-        if (count($this->task)){
-            $this->task->delete();
-        }
-
-        if (count($this->path)){
-            $this->path->each(function($path){
-                $path->delete();
-            });
-        }
-
-        $this->currentHex->update(['army_id' => 0]);
-        $this->delete();
-    }
-
     public static $unit_names = [
         1 => [ // római
             1 => 'könnyűgyalogos',
@@ -470,4 +323,221 @@ class Army extends Model
             7 => "Leírás"
         ],
     ];
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'armies';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['user_id', 'current_hex_id', 'task_id', 'path_id', 'general'];
+
+
+    public function currentHex()
+    {
+        return $this->hasOne('App\Grid', 'army_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\user');
+    }
+
+    public function task()
+    {
+        return $this->hasOne('App\Task', 'army_id');
+    }
+
+    public function general()
+    {
+        return $this->belongsTo('App\General', 'army_id');
+    }
+
+    public function path()
+    {
+        return $this->hasMany('App\Path', 'path_id', 'path_id');
+    }
+
+    public function getUnits()
+    {
+        return [
+            1 => $this->unit1,
+            2 => $this->unit2,
+            3 => $this->unit3,
+            4 => $this->unit4,
+            5 => $this->unit5,
+            6 => $this->unit6,
+            7 => $this->unit7
+        ];
+    }
+
+    public function getUnitsSum()
+    {
+        $units = $this->getUnits();
+
+        $sum = 0;
+        foreach ($units as $key => $unit) {
+            $sum += $unit;
+        }
+
+        return $sum;
+    }
+
+    /**
+     * Calculates the sum of the attack points of the Army's units.
+     *
+     * @return int
+     */
+    public function calculateAttackingPoints()
+    {
+        // TODO include modifiers (armour and weapon upgrades) in the calculation
+
+        $units = $this->getUnits();
+        $points = 0;
+
+        foreach ($units as $key => $unit) {
+            if ($unit > 0) {
+                $points += (Army::$unit_attack[$this->user->nation][$key] * $unit);
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * Calculates the sum of the defense points of the Army's units.
+     *
+     * @return int
+     */
+    public function calculateDefensePoints()
+    {
+        // TODO include modifiers (armour and weapon upgrades) in the calculation
+
+        $units = $this->getUnits();
+        $points = 0;
+
+        foreach ($units as $key => $unit) {
+            if ($unit > 0) {
+                $points += (Army::$unit_defense[$this->user->nation][$key] * $unit);
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * Calculates the hourly food consumption of the army.
+     * Currently every
+     *
+     * @return int
+     */
+    public function calculateFoodConsumption()
+    {
+        // TODO include modifiers (e.g. upgrades)
+        $units = $this->getUnits();
+        $food = 0;
+
+        foreach ( $units as $key => $unit ) {
+            $food += (Army::$unit_food_consumtion[$this->user->nation][$key] * $unit);
+        }
+
+        return $food;
+    }
+
+    /**
+     * delete army and its path, task(s) and deletes its id from hex
+     *
+     * @param Army $army
+     */
+    public function destroyArmy()
+    {
+        if (count($this->task)){
+            $this->task->delete();
+        }
+
+        if (count($this->path)){
+            $this->path->each(function($path){
+                $path->delete();
+            });
+        }
+
+        $this->currentHex->update(['army_id' => 0]);
+        $this->delete();
+    }
+
+    /**
+     * TODO calculate casualties
+     *
+     *
+     */
+    public function calculateCasualties()
+    {
+
+
+
+    }
+
+    /**
+     * Chooses the winner army based on attack and defense points
+     *
+     * @param Army $attacking_army
+     * @return void
+     */
+    public function processBattle(Army $attacking_army)
+    {
+
+        /**
+         * attacking army's attack points
+         *
+         * @var int $attacking_attack
+         */
+        $attacking_attack = $attacking_army->calculateAttackingPoints();
+
+
+        /**
+         * attacked army's defense points
+         *
+         * @var int $attacked_defense
+         */
+        $attacked_defense = $this->calculateDefensePoints();
+
+        // TODO include hex modifier in the calculation
+
+        /** @var int $point */
+        $point = $attacking_attack - $attacked_defense;
+
+        if ($point === 0){ // it's a tie
+            $point += rand(-1, 1); // randomly add or remove 1 so the $point will be 1 or -1
+        }
+
+        if ($point > 0){ // the attacking army wins
+            /** @var Army $winner */
+            $winner = $attacking_army;
+            /** @var Army $loser */
+            $loser = $this;
+        } elseif ($point < 0) { // the attacked army wins
+            /** @var Army $winner */
+            $winner = $this;
+            /** @var Army $loser */
+            $loser = $attacking_army;
+        }
+
+//        TODO $this::calculateCasualties();
+
+        /** @var Army $loser */
+        $loser->destroyArmy();
+
+        // TODO a pontok alapján kiszámolni a veszteségeket és ennek megfelelően módosítani a seregeket
+        // jelenleg a vesztes sereg teljesen megsemmisül, a győztesnek nincs vesztesége és folytatja az útját
+        // TODO a csata eredményét megjeleníteni a felhasználónak
+
+    }
+
+
 }

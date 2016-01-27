@@ -178,7 +178,6 @@ class ArmyController extends Controller
            self::processArmyCrossing($path->hex->army, $path);
         }
 
-
         if ($path->hex->city_id > 0) { // check if there is a city in the way
             if($path->hex->owner != $path->army->user_id){
                 SiegeController::processSiege($path->army, $path->hex->city);
@@ -188,7 +187,7 @@ class ArmyController extends Controller
     }
 
     /**
-     * determines if the meeting armies are friend or foe.
+     * determines if the meeting armies are friends or foes.
      *
      * @param Army $army
      * @param Path $step
@@ -246,60 +245,9 @@ class ArmyController extends Controller
      */
     public static function calculateBattleTime(Army $attacking_army, Army $attacked_army)
     {
+        /** @var int $time */
         $time = $attacking_army->getUnitsSum() + $attacked_army->getUnitsSum();
-
         return $time;
-    }
-
-    /**
-     * @param Path $attacking_path
-     * @param Path $attacked_path
-     */
-    public static function processBattle(Army $attacking_army, Army $attacked_army)
-    {
-        $attacking_attack = $attacking_army->calculateAttackingPoints(); // attacking army's attack points
-//        $attacked_attack = $points['attack_points'][1]; // attacked army's attack points
-//        $attacking_defense = $points['defense_points'][0]; // attacking army's defense points
-        $attacked_defense = $attacked_army->calculateDefensePoints(); // attacked army's defense points
-
-//        $attacked_defense -= $attacking_attack;
-//        $attacking_defense -= $attacked_attack;
-
-        // TODO include hex modifier in the calculation
-        $point = $attacking_attack - $attacked_defense;
-
-        if ($point == 0){ // it's a tie
-            $point += rand(-1, 1); // randomly add or remove 1 so the $point will be 1 or -1
-        } elseif ($point > 0){ // the attacking army wins
-            $winner = $attacking_army;
-            $loser = $attacked_army;
-        } elseif ($point < 0) { // the attacked army wins
-            $winner = $attacked_army;
-            $loser = $attacking_army;
-        }
-
-//        TODO self::calculateCasualties();
-        $loser->destroyArmy();
-
-
-//        $battle_time = self::calculateBattleTime($attacking_army, $attacked_army);
-
-        // TODO a pontok alapján kiszámolni a veszteségeket és ennek megfelelően módosítani a seregeket
-        // jelenleg a vesztes sereg teljesen megsemmisül, a győztesnek nincs vesztesége és folytatja az útját
-        // TODO a csata eredményét megjeleníteni a felhasználónak
-
-    }
-
-    /**
-     * TODO calculate casualties
-     * @param Army $army
-     * @param      $points
-     */
-    public static function calculateCasualties()
-    {
-
-
-
     }
 
     /**
