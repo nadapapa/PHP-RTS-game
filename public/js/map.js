@@ -338,7 +338,7 @@ function init() {
 
     map.setMaxBounds(mapBounds);
 
-    L.tileLayer('http://localhost/img/map/{z}/{x}/{y}.png', {
+    L.tileLayer('/img/map/{z}/{x}/{y}.png', {
         minZoom: mapMinZoom,
         maxZoom: mapMaxZoom,
         continuousWorld: true,
